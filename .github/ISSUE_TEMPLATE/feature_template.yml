@@ -1,0 +1,42 @@
+name: New Feature
+description: Document a new feature or improvement to be implemented.
+title: "[FEATURE] Briefly describe the new feature"
+labels: ["enhancement", "new feature"]
+
+body:
+  - type: textarea
+    id: feature_description
+    attributes:
+      label: Feature Description
+      description: "Provide a detailed explanation of the feature or improvement. Explain why it's needed and how it could benefit users."
+      placeholder: "Describe your idea in detail."
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation_steps
+    attributes:
+      label: Implementation Steps
+      description: "Outline the steps needed to complete the task."
+      placeholder: |
+        1. Step one
+        2. Step two
+        3. Step three
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: "List any dependencies or other tasks/issues that must be resolved before this task can be completed."
+      placeholder: "E.g., 'Depends on issue #123 or completion of the API module.'"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_notes
+    attributes:
+      label: Additional Considerations
+      description: "List any related issues, dependencies, or notes relevant to this feature."
+      placeholder: "E.g., 'This feature will require updating the documentation.'"

@@ -1,0 +1,62 @@
+name: Bug
+description: Document a bug or issue that will be addressed.
+title: "[BUG] Briefly describe the issue"
+labels: ["bug", "high priority"]
+
+body:
+  - type: input
+    id: bug_summary
+    attributes:
+      label: Bug Summary
+      description: "Provide a brief summary of the bug."
+      placeholder: "E.g., 'Payments are showing wrong amount'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: "Provide the steps needed to consistently reproduce the issue."
+      placeholder: |
+        1. Step one
+        2. Step two
+        3. Step three
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: "Describe what the correct behavior should be."
+      placeholder: "E.g., 'Payments should show correct amount'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual Behavior
+      description: "Describe what actually happens."
+      placeholder: "E.g., 'Payments have an added zero to the amount'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs_or_screenshots
+    attributes:
+      label: Logs or Screenshots
+      description: "Attach any relevant error logs or screenshots to assist with debugging."
+      placeholder: "Paste error logs or screenshots here."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_notes
+    attributes:
+      label: Additional Notes
+      description: "Include any other context that might help resolve the issue."
+      placeholder: "Any additional observations or related bugs."
+    validations:
+      required: false
