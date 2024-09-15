@@ -4,15 +4,6 @@ title: "[FEATURE] Briefly describe the new feature"
 labels: ["enhancement", "new feature"]
 
 body:
-  - type: input
-    id: feature_title
-    attributes:
-      label: Feature Title
-      description: "Give a short, descriptive title for your new feature."
-      placeholder: "E.g., 'Add dark mode to the interface'"
-    validations:
-      required: true
-
   - type: textarea
     id: feature_description
     attributes:
