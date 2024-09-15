@@ -1,0 +1,50 @@
+name: Pull Request
+description: Document changes being merged into the project.
+title: "[PR] Briefly describe the change"
+labels: ["pull request", "in progress"]
+
+body:
+  - type: input
+    id: pr_summary
+    attributes:
+      label: Pull Request Summary
+      description: "Provide a concise summary of the changes in this pull request."
+      placeholder: "E.g., 'Added new API endpoint for user authentication'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: changes_description
+    attributes:
+      label: Description of Changes
+      description: "Describe the changes made in detail, including the purpose and reasoning behind them."
+      placeholder: "Provide context, purpose, and what parts of the codebase were modified."
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue_closing
+    attributes:
+      label: Related Issues
+      description: "List any related issues or tasks that this PR resolves or affects."
+      placeholder: "E.g., 'Closes issue #45' or 'Relates to task #101'"
+    validations:
+      required: false
+
+  - type: textarea
+    id: testing_details
+    attributes:
+      label: Testing & Validation
+      description: "Describe how the changes were tested and validated (e.g., unit tests, manual testing)."
+      placeholder: "E.g., 'Ran unit tests for authentication module and simulated with customer'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_notes
+    attributes:
+      label: Additional Notes
+      description: "Include any other relevant information about this pull request."
+      placeholder: "E.g., 'This PR includes updates to the API documentation that should be reviewed.'"
+    validations:
+      required: false

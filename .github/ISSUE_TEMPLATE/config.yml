@@ -1,0 +1,12 @@
+issue_templates:
+  - name: Bug Report
+    description: Use this template to report a bug or issue.
+    template: bug_report.yml
+    labels: ["bug"]
+
+  - name: Feature
+    description: Use this template to propose a new feature or improvement.
+    template: feature_request.yml
+    labels: ["enhancement"]
+
+default_template: "feature_template.yml"
