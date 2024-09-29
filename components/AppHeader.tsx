@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native"
 import Awesome5Icon from "react-native-vector-icons/FontAwesome5"
 import { useRouter } from "expo-router"
 
-const AppHeader: React.FC<{ tab: string }> = ({ tab }) => {
+const AppHeader: React.FC = () => {
   const router = useRouter()
 
   function handleProfile(): void {
-    router.push(`/${tab}/profile` as any)
+    router.navigate("/profile")
   }
 
   function handleCoin(): void {
