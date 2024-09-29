@@ -1,7 +1,9 @@
 import AppHeader from "@/components/AppHeader"
-import { Text, View, Image, StyleSheet, Pressable } from "react-native"
+import { Text, View, Image, StyleSheet, Pressable, Dimensions } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AntIcon from "react-native-vector-icons/AntDesign"
+
+const { width, height } = Dimensions.get("window")
 
 const Home = () => {
   function handleLastMonth(): void {
@@ -17,7 +19,7 @@ const Home = () => {
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: "white" }}>
+    <SafeAreaView style={styles.safeArea}>
       <AppHeader />
       <View style={styles.container}>
         <Image style={styles.cardImage} source={require("@/assets/images/card.png")} />
@@ -46,7 +48,6 @@ const Home = () => {
             <Text style={{ ...styles.budgetPostText, color: "green" }}>+ 300,00 kr</Text>
           </View>
         </View>
-        <View style={styles.horizontalLine} />
         <Pressable style={styles.transactionButton} onPress={handleTransactions}>
           <Text style={styles.transactionsText}>Mine Transaksjoner</Text>
         </Pressable>
@@ -56,20 +57,25 @@ const Home = () => {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+  },
   container: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   cardImage: {
-    width: 360,
-    height: 250,
+    width: width * 0.9,
+    height: height * 0.275,
     resizeMode: "contain",
   },
   horizontalLine: {
     borderBottomColor: "#52D1DC",
     borderBottomWidth: 2,
-    width: 300,
-    marginVertical: 20,
+    width: "80%",
+    marginVertical: 15,
   },
   balanceText: {
     fontSize: 35,
@@ -79,23 +85,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginHorizontal: 20,
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   monthText: {
     fontSize: 25,
     fontWeight: "bold",
-    marginHorizontal: 100,
+    textAlign: "center",
   },
   budget: {
-    alignItems: "center",
-    flexDirection: "column",
+    flex: 1,
     justifyContent: "center",
-    marginTop: 15,
     gap: 15,
+    paddingBottom: 20,
   },
   budgetPost: {
     paddingHorizontal: 25,
-    width: 350,
+    width: "90%",
     height: 50,
     justifyContent: "space-between",
     alignItems: "center",
@@ -110,6 +117,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFC5D3",
     borderRadius: 20,
+    marginBottom: 10,
   },
   budgetPostText: {
     fontSize: 15,

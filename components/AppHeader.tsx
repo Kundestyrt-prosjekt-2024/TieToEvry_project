@@ -2,7 +2,7 @@ import React from "react"
 import { View, Text, StyleSheet, Pressable, Image } from "react-native"
 import Awesome5Icon from "react-native-vector-icons/FontAwesome5"
 
-const AppHeader: React.FC = () => {
+const AppHeader = () => {
   function handleProfile(): void {
     console.log("Profile")
   }
