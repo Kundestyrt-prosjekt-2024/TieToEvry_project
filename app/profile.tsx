@@ -1,11 +1,21 @@
 import HorizontalLine from "@/components/HorizontalLine"
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native"
+import { View, Text, Image, TouchableOpacity, ScrollView, Pressable } from "react-native"
 
 const Profile = () => {
   return (
     <ScrollView className="h-full bg-white ">
-      <View className="flex-col items-center pt-10">
-        <Image className="w-72 h-72" source={require("@/assets/images/Default_pfp.png")} />
+      <View className="flex-col items-center py-10">
+        <View className="relative">
+          <Pressable
+            onPress={() => console.log("Change pfp")}
+            className="bg-[#52D1DC] rounded-full w-10 h-10 justify-center items-center absolute right-6 top-6 z-10 border border-black"
+          >
+            <Image source={require("@/assets/images/pencil.png")} />
+          </Pressable>
+          <View className="w-72 h-72 rounded-full border border-black justify-center items-center">
+            <Image className="w-full h-full" source={require("@/assets/images/Default_pfp.png")} />
+          </View>
+        </View>
         <HorizontalLine />
         <Text className="text-lg">Navn Navnesen</Text>
         <Text className="text-lg">11 år</Text>
