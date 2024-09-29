@@ -18,7 +18,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={{ backgroundColor: "white" }}>
-      <AppHeader />
+      <AppHeader tab="home" />
       <View style={styles.container}>
         <Image style={styles.cardImage} source={require("@/assets/images/card.png")} />
         <Text style={styles.balanceText}>1 425 503,-</Text>

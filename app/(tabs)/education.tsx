@@ -1,12 +1,12 @@
 import { Text } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
-const Profile = () => {
+const Education = () => {
   return (
     <SafeAreaView>
-      <Text>Profile</Text>
+      <Text>Education</Text>
     </SafeAreaView>
   )
 }
 
-export default Profile
+export default Education
