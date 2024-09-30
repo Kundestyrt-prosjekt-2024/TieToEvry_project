@@ -1,4 +1,5 @@
 import AppHeader from "@/components/AppHeader"
+import { useRouter } from "expo-router"
 import { Text, View, Image, StyleSheet, Pressable, Dimensions } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AntIcon from "react-native-vector-icons/AntDesign"
@@ -6,6 +7,8 @@ import AntIcon from "react-native-vector-icons/AntDesign"
 const { width, height } = Dimensions.get("window")
 
 const Home = () => {
+  const router = useRouter()
+
   function handleLastMonth(): void {
     console.log("Last month")
   }
@@ -15,7 +18,7 @@ const Home = () => {
   }
 
   function handleTransactions(): void {
-    console.log("Transactions")
+    router.push("/Transactions")
   }
 
   return (
