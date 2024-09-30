@@ -1,9 +1,9 @@
 import HorizontalLine from "@/components/HorizontalLine"
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useRef } from "react"
 import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
 import AntDesign from "@expo/vector-icons/AntDesign"
+import FontAwesome from "@expo/vector-icons/FontAwesome"
 
 const Profile = () => {
   const bottomSheetRef = useRef<BottomSheet>(null)
@@ -63,7 +63,7 @@ const Profile = () => {
               onPress={handleOpenPress}
               className="bg-[#52D1DC] rounded-full w-10 h-10 justify-center items-center absolute right-6 top-6 z-10 border border-black"
             >
-              <Image source={require("@/assets/images/pencil.png")} />
+              <FontAwesome name="pencil" size={24} color="black" />
             </Pressable>
             <View className="w-72 h-72 rounded-full border border-black justify-center items-center">
               <Image className="w-full h-full" source={require("@/assets/images/Default_pfp.png")} />
