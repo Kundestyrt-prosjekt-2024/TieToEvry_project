@@ -19,7 +19,6 @@ const Home = () => {
 
   function handleTransactions(): void {
     router.push("/Transactions")
-    console.log("Transactions")
   }
 
   return (

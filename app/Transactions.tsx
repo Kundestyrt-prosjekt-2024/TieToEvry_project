@@ -37,8 +37,8 @@ const Transactions = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
     alignItems: "center",
-    marginTop: 30,
   },
   horizontalLine: {
     borderBottomColor: "#52D1DC",
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   balanceText: {
+    marginTop: 30,
     fontSize: 35,
     fontWeight: "bold",
   },
