@@ -1,13 +1,65 @@
 import HorizontalLine from "@/components/HorizontalLine"
-import { View, Text, Image, TouchableOpacity, ScrollView, Pressable } from "react-native"
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
+import { useCallback, useEffect, useRef } from "react"
+import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import AntDesign from "@expo/vector-icons/AntDesign"
 
 const Profile = () => {
+  const bottomSheetRef = useRef<BottomSheet>(null)
+
+  const handleClosePress = useCallback(() => {
+    bottomSheetRef.current?.close()
+  }, [])
+
+  const handleOpenPress = useCallback(() => {
+    bottomSheetRef.current?.expand()
+  }, [])
+
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />,
+    []
+  )
+
+  const data = [
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+    {
+      source: require("@/assets/images/animal-pfp.png"),
+    },
+  ]
+
   return (
-    <ScrollView className="h-full bg-white ">
-      <View className="flex-col items-center py-10">
+    <>
+      <View className="h-full flex-col items-center py-10 bg-white">
         <View className="relative">
           <Pressable
-            onPress={() => console.log("Change pfp")}
+            onPress={handleOpenPress}
             className="bg-[#52D1DC] rounded-full w-10 h-10 justify-center items-center absolute right-6 top-6 z-10 border border-black"
           >
             <Image source={require("@/assets/images/pencil.png")} />
@@ -43,7 +95,38 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </ScrollView>
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={["50%"]}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        index={-1}
+      >
+        <View className="flex-col items-center">
+          <View className="w-full flex-row justify-end pr-6">
+            <Pressable onPress={handleClosePress}>
+              <AntDesign name="close" size={32} color="black" />
+            </Pressable>
+          </View>
+          <Text className="font-bold text-lg">Velg profilbilde</Text>
+          <ScrollView>
+            <View className="pt-6 justify-center">
+              <FlatList
+                data={data}
+                numColumns={4}
+                renderItem={({ item }) => (
+                  <Pressable className="w-12 h-12 mx-4 my-2" onPress={() => console.log("Endrer pfp")}>
+                    <Image source={item.source} className="h-full w-full"></Image>
+                  </Pressable>
+                )}
+                keyExtractor={(_item, index) => index.toString()}
+                scrollEnabled={false}
+              />
+            </View>
+          </ScrollView>
+        </View>
+      </BottomSheet>
+    </>
   )
 }
 
