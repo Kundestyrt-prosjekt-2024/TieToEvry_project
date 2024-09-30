@@ -1,5 +1,6 @@
 import AppHeader from "@/components/AppHeader"
 import { useRouter } from "expo-router"
+import HorizontalLine from "@/components/HorizontalLine"
 import { Text, View, Image, StyleSheet, Pressable, Dimensions } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AntIcon from "react-native-vector-icons/AntDesign"
@@ -27,7 +28,7 @@ const Home = () => {
       <View style={styles.container}>
         <Image style={styles.cardImage} source={require("@/assets/images/card.png")} />
         <Text style={styles.balanceText}>1 425 503,-</Text>
-        <View style={styles.horizontalLine} />
+        <HorizontalLine />
         <View style={styles.budgetHeader}>
           <Pressable onPress={handleLastMonth}>
             <AntIcon name="left" size={25} color="#000" />
@@ -73,12 +74,6 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     height: height * 0.275,
     resizeMode: "contain",
-  },
-  horizontalLine: {
-    borderBottomColor: "#52D1DC",
-    borderBottomWidth: 2,
-    width: "80%",
-    marginVertical: 15,
   },
   balanceText: {
     fontSize: 35,
