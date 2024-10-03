@@ -1,7 +1,7 @@
 name: New Feature
 description: Document a new feature or improvement to be implemented.
-title: "[FEATURE] Briefly describe the new feature"
-labels: ["enhancement", "new feature"]
+title: "R[req num] [FEAT] Briefly describe the new feature"
+labels: ["enhancement"]
 
 body:
   - type: textarea
@@ -22,6 +22,15 @@ body:
         1. Step one
         2. Step two
         3. Step three
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing
+      description: "Define the testing that needs to be done, if any"
+      placeholder: "E.g unit testing"
     validations:
       required: true
 
