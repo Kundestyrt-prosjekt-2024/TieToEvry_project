@@ -14,6 +14,13 @@ export default function RootLayout() {
             title: "Transaksjoner",
           }}
         />
+        <Stack.Screen
+          name="Coins"
+          options={{
+            headerBackTitle: "Tilbake",
+            title: "Gullrøtter",
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   )
