@@ -1,30 +1,45 @@
-import React from "react"
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions } from "react-native"
+import React, { useCallback, useRef } from "react"
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, Pressable } from "react-native"
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
+import FeatherIcon from "react-native-vector-icons/Feather"
 
 const coinItems: { id: string; name: string; amount: number }[] = [
-  { id: "1", name: "Flaske", amount: 100 },
-  { id: "2", name: "Sparegris", amount: 200 },
-  { id: "3", name: "Kortstokk", amount: 300 },
-  { id: "4", name: "Jalla", amount: 400 },
+  { id: "1", name: "Flaske", amount: 249 },
+  { id: "2", name: "Sparegris", amount: 349 },
+  { id: "3", name: "Kortstokk", amount: 149 },
+  { id: "4", name: "Jalla", amount: 999 },
 ]
 
 const Coins = () => {
+  const bottomSheetRef = useRef<BottomSheet>(null)
+  const [expandedItem, setExpandedItem] = React.useState<{ id: string; name: string; amount: number } | null>(null)
+
   function renderList(coinItem: { id: string; name: string; amount: number }) {
     return (
-      <TouchableOpacity style={styles.product}>
+      <TouchableOpacity style={styles.product} onPress={() => handleExpandItem(coinItem)}>
         <Text style={styles.productName}>{coinItem.name}</Text>
         <View style={styles.productPrice}>
-          <Text style={styles.priceText}>{coinItem.amount}</Text>
-          <Image style={styles.productCoin} source={require("@/assets/images/coin.png")} />
+          <Text style={styles.text2}>{coinItem.amount}</Text>
+          <Image style={styles.coin2} source={require("@/assets/images/coin.png")} />
         </View>
       </TouchableOpacity>
     )
   }
 
+  const handleExpandItem = useCallback((coinItem: { id: string; name: string; amount: number }) => {
+    setExpandedItem(coinItem)
+    bottomSheetRef.current?.expand()
+  }, [])
+
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />,
+    []
+  )
+
   const coinBalance = (
     <View style={styles.coins}>
-      <Text style={styles.text}>2387</Text>
-      <Image style={styles.coin} source={require("@/assets/images/coin.png")} />
+      <Text style={styles.text1}>2387</Text>
+      <Image style={styles.coin1} source={require("@/assets/images/coin.png")} />
     </View>
   )
 
@@ -41,6 +56,30 @@ const Coins = () => {
         keyExtractor={(item) => item.id}
         scrollEnabled={Math.ceil(coinItems.length / 2) >= (screenHeight - 260) / 100}
       />
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={["70%"]}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        index={-1}
+      >
+        <View style={styles.sheetContainer}>
+          <View style={styles.sheetHeader}>
+            <Text style={styles.text1}>{expandedItem?.name}</Text>
+            <Pressable style={styles.x} onPress={() => bottomSheetRef.current?.close()}>
+              <FeatherIcon name="x" size={50} />
+            </Pressable>
+          </View>
+          <Image style={styles.bottle} source={require("@/assets/images/bottle.png")} />
+          <View style={styles.priceContainer}>
+            <Text style={styles.text3}>Pris: {expandedItem?.amount}</Text>
+            <Image style={styles.coin3} source={require("@/assets/images/coin.png")} />
+          </View>
+          <TouchableOpacity style={styles.buyButton}>
+            <Text style={styles.text3}>Kjøp</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
     </View>
   )
 }
@@ -67,11 +106,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  text: {
+  text1: {
     fontSize: 50,
     fontWeight: "bold",
   },
-  coin: {
+  coin1: {
     width: 50,
     height: 50,
     resizeMode: "contain",
@@ -92,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
   },
-  productCoin: {
+  coin2: {
     width: 25,
     height: 25,
     resizeMode: "contain",
@@ -102,8 +141,52 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
   },
-  priceText: {
+  text2: {
     fontSize: 20,
+  },
+  sheetContainer: {
+    width: "100%",
+    alignItems: "center",
+    gap: 20,
+  },
+  sheetHeader: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  x: {
+    position: "absolute",
+    right: 20,
+  },
+  buyButton: {
+    width: 120,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#52D1DC",
+    padding: 10,
+    borderRadius: 30,
+    marginVertical: 20,
+  },
+  text3: {
+    fontSize: 30,
+    fontWeight: "bold",
+  },
+  bottle: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  coin3: {
+    width: 30,
+    height: 30,
+    resizeMode: "contain",
   },
 })
 
