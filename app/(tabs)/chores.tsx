@@ -6,6 +6,7 @@ import React from "react";
 import ChoreList from "@/components/chores/chore";
 import { ScrollView } from "react-native-gesture-handler";
 import ChoresDetailedView from "@/components/chores/choresDetailedView";
+import { HandPlatter } from "lucide-react-native";
 
 const Chores = () => {
   const [viewChore, toggleView] = React.useState(false);
@@ -13,6 +14,7 @@ const Chores = () => {
 
   const chores: Chore[] = [
     {
+      icon: <HandPlatter />,
       chore: "chore1",
       name: "Vask opp",
       description: "Vask opp alle tallerkner, glass og bestikk",
@@ -138,15 +140,15 @@ const Chores = () => {
           animationType="none"
           transparent={true}
           onRequestClose={toggleModal}>
-            <View>
-              <View>
+            <View style={{height:"100%", width: "100%", justifyContent: "center", alignContent: "center"}}>
+              <View style={styles.modalView}>
                 {choreOfInterest && (
                   <ChoresDetailedView
                     chore={choreOfInterest}
-                    // onClick={toggleModal} // Close the modal when clicked
+                    onClick={toggleModal} // Close the modal when clicked
                   />
                 )}
-                <Button title="Close" onPress={toggleModal} />
+                {/* <Button title="Close" onPress={toggleModal} /> */}
               </View>
             </View>
           </Modal>
@@ -204,6 +206,9 @@ const styles = StyleSheet.create({
   },
   list:{
     height: 350,
+  },
+  modalView:{
+    padding: 16,
   }
 })
 

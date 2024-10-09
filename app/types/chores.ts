@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const ChoresSchema = z.object({
-    // Icon?: z.string(), We want icons?
+    icon: z.any(),
     chore: z.string().uuid(),
     name: z.string().nonempty("Name is required"),
     description: z.string().nonempty("Description is required"),
