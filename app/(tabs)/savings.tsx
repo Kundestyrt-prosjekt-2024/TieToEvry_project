@@ -14,10 +14,10 @@ const Savings = () => {
     <SafeAreaView>
       <AppHeader />
       <View className="h-full bg-white">
-        <View className="items-center py-5">
+        <View className="items-center py-2">
           <Text>Spare med Sphare! Her finner du sparetips som kan hjelpe deg å nå målet ditt!</Text>
         </View>
-        <View className="flex-row py-5 px-10">
+        <View className="flex-row py-2 px-10">
           <View>
             <Image className="w-85 h-154" source={require("@/assets/images/sphare.png")} />
           </View>
@@ -32,7 +32,8 @@ const Savings = () => {
           </View>
         </View>
         <ScrollView>
-          <View className="flex-col items-center py-5">
+          <View className="flex-col items-center py-5 pb-20">
+            <SavingGoalCard></SavingGoalCard>
             <SavingGoalCard></SavingGoalCard>
           </View>
         </ScrollView>
