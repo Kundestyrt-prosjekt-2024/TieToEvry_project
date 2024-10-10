@@ -103,113 +103,57 @@ const Chores = () => {
   return (
     <SafeAreaView>
       <AppHeader />
-      <View style={styles.parentView}>
-        <Text style={styles.headerText}>Her kan du spare med Sphare!</Text>
-        <View style={styles.sphareSays}>
+      <View className="h-full bg-white flex flex-col">
+        <Text className="p-1 text-lg font-semibold text-center">Her kan du spare med Sphare!</Text>
+        <View className="p-4 flex-row items-center">
           <Image
-            style={{ width: 150, height: 200, resizeMode: "contain", borderRadius: 4 }}
+            className="w-36 h-48 rounded-md"
             source={require("@/assets/images/sphare1.png")}
+            resizeMode="contain"
           />
-          <View style={{flexDirection:"column", justifyContent: "center", alignItems: "center", flex:1, flexWrap: "wrap",}}>
-            <Text style={styles.sphareSaysHeader}>Du har tjent:</Text>
-            <Text style={styles.sphareSaysMoney}>{cashMulla.mulla},-</Text>
-            <View style={{flexDirection:"row",flex:1, flexWrap: "wrap", alignItems:"center"}}>
+          <View className="flex flex-col items-center flex-1">
+            <Text className="text-3xl font-semibold text-teal-500">Du har tjent:</Text>
+            <Text className="text-2xl font-semibold text-center">{cashMulla.mulla},-</Text>
+            <View className="flex-row items-center">
               <Image
-              style={{ width: 35, height: 35, resizeMode: "contain", borderRadius: 4 }}
-              source={require("@/assets/images/coin.png")}/>
-              <Text style={styles.sphareSaysCoin}>x{cashMulla.sphareCoin}</Text>
+                className="w-9 h-9 rounded-md"
+                source={require("@/assets/images/coin.png")}
+                resizeMode="contain"
+              />
+              <Text className="text-xl font-semibold">x{cashMulla.sphareCoin}</Text>
             </View>
           </View>
         </View>
-        <View style={styles.body}>
-            <Text style={{alignItems:"center", textAlign:"center", fontSize:20, padding:6,
-                  borderBottomWidth: 1, borderBottomColor: "#52D1DC"
-            }}>Aktive gjøremål 👇</Text>
-          <ScrollView style={styles.list}>
-            {/* Render list of chores */}
+        <View className="flex flex-col items-center px-8">
+          <Text className="text-lg pb-2 text-center border-b border-teal-300">
+            Aktive gjøremål 👇
+          </Text>
+          <ScrollView className="h-88">
             {chores.map((chore, index) => (
               <View key={index}>
                 <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
               </View>
             ))}
-            </ScrollView>
-          <View style={{ borderBottomWidth: 1, borderBottomColor: "#52D1DC" }}></View>
+          </ScrollView>
+          <View className="border-b border-teal-300"></View>
           {choreOfInterest && (
-          <Modal
-          visible={viewChore}
-          animationType="none"
-          transparent={true}
-          onRequestClose={toggleModal}>
-            <View style={{height:"100%", width: "100%", justifyContent: "center", alignContent: "center"}}>
-              <View style={styles.modalView}>
-                {choreOfInterest && (
-                  <ChoresDetailedView
-                    chore={choreOfInterest}
-                    onClick={toggleModal} // Close the modal when clicked
-                  />
-                )}
-                {/* <Button title="Close" onPress={toggleModal} /> */}
+            <Modal
+              visible={viewChore}
+              animationType="none"
+              transparent={true}
+              onRequestClose={toggleModal}
+            >
+              <View className="h-full w-full flex justify-center items-center">
+                <View className="p-4">
+                  <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} />
+                </View>
               </View>
-            </View>
-          </Modal>
+            </Modal>
           )}
         </View>
       </View>
     </SafeAreaView>
-  )
-}
-
-const styles = StyleSheet.create({
-  parentView: {
-    height: "100%",
-    backgroundColor: "white",
-    justifyContent: "flex-start",
-    flexDirection: "column",
-  },
-  headerText: {
-    padding: 4,
-    fontSize: 20,
-    fontWeight: "semibold",
-    textAlign: "center",
-  },
-  sphareSays: {
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  sphareSaysHeader: {
-    fontSize: 35 ,
-    fontWeight: "semibold",
-    color: "#52D1DC",
-    flex: 1,
-    flexWrap: "wrap",
-  },
-  sphareSaysMoney: {
-    fontSize: 30,
-    fontWeight: "semibold",
-    textAlign: "center",
-    flex: 1,
-    flexWrap: "wrap",
-  },
-  sphareSaysCoin: {
-    //Appears to not apply
-    fontSize: 25,
-    fontWeight: "semibold",
-    textAlign: "center",
-    flexWrap: "wrap",
-  },
-  body:{
-    flexDirection: "column",
-    alignContent: "center",
-    justifyContent: "center",
-    paddingHorizontal: 30,
-  },
-  list:{
-    height: 350,
-  },
-  modalView:{
-    padding: 16,
-  }
-})
+  );
+};
 
 export default Chores

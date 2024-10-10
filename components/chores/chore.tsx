@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Chore } from "@/app/types/chores";
 
 interface Props {
@@ -8,18 +8,18 @@ interface Props {
 }
 
 const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
-    const urgent = chore.dueDate < new Date(new Date().setDate(new Date().getDate() + 3)) ? "red" : "black";
-    
+  const urgent = chore.dueDate < new Date(new Date().setDate(new Date().getDate() + 3)) ? "text-red-500" : "text-black";
+
   return (
     <Pressable onPress={onClick}>
-      <View style={styles.list}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.icon}>{chore.icon ? chore.icon : "Icon"}</Text>
-          <View style={styles.textContainer}>
-            <Text style={styles.name}>{chore.name}</Text>
-            <View style={styles.dueDateContainer}>
-              <Text style={styles.dueDateLabel}>Frist:</Text>
-              <Text style={{color:urgent}}>
+      <View className="flex-row justify-between p-3 px-5 items-center bg-gray-200 rounded-2xl mb-2.5">
+        <View className="flex-row items-center space-x-2.5">
+          <Text className="mr-2.5">{chore.icon ? chore.icon : "Icon"}</Text>
+          <View className="flex-col justify-center">
+            <Text className="text-lg">{chore.name}</Text>
+            <View className="flex-row items-center space-x-1.5">
+              <Text className="text-xs">Frist:</Text>
+              <Text className={urgent}>
                 {new Date(chore.dueDate).toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "2-digit",
@@ -29,53 +29,10 @@ const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
             </View>
           </View>
         </View>
-        <Text style={styles.reward}>{chore.reward}</Text>
+        <Text className="text-lg text-green-600">{chore.reward}</Text>
       </View>
     </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  list: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    paddingHorizontal: 20,
-    alignItems: "center", // Align items vertically centered
-    backgroundColor: "whitesmoke",
-    borderRadius: 20,
-    marginBottom: 10,
-  },
-  contentContainer: {
-    flexDirection: "row",
-    alignItems: "center", // Align children (icon and text) vertically centered
-    gap: 10, // Add spacing between icon and text
-  },
-  icon: {
-    marginRight: 10, // Add spacing to the right of the icon
-  },
-  textContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-  dueDateContainer: {
-    flexDirection: "row",
-    alignItems: "center", 
-    gap: 5, 
-  },
-  dueDateLabel: {
-    fontSize: 12,
-  },
-  dueDate: {
-    marginLeft: 5,
-  },
-  reward: {
-    fontSize: 20,
-    color: "green", 
-  },
-  name: {
-    fontSize: 20,
-  },
-});
 
 export default ChoreList;
