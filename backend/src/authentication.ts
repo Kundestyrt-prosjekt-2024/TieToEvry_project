@@ -10,7 +10,8 @@ const registerUser = async (
   password: string,
   name: string,
   passphrase: string,
-  phonenumber: number
+  phonenumber: number,
+  birthdate: Timestamp,
 ) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -19,6 +20,7 @@ const registerUser = async (
     const newUser: User = {
       UserID: user.uid,
       created_at: Timestamp.now(),
+      birthdate: birthdate,
       name: name,
       passphrase: passphrase,
       phonenumber: phonenumber

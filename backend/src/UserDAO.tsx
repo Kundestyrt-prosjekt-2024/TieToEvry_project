@@ -5,6 +5,7 @@ import { addDoc, collection, doc, Firestore, getDoc, Timestamp } from "firebase/
 export interface User {
   UserID: string
   created_at: Timestamp
+  birthdate: Timestamp
   name: string
   passphrase: string
   phonenumber: number
