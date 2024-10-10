@@ -19,6 +19,7 @@
     "@gorhom/bottom-sheet": "^4.6.4",
     "@react-native-firebase/auth": "^21.0.0",
     "@react-navigation/native": "^6.0.2",
+    "child_banking": "file:",
     "expo": "~51.0.28",
     "expo-constants": "~16.0.2",
     "expo-firebase-recaptcha": "^2.3.1",
