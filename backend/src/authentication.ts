@@ -5,7 +5,7 @@ import { Timestamp } from 'firebase/firestore';
 
 const userDAO = new UserDAO();
 
-export const registerUser = async (
+const registerUser = async (
   email: string,
   password: string,
   name: string,
@@ -30,3 +30,5 @@ export const registerUser = async (
     console.error("Error registering user: ", error);
   }
 };
+
+export { registerUser };
