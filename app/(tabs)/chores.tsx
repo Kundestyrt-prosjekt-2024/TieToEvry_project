@@ -1,5 +1,5 @@
 import AppHeader from "@/components/AppHeader";
-import { View, Text, StyleSheet, Pressable, Image, Modal, Button } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Chore } from "../types/chores";
 import React from "react";
@@ -7,6 +7,7 @@ import ChoreList from "@/components/chores/chore";
 import { ScrollView } from "react-native-gesture-handler";
 import ChoresDetailedView from "@/components/chores/choresDetailedView";
 import { HandPlatter } from "lucide-react-native";
+import Button from "@/components/ui/button";
 
 const Chores = () => {
   const [viewChore, toggleView] = React.useState(false);
@@ -103,32 +104,36 @@ const Chores = () => {
   return (
     <SafeAreaView>
       <AppHeader />
-      <View className="h-full bg-white flex flex-col">
-        <Text className="p-1 text-lg font-semibold text-center">Her kan du spare med Sphare!</Text>
-        <View className="p-4 flex-row items-center">
-          <Image
-            className="w-36 h-48 rounded-md"
-            source={require("@/assets/images/sphare1.png")}
-            resizeMode="contain"
-          />
-          <View className="flex flex-col items-center flex-1">
-            <Text className="text-3xl font-semibold text-teal-500">Du har tjent:</Text>
-            <Text className="text-2xl font-semibold text-center">{cashMulla.mulla},-</Text>
-            <View className="flex-row items-center">
+      <View className="h-full bg-white flex flex-col px-8 py-4 space-y-2">
+        <View className="bg-slate-50 rounded-2xl p-4">
+          <View className="border-b border-teal-300">
+            <Text className="text-lg font-regular text-center pb-2 ">Her kan du spare med Sphare!</Text>
+          </View>
+          <View className=" flex-row justify-center items-center py-2 space-x-6">
               <Image
-                className="w-9 h-9 rounded-md"
-                source={require("@/assets/images/coin.png")}
+                className="rounded-md"
+                source={require("@/assets/images/sphare1.png")}
                 resizeMode="contain"
               />
-              <Text className="text-xl font-semibold">x{cashMulla.sphareCoin}</Text>
+            <View className="flex flex-col h-36 justify-between items-center ">
+              <Text className="text-3xl font-normal text-teal-500">Du har tjent:</Text>
+              <Text className="text-2xl font-light text-center">{cashMulla.mulla},-</Text>
+              <View className="flex-row items-center">
+                <Image
+                  className="w-9 h-9 rounded-md"
+                  source={require("@/assets/images/coin.png")}
+                  resizeMode="contain"
+                />
+                <Text className="text-xl font-light">x{cashMulla.sphareCoin}</Text>
+              </View>
             </View>
           </View>
         </View>
-        <View className="flex flex-col items-center px-8">
+        <View className="flex flex-col items-center">
           <Text className="text-lg pb-2 text-center border-b border-teal-300">
             Aktive gjøremål 👇
           </Text>
-          <ScrollView className="h-88">
+          <ScrollView className="h-[280px] mb-2 border-b-2 border-teal-300">
             {chores.map((chore, index) => (
               <View key={index}>
                 <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
@@ -151,6 +156,14 @@ const Chores = () => {
             </Modal>
           )}
         </View>
+            <View className="flex flex-row justify-between">
+              <View>
+                <Button text="Se alle gjøremål" onClick={() => console.log("Helloworld")}></Button>
+              </View>
+              <View>
+                <Button text="Foreslå gjøremål" onClick={() => console.log("Helloworld2")}></Button>
+              </View>
+            </View>
       </View>
     </SafeAreaView>
   );

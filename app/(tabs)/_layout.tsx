@@ -31,7 +31,7 @@ const TabsLayout = () => {
         name="home" 
         options={{ 
         headerShown: false,
-        tabBarShowLabel: false,
+        // tabBarShowLabel: false,
         tabBarIcon: ({ color, size, focused }) => (
           <Rabbit color={focused ? "#52D1DC": color} size={size} />
         ),
