@@ -9,7 +9,7 @@ const TabsLayout = () => {
         name="savings" 
         options={{ 
         headerShown: false,
-        tabBarShowLabel: false,
+        // tabBarShowLabel: false,
         tabBarIcon: ({ color, size, focused }) => (
           <PiggyBank color={focused ? "#52D1DC": color} size={size} />
         ),
@@ -20,7 +20,7 @@ const TabsLayout = () => {
         name="chores" 
         options={{ 
         headerShown: false,
-        tabBarShowLabel: false,
+        // tabBarShowLabel: false,
         tabBarIcon: ({ color, size, focused }) => (
           <ListCheck color={focused ? "#52D1DC": color} size={size} />
         ),
@@ -42,7 +42,7 @@ const TabsLayout = () => {
         name="payment" 
         options={{ 
         headerShown: false,
-        tabBarShowLabel: false,
+        // tabBarShowLabel: false,
         tabBarIcon: ({ color, size, focused }) => (
           <Coins color={focused ? "#52D1DC": color} size={size} />
         ),
@@ -53,10 +53,12 @@ const TabsLayout = () => {
         name="education" 
         options={{ 
         headerShown: false,
-        tabBarShowLabel: false,
+        // tabBarShowLabel: false,
         tabBarIcon: ({ color, size, focused }) => (
           <GraduationCap color={focused ? "#52D1DC": color} size={size} />
         ),
+        tabBarLabel: "Lær mer",
+
         }} 
       />
       </Tabs>

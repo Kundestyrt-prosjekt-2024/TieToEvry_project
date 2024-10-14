@@ -8,10 +8,12 @@ import { ScrollView } from "react-native-gesture-handler";
 import ChoresDetailedView from "@/components/chores/choresDetailedView";
 import { HandPlatter } from "lucide-react-native";
 import Button from "@/components/ui/button";
+import Popover from "@/components/chores/chorePopover";
 
 const Chores = () => {
   const [viewChore, toggleView] = React.useState(false);
   const [choreOfInterest, setChoreOfInterest] = React.useState<Chore | null>(null);
+  const [showPopover, setShowPopover] = React.useState(false);
 
   const chores: Chore[] = [
     {
@@ -152,7 +154,7 @@ const Chores = () => {
           {choreOfInterest && (
             <Modal
               visible={viewChore}
-              animationType="none"
+              animationType="slide"
               transparent={true}
               onRequestClose={toggleModal}
             >
@@ -166,13 +168,16 @@ const Chores = () => {
         </View>
             <View className="flex flex-row justify-between">
               <View>
-                <Button text="Se alle gjøremål" onClick={() => console.log("Helloworld")}></Button>
+                <Button text="Se alle gjøremål" onClick={() => setShowPopover(true)}></Button>
               </View>
               <View>
                 <Button text="Foreslå gjøremål" onClick={() => console.log("Helloworld2")}></Button>
               </View>
             </View>
       </View>
+      <Popover chore={chores}
+       onClick={() => setShowPopover(false)}
+       showPopover={showPopover}/>
     </SafeAreaView>
   );
 };

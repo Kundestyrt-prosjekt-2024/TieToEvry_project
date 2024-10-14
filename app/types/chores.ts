@@ -13,3 +13,9 @@ const ChoresSchema = z.object({
 });
 
 export type Chore = z.infer<typeof ChoresSchema>;
+
+export enum ChoreNavbarState {
+    GJENNOMFØRT,
+    FORESPURT,
+    ELDRE
+}
