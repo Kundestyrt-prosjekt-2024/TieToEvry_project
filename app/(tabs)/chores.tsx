@@ -19,7 +19,8 @@ const Chores = () => {
       chore: "chore1",
       name: "Vask opp",
       description: "Vask opp alle tallerkner, glass og bestikk",
-      reward: 75,
+      rewardNOK: 75,
+      rewardCoins: 5,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 7)), 
       completed: false,
       assignee: "Mamma",
@@ -28,7 +29,8 @@ const Chores = () => {
       chore: "chore2",
       name: "Rydde rommet",
       description: "Rommet ditt er rotete og må ryddes. Du vet hvordan det skal være",
-      reward: 50,
+      rewardNOK: 50,
+      rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 6)), 
       completed: false,
       assignee: "Mamma",
@@ -37,7 +39,8 @@ const Chores = () => {
       chore: "chore3",
       name: "Gå tur med Laila",
       description: "Du har ikke gått tur med Laila denne uken. Det kan du gjøre.",
-      reward: 100,
+      rewardNOK: 100,
+      rewardCoins: 5,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 9)), 
       completed: false,
       assignee: "Pappa",
@@ -46,7 +49,8 @@ const Chores = () => {
       chore: "chore4",
       name: "Vaske sjarken",
       description: "Sjarken er skitten og trenger en vask. Husk å skrubbe dekket godt! Onkel blir fornøyd.",
-      reward: 200,
+      rewardNOK: 200,
+      rewardCoins: 15,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 4)), 
       completed: false,
       assignee: "Pappa",
@@ -55,7 +59,8 @@ const Chores = () => {
       chore: "chore5",
       name: "Vaske fesken",
       description: "Fesken har blitt skitten og trenger en vask. Husk å skrubbe den godt! Vi vil ikke ha skitten fesk.",
-      reward: 30,
+      rewardNOK: 30,
+      rewardCoins: 1,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
       completed: false,
       assignee: "Mamma",
@@ -64,7 +69,8 @@ const Chores = () => {
       chore: "chore6",
       name: "Gjøre lekser",
       description: "Du har fått lekser av lærer Saddam. Gjør de!",
-      reward: 60,
+      rewardNOK: 60,
+      rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
       completed: false,
       assignee: "Pappa",
@@ -73,7 +79,8 @@ const Chores = () => {
       chore: "chore7",
       name: "Gjøre lekser",
       description: "Du har fått lekser av lærer Saddam. Gjør de!",
-      reward: 60,
+      rewardNOK: 60,
+      rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
       completed: false,
       assignee: "Pappa",
@@ -82,7 +89,8 @@ const Chores = () => {
       chore: "chore8",
       name: "Gjøre lekser",
       description: "Du har fått lekser av lærer Saddam. Gjør de!",
-      reward: 60,
+      rewardNOK: 60,
+      rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
       completed: false,
       assignee: "Pappa",
@@ -149,7 +157,7 @@ const Chores = () => {
               onRequestClose={toggleModal}
             >
               <View className="h-full w-full flex justify-center items-center">
-                <View className="p-4">
+                <View className="p-4 w-full">
                   <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} />
                 </View>
               </View>

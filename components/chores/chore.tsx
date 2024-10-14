@@ -14,11 +14,11 @@ const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
     <Pressable onPress={onClick}>
       <View className="w-full flex-row justify-between p-2 px-5 items-center bg-slate-50 rounded-2xl mb-2.5">
         <View className="flex-row items-center space-x-2.5">
-            <Text className="mr-2.5 text-black">{chore.icon ? chore.icon : "Icon"}</Text>
+            {/* <Text className="mr-2.5 text-black">{chore.icon ? chore.icon : "Icon"}</Text> */}
           <View className="flex-col justify-center">
             <Text className="text-base">{chore.name}</Text>
             <View className="flex-row items-center space-x-1.5">
-              <Text className="text-xs">Frist:</Text>
+              <Text className="text-xs color-slate-400">Frist:</Text>
               <Text className={urgent}>
                 {new Date(chore.dueDate).toLocaleDateString("en-GB", {
                   day: "2-digit",
@@ -29,7 +29,10 @@ const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
             </View>
           </View>
         </View>
-        <Text className="text-lg text-green-600">{chore.reward}</Text>
+        <View className="">
+          <Text className="text-xs color-slate-400">Belønning:</Text>
+          <Text className="text-lg text-green-600">{chore.rewardNOK},-</Text>
+        </View>
       </View>
     </Pressable>
   );
