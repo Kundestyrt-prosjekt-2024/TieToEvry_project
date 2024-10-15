@@ -1,9 +1,12 @@
 import React, { useCallback, useRef, useEffect } from "react";
-import { Modal, Text } from "react-native";
+import { Modal, Text, View } from "react-native";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { Chore } from "@/app/types/chores";
 import ChoreNavbar from "./chorePopoverNavbar";
 import { ChoreNavbarState } from "@/app/types/chores";
+import Done from "./popOverComponents/done";
+import Requested from "./popOverComponents/requested";
+import Older from "./popOverComponents/older";
 
 interface Props {
   chore: Chore[];
@@ -41,19 +44,21 @@ const Popover: React.FC<Props> = ({ chore, onClick, showPopover }) => {
       index={-1}
       onChange={onClick}
     >
-      <ChoreNavbar state={state} onClick={(newState) => setNavbarState(newState)}/>
-        {state === ChoreNavbarState.GJENNOMFØRT ? (
-            //Render component for gjennomført
-            <Text>gjennomført</Text>
-        ):(
-            state === ChoreNavbarState.FORESPURT ? (
-                //Render component for forespurt
-                <Text>forspurt</Text>
-            ):(
-                //Render component for eldre
-                <Text>eldre</Text>
-            )
-        )}
+      <View className="flex flex-col p-6">
+        <ChoreNavbar state={state} onClick={(newState) => setNavbarState(newState)}/>
+          {state === ChoreNavbarState.GJENNOMFØRT ? (
+              //Render component for gjennomført
+              <Done chores={chore} onClick={onClick}/>
+          ):(
+              state === ChoreNavbarState.FORESPURT ? (
+                  //Render component for forespurt
+                  <Requested chores={chore} onClick={onClick}/>
+              ):(
+                  //Render component for eldre
+                  <Older chores={chore} onClick={onClick}/>
+              )
+          )}
+      </View>
     </BottomSheet>
   );
 };
