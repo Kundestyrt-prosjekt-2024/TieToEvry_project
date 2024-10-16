@@ -9,6 +9,7 @@ const ChoresSchema = z.object({
     rewardCoins: z.number().min(0, "Reward must be a positive number"),
     dueDate: z.date().refine(date => date > new Date(), "Due date must be in the future"),
     completed: z.boolean(),
+    status: z.enum(["Gjennomførbar", "Forespurt", "Ferdig"]),
     assignee: z.string().nonempty("Assignee is required"),
 });
 

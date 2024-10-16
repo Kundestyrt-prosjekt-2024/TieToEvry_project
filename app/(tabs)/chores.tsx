@@ -25,6 +25,7 @@ const Chores = () => {
       rewardCoins: 5,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 7)), 
       completed: false,
+      status: "Gjennomførbar",
       assignee: "Mamma",
     },
     {
@@ -35,6 +36,7 @@ const Chores = () => {
       rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 6)), 
       completed: false,
+      status: "Gjennomførbar",
       assignee: "Mamma",
     },
     {
@@ -44,7 +46,8 @@ const Chores = () => {
       rewardNOK: 100,
       rewardCoins: 5,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 9)), 
-      completed: false,
+      completed: true,
+      status: "Gjennomførbar",
       assignee: "Pappa",
     },
     {
@@ -55,6 +58,7 @@ const Chores = () => {
       rewardCoins: 15,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 4)), 
       completed: false,
+      status: "Gjennomførbar",
       assignee: "Pappa",
     },
     {
@@ -64,7 +68,8 @@ const Chores = () => {
       rewardNOK: 30,
       rewardCoins: 1,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
-      completed: false,
+      status: "Ferdig",
+      completed: true,
       assignee: "Mamma",
     },
     {
@@ -75,6 +80,7 @@ const Chores = () => {
       rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
       completed: false,
+      status: "Ferdig",
       assignee: "Pappa",
     },
     {
@@ -85,6 +91,7 @@ const Chores = () => {
       rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
       completed: false,
+      status: "Gjennomførbar",
       assignee: "Pappa",
     },
     {
@@ -94,7 +101,8 @@ const Chores = () => {
       rewardNOK: 60,
       rewardCoins: 2,
       dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
-      completed: false,
+      completed: true,
+      status: "Forespurt",
       assignee: "Pappa",
     },
   ];

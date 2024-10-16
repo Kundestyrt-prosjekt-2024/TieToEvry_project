@@ -38,13 +38,13 @@ const Popover: React.FC<Props> = ({ chore, onClick, showPopover }) => {
     <BottomSheet
       style={{ zIndex: 15 }}
       ref={bottomSheetRef}
-      snapPoints={["80%"]}
+      snapPoints={["90%"]}
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
       index={-1}
       onChange={onClick}
     >
-      <View className="flex flex-col p-6">
+      <View className="flex flex-col px-6">
         <ChoreNavbar state={state} onClick={(newState) => setNavbarState(newState)}/>
           {state === ChoreNavbarState.GJENNOMFØRT ? (
               //Render component for gjennomført
