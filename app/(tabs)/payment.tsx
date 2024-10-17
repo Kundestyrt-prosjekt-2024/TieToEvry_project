@@ -118,24 +118,28 @@ const PaymentScreen = () => {
           data={dummyData}
           renderItem={(req) => renderPayment(req.item)}
           keyExtractor={(req) => req.id.toString()}
+          showsVerticalScrollIndicator={false}
         ></FlatList>
         <View style={styles.bottomContainer}>
-          <TouchableOpacity style={styles.bottomButton} onPress={handleAsk} activeOpacity={0.5}>
-            <View style={styles.iconContainer}>
-              <AwesomeIcon name="money" size={30} />
-              <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
-            </View>
-            <Text style={styles.buttonText}>Be om</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomButton} onPress={handleSend} activeOpacity={0.5}>
-            <View style={styles.iconContainer}>
-              <AwesomeIcon name="money" size={30} />
-              <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
-            </View>
-            <Text style={styles.buttonText}>Send</Text>
-          </TouchableOpacity>
-          <View style={styles.buttonBackgroundLeft} />
-          <View style={styles.buttonBackgroundRight} />
+          <View style={styles.combinedButtonContainer}>
+            <TouchableOpacity style={styles.leftButton} onPress={handleAsk} activeOpacity={0.7}>
+              <View style={styles.iconContainer}>
+                <AwesomeIcon name="money" color={"#363534"} size={30} />
+                <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
+              </View>
+              <Text style={styles.buttonText}>Be om</Text>
+            </TouchableOpacity>
+
+            <View style={styles.verticalDivider} />
+
+            <TouchableOpacity style={styles.rightButton} onPress={handleSend} activeOpacity={0.7}>
+              <View style={styles.iconContainer}>
+                <AwesomeIcon name="money" color={"#363534"} size={30} />
+                <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
+              </View>
+              <Text style={styles.buttonText}>Send</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -177,22 +181,30 @@ const styles = StyleSheet.create({
   bottomContainer: {
     position: "absolute",
     width: "100%",
-    bottom: 10,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
+    alignItems: "flex-end",
+    bottom: 15,
+    right: 15,
   },
-  bottomButton: {
-    height: 100,
-    width: 100,
-    padding: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 40,
-    marginTop: 20,
-    borderRadius: 50,
+  combinedButtonContainer: {
+    flexDirection: "row",
     backgroundColor: "#52D1DC",
+    borderRadius: 50,
+    width: 160,
+    height: 100,
+  },
+  leftButton: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 10,
+    paddingTop: 20,
+  },
+  rightButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingTop: 20,
   },
   iconContainer: {
     position: "relative",
@@ -210,28 +222,15 @@ const styles = StyleSheet.create({
     color: "green",
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "bold",
+    color: "#000",
   },
-  buttonBackgroundLeft: {
-    position: "absolute",
-    height: 100,
-    width: 100,
-    borderRadius: 50,
-    left: 40,
-    top: 20,
-    zIndex: -1,
-    backgroundColor: "#fff",
-  },
-  buttonBackgroundRight: {
-    position: "absolute",
-    height: 100,
-    width: 100,
-    borderRadius: 50,
-    right: 40,
-    top: 20,
-    zIndex: -1,
-    backgroundColor: "#fff",
+  verticalDivider: {
+    width: 1,
+    height: "100%",
+    backgroundColor: "#000",
+    alignSelf: "center",
   },
   listContent: {
     paddingBottom: 120,
