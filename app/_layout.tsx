@@ -1,7 +1,9 @@
-import { Stack } from "expo-router"
+import { Stack, useLocalSearchParams } from "expo-router"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 export default function RootLayout() {
+  const { name } = useLocalSearchParams()
+
   return (
     <GestureHandlerRootView>
       <Stack>
@@ -12,6 +14,13 @@ export default function RootLayout() {
           options={{
             headerBackTitle: "Tilbake",
             title: "Transaksjoner",
+          }}
+        />
+        <Stack.Screen
+          name="PaymentHistory"
+          options={{
+            headerBackTitle: "Tilbake",
+            title: name ? `Payment History of ${name}` : "Payment History",
           }}
         />
       </Stack>

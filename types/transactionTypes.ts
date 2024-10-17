@@ -1,6 +1,6 @@
 
 export type MoneyRequest = {
-    id: number;
+    id: string;
     receiver: string;
     sender: string;
     message: string;
