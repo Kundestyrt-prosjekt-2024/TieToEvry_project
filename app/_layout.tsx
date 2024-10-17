@@ -22,6 +22,13 @@ export default function RootLayout() {
           name="(profile)/myParents"
           options={{ headerBackTitle: "Tilbake", headerTitle: "Mine foreldre" }}
         />
+        <Stack.Screen
+          name="Coins"
+          options={{
+            headerBackTitle: "Tilbake",
+            title: "Gullrøtter",
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   )
