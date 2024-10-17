@@ -11,7 +11,7 @@ const AppHeader = () => {
   }
 
   function handleCoin(): void {
-    console.log("Coins")
+    router.push("/Coins")
   }
 
   return (
