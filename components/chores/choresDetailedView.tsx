@@ -45,6 +45,10 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick }) => 
                   })}</Text>
         </View>
       </View>
+      <View className="w-full flex flex-row items-center space-x-2">
+        <Text className="text-sm color-slate-400">Fra:</Text>
+        <Text className="text-base">{chore.assignee}</Text>
+      </View>
       <View className="flex flex-row justify-between w-full pt-2">
         <Button onClick={onClick} text="Lukk" classname="bg-slate-50 px-3 py-1"></Button>
         <View className="flex justify-center flex-row space-x-2">

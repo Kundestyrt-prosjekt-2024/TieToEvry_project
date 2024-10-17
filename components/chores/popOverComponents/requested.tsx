@@ -25,7 +25,7 @@ const Requested: React.FC<Props> = ({ chores, onClick }) => {
   }
 
   const earnedCoin = chores.reduce((acc, chore) => {
-    if (chore.completed) {
+    if (chore.status === "Forespurt") {
       return acc + chore.rewardNOK;
     }
     return acc;

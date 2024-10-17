@@ -31,6 +31,21 @@ const Older: React.FC<Props> = ({ chores, onClick }) => {
     return acc;
   },0);
 
+  const waitingForCoin = chores.reduce((acc, chore) => {
+    if (chore.status === "Forespurt") {
+      return acc + chore.rewardNOK;
+    }
+    return acc;
+  },0);
+
+  const missedCoin = chores.reduce((acc, chore) => {
+    if (chore.status === "Gjennomførbar" && !chore.completed) {
+      return acc + chore.rewardNOK;
+    }
+    return acc;
+  },0);
+
+
   return (
     <View className="w-full flex flex-col items-center justify-between py-4 space-y-2">
       <View className="flex flex-row w-full space-x-2">
@@ -67,14 +82,19 @@ const Older: React.FC<Props> = ({ chores, onClick }) => {
           </View>
         </Modal>
       )}
-      <View className="w-full flex flex-col justify-center items-center rounded-lg bg-[#E6FDFF] p-4">
-        <Text className="w-full text-left">Du har tjent så mye de siste to ukene:</Text>
-        <Text className="w-full text-center p-2 font-semibold text-xl text-green-600">{earnedCoin} NOK</Text>
-        {/* <View className="flex flex-row w-full"> */}
-          <Text className="w-full my-1">Hvis du sparer halvparten kommer du nærmere sparemålet ditt!</Text>
-          <Button classname="py-1" text="Sett av til sparemål" onClick={() => console.log("Hello world from sett av til sparemål")}></Button>
-        {/* </View> */}
-        
+      <View className="flex flex-row justify-between items-center w-full">
+        <View className="w-[30%] flex flex-col justify-center items-center rounded-lg bg-[#CBFDCD] p-4 space-y-4">
+          <Text className="text-lg ">Tjent</Text>        
+          <Text className="text-green-600 text-xl font-semibold">{earnedCoin},-</Text>        
+        </View>
+        <View className="w-[30%] flex flex-col justify-center items-center rounded-lg bg-[#FFEBB9] px-2 py-4 space-y-4">
+          <Text className="text-lg ">Venter på</Text>        
+          <Text className="text-yellow-600 text-xl font-semibold">{waitingForCoin},-</Text>   
+        </View>
+        <View className="w-[30%] flex flex-col justify-center items-center rounded-lg bg-[#FFAAAA] p-4 space-y-4">
+          <Text className="text-lg ">Ikke fått</Text>
+          <Text className="text-red-600 text-xl font-semibold">{missedCoin},-</Text>
+        </View>
       </View>
     </View>
   );

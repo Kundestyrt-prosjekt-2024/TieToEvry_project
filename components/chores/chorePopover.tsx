@@ -45,18 +45,18 @@ const Popover: React.FC<Props> = ({ chore, onClick, showPopover }) => {
       onChange={onClick}
     >
       <View className="flex flex-col px-6">
-        <ChoreNavbar state={state} onClick={(newState) => setNavbarState(newState)}/>
+        <ChoreNavbar state={state} onClick={(newState) => setNavbarState(newState)} closeOverlay={() => bottomSheetRef.current?.close()}/>
           {state === ChoreNavbarState.GJENNOMFØRT ? (
-              //Render component for gjennomført
-              <Done chores={chore} onClick={onClick}/>
+          //Render component for gjennomført
+          <Done chores={chore} onClick={onClick}/>
           ):(
-              state === ChoreNavbarState.FORESPURT ? (
-                  //Render component for forespurt
-                  <Requested chores={chore} onClick={onClick}/>
-              ):(
-                  //Render component for eldre
-                  <Older chores={chore} onClick={onClick}/>
-              )
+          state === ChoreNavbarState.FORESPURT ? (
+          //Render component for forespurt
+          <Requested chores={chore} onClick={onClick}/>
+          ):(
+          //Render component for eldre
+          <Older chores={chore} onClick={onClick}/>
+          )
           )}
       </View>
     </BottomSheet>
