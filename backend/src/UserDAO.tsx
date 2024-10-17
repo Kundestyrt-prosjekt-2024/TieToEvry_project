@@ -1,15 +1,8 @@
 import { db } from "@/constants/firebaseConfig"
 import "firebase/firestore"
-import { addDoc, collection, doc, Firestore, getDoc, Timestamp } from "firebase/firestore"
+import { setDoc, doc, Firestore, getDoc } from "firebase/firestore"
+import { User } from "../types/user"
 
-export interface User {
-  UserID: string
-  created_at: Timestamp
-  birthdate: Timestamp
-  name: string
-  passphrase: string
-  phonenumber: number
-}
 class UserDAO {
   database: Firestore
 
@@ -17,27 +10,27 @@ class UserDAO {
     this.database = db
   }
 
-  addUser = async (data: User) => {
+  async addUser(uid: string, data: User): Promise<string | undefined> {
     try {
-      await addDoc(collection(this.database, "users"), data)
+      const docRef = doc(this.database, "users", uid)
+      await setDoc(docRef, data)
+      return uid
     } catch (error) {
-      console.error("Error adding document: ", error)
+      return undefined
     }
   }
 
-  getUser(phonenumber: string): Promise<User> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const userDoc = await getDoc(doc(this.database, "users", phonenumber))
-        if (userDoc.exists()) {
-          resolve(userDoc.data() as User)
-        } else {
-          reject(new Error("No such document!"))
-        }
-      } catch (error) {
-        reject(error)
+  async getUser(uid: string): Promise<User | undefined> {
+    try {
+      const userDoc = await getDoc(doc(this.database, "users", uid))
+      if (userDoc.exists()) {
+        return userDoc.data() as User
+      } else {
+        return undefined
       }
-    })
+    } catch (error) {
+      return undefined
+    }
   }
 }
 

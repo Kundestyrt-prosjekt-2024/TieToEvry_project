@@ -1,36 +1,46 @@
 import { auth } from '../../constants/firebaseConfig';
-import { createUserWithEmailAndPassword} from 'firebase/auth';
-import UserDAO, { User } from './UserDAO';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import { User } from '../types/user';
 import { Timestamp } from 'firebase/firestore';
-
-const userDAO = new UserDAO();
+import UserDAO from './UserDAO';
 
 const registerUser = async (
   email: string,
   password: string,
   name: string,
-  passphrase: string,
   phonenumber: number,
-  birthdate: Timestamp,
+  birthdate: Date,
 ) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     const newUser: User = {
-      UserID: user.uid,
-      created_at: Timestamp.now(),
+      created_at: Timestamp.now().toDate(),
       birthdate: birthdate,
       name: name,
-      passphrase: passphrase,
+      passphrase: password,
       phonenumber: phonenumber
     };
 
-    await userDAO.addUser(newUser);
-    console.log("User registered and added to Firestore:", newUser);
+    const userDAO = new UserDAO();
+    const userId = await userDAO.addUser(user.uid, newUser);
+    return userId;
+
   } catch (error) {
-    console.error("Error registering user: ", error);
+    return undefined
   }
 };
 
-export { registerUser };
+const loginUser = async (email: string, password: string): Promise<User | undefined> => {
+  try {
+    const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userDAO = new UserDAO();
+    const user = await userDAO.getUser(userCredential.user.uid);
+    return user;
+  } catch (error) {
+    return undefined;
+  }
+};
+
+export { registerUser, loginUser };
