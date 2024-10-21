@@ -4,8 +4,10 @@ import { useCallback, useRef } from "react"
 import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } from "react-native"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
+import { useRouter } from "expo-router"
 
 const Profile = () => {
+  const router = useRouter()
   const bottomSheetRef = useRef<BottomSheet>(null)
 
   const handleClosePress = useCallback(() => {
@@ -75,14 +77,14 @@ const Profile = () => {
           <View className="flex-col items-center gap-4 mt-8">
             <TouchableOpacity
               className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-              onPress={() => console.log("Innstillinger")}
+              onPress={() => router.navigate("/settings")}
               activeOpacity={0.8}
             >
               <Text className="text-xl">Innstillinger</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-              onPress={() => console.log("Mine foreldre")}
+              onPress={() => router.navigate("/myParents")}
               activeOpacity={0.8}
             >
               <Text className="text-xl">Mine foreldre</Text>
