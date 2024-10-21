@@ -1,38 +1,64 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useLocalSearchParams } from "expo-router"
 import { View, Text, FlatList, StyleSheet } from "react-native"
-import { User } from "./(tabs)/payment"
+import { Payment } from "@/types"
 
 export type Transaction = [id: string, type: string, amount: number, date: string]
 
-const messages = [
-  { id: "1", type: "send", amount: 50, date: "2024-10-01" },
-  { id: "2", type: "receive", amount: 20, date: "2024-10-02" },
-  { id: "3", type: "send", amount: 30, date: "2024-10-03" },
-  { id: "4", type: "receive", amount: 40, date: "2024-10-04" },
+const dummyData: Payment[] = [
+  {
+    id: "1",
+    receiver: "1",
+    sender: "2",
+    message: "",
+    amount: 5800000,
+    sentAt: new Date("2024-10-01T10:30:00"),
+  },
+  {
+    id: "2",
+    receiver: "2",
+    sender: "1",
+    message: "Jalla",
+    amount: 4500000,
+    sentAt: new Date("2024-10-01T12:45:00"),
+  },
+  {
+    id: "3",
+    receiver: "2",
+    sender: "1",
+    message: "Jalla",
+    amount: 4500000,
+    sentAt: new Date("2024-10-02T09:30:00"),
+  },
 ]
 
 const PaymentHistory = () => {
-  const { userId, name } = useLocalSearchParams()
-  console.log(userId, name)
+  const params = useLocalSearchParams()
+  const userId = params.userId as string
+  const name = params.name as string
+  const [payments, setPayments] = React.useState<Payment[]>([])
 
-  function fetchTransactions(userId: string): Transaction[] {
-    return []
+  useEffect(() => {
+    fetchTransactions(userId)
+  }, [userId])
+
+  function fetchTransactions(userId: string): void {
+    setPayments(dummyData)
   }
 
-  function renderItem({ item }: any) {
+  function renderItem(payment: Payment) {
     return (
-      <View style={[styles.messageContainer, item.type === "send" ? styles.send : styles.receive]}>
-        <Text style={styles.messageText}>
-          {item.type === "send" ? "Sent" : "Received"} ${item.amount} on {item.date}
-        </Text>
+      <View style={[styles.messageContainer, payment.sender == userId ? styles.send : styles.receive]}>
+        <Text style={styles.statusText}>{payment.sender == userId ? `Du sendte ${name}` : `${name} sendte deg`}</Text>
+        <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
+        {payment.message && <Text style={styles.statusText}>{payment.message}</Text>}
       </View>
     )
   }
 
   return (
     <View style={styles.container}>
-      <FlatList data={messages} renderItem={renderItem} keyExtractor={(item) => item.id} />
+      <FlatList data={payments} renderItem={(payment) => renderItem(payment.item)} keyExtractor={(item) => item.id} />
     </View>
   )
 }
@@ -45,19 +71,26 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     padding: 10,
-    borderRadius: 10,
-    marginVertical: 5,
+    borderRadius: 20,
+    marginVertical: 6,
+    alignItems: "center",
+    gap: 5,
   },
   send: {
     alignSelf: "flex-end",
-    backgroundColor: "#d1e7dd",
+    backgroundColor: "#f8d7da",
+    borderBottomRightRadius: 2,
   },
   receive: {
     alignSelf: "flex-start",
-    backgroundColor: "#f8d7da",
+    backgroundColor: "#d1e7dd",
+    borderBottomLeftRadius: 2,
   },
-  messageText: {
+  statusText: {
     fontSize: 16,
+  },
+  amountText: {
+    fontSize: 24,
   },
 })
 

@@ -36,6 +36,7 @@ const dummyData: MoneyRequest[] = [
     sender: "2",
     message: "",
     amount: 5800000,
+    requestedAt: new Date(),
   },
   {
     id: "2",
@@ -43,6 +44,7 @@ const dummyData: MoneyRequest[] = [
     sender: "1",
     message: "Jalla",
     amount: 4500000,
+    requestedAt: new Date(),
   },
   {
     id: "3",
@@ -50,6 +52,7 @@ const dummyData: MoneyRequest[] = [
     sender: "1",
     message: "Jalla",
     amount: 4500000,
+    requestedAt: new Date(),
   },
   {
     id: "4",
@@ -57,6 +60,7 @@ const dummyData: MoneyRequest[] = [
     sender: "1",
     message: "Jalla",
     amount: 4500000,
+    requestedAt: new Date(),
   },
   {
     id: "5",
@@ -64,6 +68,7 @@ const dummyData: MoneyRequest[] = [
     sender: "1",
     message: "Jalla",
     amount: 4500000,
+    requestedAt: new Date(),
   },
   {
     id: "6",
@@ -71,6 +76,7 @@ const dummyData: MoneyRequest[] = [
     sender: "1",
     message: "Jalla",
     amount: 4500000,
+    requestedAt: new Date(),
   },
   {
     id: "7",
@@ -78,6 +84,7 @@ const dummyData: MoneyRequest[] = [
     sender: "2",
     message: "",
     amount: 5800000,
+    requestedAt: new Date(),
   },
   {
     id: "8",
@@ -85,6 +92,7 @@ const dummyData: MoneyRequest[] = [
     sender: "2",
     message: "",
     amount: 5800000,
+    requestedAt: new Date(),
   },
 ]
 
@@ -135,7 +143,7 @@ const PaymentScreen = () => {
       return (
         <View style={styles.request}>
           <Text style={styles.requestText}>
-            Du ber {request.receiver} om {request.amount}
+            Du ber {request.receiver} om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
           </Text>
           <TouchableOpacity onPress={handleCancel}>
             <Text style={{ ...styles.requestText, color: "red" }}>Avbryt</Text>
@@ -146,7 +154,7 @@ const PaymentScreen = () => {
       return (
         <View style={styles.request}>
           <Text style={styles.requestText}>
-            {request.sender} ber deg om {request.amount}
+            {request.sender} ber deg om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
           </Text>
           <TouchableOpacity onPress={handleAccept}>
             <Text style={{ ...styles.requestText, color: "green" }}>Godta</Text>
