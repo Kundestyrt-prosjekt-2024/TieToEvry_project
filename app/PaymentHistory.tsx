@@ -1,7 +1,8 @@
 import React, { useEffect } from "react"
 import { useLocalSearchParams } from "expo-router"
-import { View, Text, FlatList, StyleSheet } from "react-native"
+import { View, FlatList, StyleSheet } from "react-native"
 import { Payment } from "@/types"
+import PaymentBubble from "@/components/PaymentBubble"
 
 export type Transaction = [id: string, type: string, amount: number, date: string]
 
@@ -62,25 +63,38 @@ const PaymentHistory = () => {
     }).format(date)
   }
 
+  function formatTime(date: Date) {
+    return new Intl.DateTimeFormat("nb-NO", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date)
+  }
+
   function renderItem({ item, index }: { item: Payment; index: number }) {
     const previousItem = payments[index - 1]
     const showDateDivider = !previousItem || formatDate(item.sentAt) !== formatDate(previousItem.sentAt)
 
     return (
-      <View>
-        {showDateDivider && <Text style={styles.dateDivider}>{formatDate(item.sentAt)}</Text>}
-        <View style={[styles.messageContainer, item.sender == userId ? styles.send : styles.receive]}>
-          <Text style={styles.statusText}>{item.sender == userId ? `Du sendte ${name}` : `${name} sendte deg`}</Text>
-          <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(item.amount)} kr</Text>
-          {item.message && <Text style={styles.statusText}>{item.message}</Text>}
-        </View>
-      </View>
+      <PaymentBubble
+        payment={item}
+        userId={userId}
+        name={name}
+        showDateDivider={showDateDivider}
+        formatDate={formatDate}
+        formatTime={formatTime}
+      />
     )
   }
 
   return (
     <View style={styles.container}>
-      <FlatList data={payments} renderItem={renderItem} keyExtractor={(item) => item.id} />
+      <FlatList
+        contentContainerStyle={styles.listContent}
+        data={payments}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   )
 }
@@ -88,40 +102,10 @@ const PaymentHistory = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: "#fff",
   },
-  messageContainer: {
-    padding: 10,
-    borderRadius: 20,
-    marginVertical: 6,
-    marginHorizontal: 5,
-    alignItems: "center",
-    gap: 5,
-    maxWidth: "70%",
-  },
-  send: {
-    alignSelf: "flex-end",
-    backgroundColor: "#f8d7da",
-    borderBottomRightRadius: 2,
-  },
-  receive: {
-    alignSelf: "flex-start",
-    backgroundColor: "#d1e7dd",
-    borderBottomLeftRadius: 2,
-  },
-  statusText: {
-    fontSize: 16,
-  },
-  amountText: {
-    fontSize: 24,
-  },
-  dateDivider: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 10,
-    textAlign: "center",
-    color: "#555",
+  listContent: {
+    paddingBottom: 20,
   },
 })
 

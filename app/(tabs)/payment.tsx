@@ -245,7 +245,6 @@ const styles = StyleSheet.create({
   userListContent: {
     flex: 1,
     justifyContent: "center",
-    // paddingBottom: 10,
   },
   balance: {
     fontSize: 50,
