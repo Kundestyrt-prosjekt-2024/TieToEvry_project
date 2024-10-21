@@ -1,9 +1,10 @@
 import AppHeader from "@/components/AppHeader"
 import SavingGoalCard from "@/components/SavingGoalCard"
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
-import React, { useCallback, useRef } from "react"
-import { Text, View, Image, ScrollView, TouchableOpacity, Pressable, TextInput } from "react-native"
+import React, { useCallback, useRef, useState } from "react"
+import { Text, View, Image, ScrollView, TouchableOpacity, Pressable, TextInput, FlatList, TouchableWithoutFeedback, Keyboard } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
+import Carousel from 'react-native-snap-carousel';
 
 
 const Savings = () => {
@@ -13,10 +14,12 @@ const Savings = () => {
 
   const handleAddMoney = useCallback(() => {
     bottomSheetRefAddMoney.current?.expand();
+    dismissKeyboard();
   }, []);
 
   const handleNewGoalPress = useCallback(() => {
     bottomSheetRef.current?.expand()
+    dismissKeyboard();
   }, [])
 
   const renderBackdrop = useCallback(
@@ -27,10 +30,25 @@ const Savings = () => {
   const handleClosePress = useCallback(() => {
     bottomSheetRef.current?.close()
     bottomSheetRefAddMoney.current?.close()
+    dismissKeyboard();
   }, [])
 
+  function dismissKeyboard() {
+    Keyboard.dismiss();
+  }
+
+  const handleChangeIcon = () => {
+    dismissKeyboard();
+  }
+
   {/**Icon images for change icon functionality */}
-  const data = [
+  const icons = [
+    {
+      source: require("@/assets/images/bike.png"),
+    },
+    {
+      source: require("@/assets/images/bike.png"),
+    },
     {
       source: require("@/assets/images/bike.png"),
     },
@@ -105,7 +123,8 @@ const Savings = () => {
 
         {/* Overlay should expand with keyboard */}
         <BottomSheet ref={bottomSheetRef} snapPoints={["75%"]} enablePanDownToClose={true} backdropComponent={renderBackdrop} index={-1}>
-          <View className="flex-col items-center">
+        <TouchableWithoutFeedback onPress={ () => { dismissKeyboard() } }>
+          <View className="flex-col items-center" >
 
             <View className="w-full flex-row justify-end pr-6">
               <Pressable onPress={handleClosePress}>
@@ -118,19 +137,15 @@ const Savings = () => {
             </View>
 
             <View style={{ width: 237, height: 38 }} className=" items-center justify-center border border-color-[#8D8E8E] rounded-md my-5">
-              <TextInput placeholder="Hva vil du spare til?" placeholderTextColor="#8D8E8E"></TextInput>
+              <TextInput  placeholder="Hva vil du spare til?" placeholderTextColor="#8D8E8E"></TextInput>
             </View>
 
             <View style={{ width: 237, height: 38 }} className=" items-center justify-center border border-color-[#8D8E8E] rounded-md">
-              <TextInput placeholder="Hvor mye vil du spare?" placeholderTextColor="#8D8E8E"></TextInput>
+              <TextInput keyboardType='numeric' placeholder="Hvor mye vil du spare?" placeholderTextColor="#8D8E8E"></TextInput>
             </View>
 
-            {/* Missing choose icon functionality */}
             <View style={{ width: 245, height: 70 }} className="mt-3 items-center flex-row justify-around">
               <Image style={{ width: 60, height: 60 }} source={require('@/assets/images/bike.png')}/>
-              <TouchableOpacity style={{ width: 145, height: 48 }} className="bg-[#6DE272] rounded-full" onPress={handleNewGoalPress}>
-                <Text className="text-center justify-center mt-2 text-xl">Endre Ikon</Text>
-              </TouchableOpacity>
             </View>
 
             <View style={{ width: 131, height: 45 }} className="mt-2 items-center justify-center ">
@@ -139,10 +154,27 @@ const Savings = () => {
               </TouchableOpacity>
             </View>
 
+            <View style={{ width: 393, height: 275 }} className="pt-4 justify-center flex-col items-center">
+              <FlatList
+                  data={icons}
+                  numColumns={4}
+                  renderItem={({ item }) => (
+                    <Pressable className="w-12 h-12 mx-4 my-2" onPress={handleChangeIcon}>
+                      <Image source={item.source} className="h-full w-full"></Image>
+                    </Pressable>
+                  )}
+                  keyExtractor={(_item, index) => index.toString()}
+                  scrollEnabled={false}
+                />
+            </View>
+
           </View>
+          </TouchableWithoutFeedback>
         </BottomSheet>
 
         <BottomSheet ref={bottomSheetRefAddMoney} snapPoints={["75%"]} enablePanDownToClose={true} backdropComponent={renderBackdrop} index={-1}>
+        <TouchableWithoutFeedback onPress={ () => { dismissKeyboard() } }>
+
           <View className="flex-col items-center">
 
             <View className="w-full flex-row justify-end pr-6">
@@ -166,7 +198,7 @@ const Savings = () => {
             </View>
 
             <View style={{ width: 236, height: 48 }} className="mt-3 items-center justify-center border border-color-[#8D8E8E] rounded-md">
-              <TextInput placeholder="Hvor mye vil du legge til?" placeholderTextColor="#8D8E8E"></TextInput>
+              <TextInput keyboardType='numeric' placeholder="Hvor mye vil du legge til?" placeholderTextColor="#8D8E8E"></TextInput>
             </View>
 
             <View style={{ width: 131, height: 45 }} className="mt-2 items-center justify-center ">
@@ -176,6 +208,7 @@ const Savings = () => {
             </View>
 
           </View>
+          </TouchableWithoutFeedback>
         </BottomSheet>
         
     </SafeAreaView>
