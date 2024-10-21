@@ -12,8 +12,14 @@ const messages = [
   { id: "4", type: "receive", amount: 40, date: "2024-10-04" },
 ]
 
-const PaymentHistory = (user: User) => {
-  const { id, name } = useLocalSearchParams()
+const PaymentHistory = () => {
+  const { userId, name } = useLocalSearchParams()
+  console.log(userId, name)
+
+  function fetchTransactions(userId: string): Transaction[] {
+    return []
+  }
+
   function renderItem({ item }: any) {
     return (
       <View style={[styles.messageContainer, item.type === "send" ? styles.send : styles.receive]}>

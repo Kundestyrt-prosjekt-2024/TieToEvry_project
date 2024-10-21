@@ -113,10 +113,10 @@ const PaymentScreen = () => {
         style={styles.userContainer}
         onPress={() =>
           router.push({
-            pathname: "/PaymentHistory",
+            pathname: "../PaymentHistory",
             params: {
               name: user.name,
-              id: user.uid,
+              userId: user.uid,
             },
           })
         }

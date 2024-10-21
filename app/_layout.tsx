@@ -18,9 +18,12 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="PaymentHistory"
-          options={{
-            headerBackTitle: "Tilbake",
-            title: name ? `Payment History of ${name}` : "Payment History",
+          options={({ route }) => {
+            const { name } = route.params as { name: string }
+            return {
+              headerBackTitle: "Tilbake",
+              title: name ? `${name}` : "Betalingshistorikk",
+            }
           }}
         />
       </Stack>
