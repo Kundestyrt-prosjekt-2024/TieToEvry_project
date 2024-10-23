@@ -1,6 +1,6 @@
 import { db } from "@/constants/firebaseConfig"
 import "firebase/firestore"
-import { setDoc, doc, Firestore, getDoc } from "firebase/firestore"
+import { setDoc, doc, Firestore, getDoc, updateDoc, arrayUnion } from "firebase/firestore"
 import { User } from "../types/user"
 
 class UserDAO {
@@ -15,8 +15,24 @@ class UserDAO {
       const docRef = doc(this.database, "users", uid)
       await setDoc(docRef, data)
       return uid
-    } catch (error) {
-      return undefined
+    } catch (error: any) {
+      throw new Error(error.message)
+    }
+  }
+
+  async addChildToParent(parentUid: string, childUid: string, data: User): Promise<string | undefined> {
+    try {
+      const childDocRef = doc(this.database, "users", childUid)
+      await setDoc(childDocRef, data, { merge: true })
+
+      const parentDocRef = doc(this.database, "users", parentUid)
+      await updateDoc(parentDocRef, {
+        children: arrayUnion(childUid),
+      })
+
+      return childUid
+    } catch (error: any) {
+      throw new Error(error.message)
     }
   }
 
@@ -26,10 +42,10 @@ class UserDAO {
       if (userDoc.exists()) {
         return userDoc.data() as User
       } else {
-        return undefined
+        throw new Error("User not found")
       }
-    } catch (error) {
-      return undefined
+    } catch (error: any) {
+      throw new Error(error.message)
     }
   }
 }
