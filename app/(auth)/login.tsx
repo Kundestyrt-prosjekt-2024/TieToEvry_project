@@ -19,7 +19,7 @@ export default function Login() {
       const user = await loginUser(email, password)
       if (user) {
         const userData = JSON.stringify(user)
-        await AsyncStorage.setItem("user", userData)
+        await AsyncStorage.setItem("userID", userData)
         router.push("/(tabs)/home")
       }
     } catch (error) {

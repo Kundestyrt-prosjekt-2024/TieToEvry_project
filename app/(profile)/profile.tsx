@@ -59,7 +59,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("user")
+      await AsyncStorage.removeItem("userID")
 
       router.replace("/(auth)/login")
     } catch (error) {

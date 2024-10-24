@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react"
 import { Redirect } from "expo-router"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { View, Text } from "react-native"
-import useAsyncUser from "@/hooks/useAsyncUser"
+import useUserID from "@/hooks/useUserID"
 
 export default function Index() {
-  const { hasUser, isChecking } = useAsyncUser()
+  const { isLoading, userID } = useUserID()
 
   // Render a loading state while checking AsyncStorage
-  if (isChecking) {
+  if (isLoading) {
     return (
       <View>
         <Text>Loading...</Text>
@@ -17,7 +15,7 @@ export default function Index() {
   }
 
   // Conditionally redirect based on user data
-  if (hasUser) {
+  if (userID) {
     return <Redirect href="/(tabs)/home" />
   } else {
     return <Redirect href="/(auth)/login" />
