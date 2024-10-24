@@ -64,12 +64,12 @@ const registerChild = async (
   }
 };
 
-const loginUser = async (email: string, password: string): Promise<User | undefined> => {
+const loginUser = async (email: string, password: string) => {
   try {
     const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
     const userDAO = new UserDAO();
-    const user = await userDAO.getUser(userCredential.user.uid);
-    return user;
+    await userDAO.getUser(userCredential.user.uid);
+    return userCredential.user.uid;
   } catch (error: any) {
     throw new Error(error.message);
   }
