@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const useUserID = () => {
+const useGetUserID = () => {
   const [userID, setUserID] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -26,4 +26,4 @@ const useUserID = () => {
   return { userID, isLoading };
 };
 
-export default useUserID;
+export default useGetUserID;

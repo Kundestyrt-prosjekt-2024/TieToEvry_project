@@ -1,9 +1,9 @@
 import { Redirect } from "expo-router"
 import { View, Text } from "react-native"
-import useUserID from "@/hooks/useUserID"
+import useGetUserID from "@/hooks/useGetUserID"
 
 export default function Index() {
-  const { isLoading, userID } = useUserID()
+  const { isLoading, userID } = useGetUserID()
 
   // Render a loading state while checking AsyncStorage
   if (isLoading) {
