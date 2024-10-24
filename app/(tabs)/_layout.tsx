@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router"
-import { Coins, GraduationCap, ListCheck, PiggyBank, Rabbit } from "lucide-react-native"
+import { Coins, DollarSign, GraduationCap, House, ListCheck, PiggyBank, Rabbit } from "lucide-react-native"
 
 const TabsLayout = () => {
   
@@ -33,7 +33,7 @@ const TabsLayout = () => {
         headerShown: false,
         // tabBarShowLabel: false,
         tabBarIcon: ({ color, size, focused }) => (
-          <Rabbit color={focused ? "#52D1DC": color} size={size} />
+          <House color={focused ? "#52D1DC": color} size={size} />
         ),
         tabBarLabel: "Hjem",
         }} 
@@ -44,7 +44,7 @@ const TabsLayout = () => {
         headerShown: false,
         // tabBarShowLabel: false,
         tabBarIcon: ({ color, size, focused }) => (
-          <Coins color={focused ? "#52D1DC": color} size={size} />
+          <DollarSign color={focused ? "#52D1DC": color} size={size} />
         ),
         tabBarLabel: "Be om penger",
         }} 
