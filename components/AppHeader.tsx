@@ -7,11 +7,11 @@ const AppHeader = () => {
   const router = useRouter()
 
   function handleProfile(): void {
-    router.navigate("/profile")
+    router.navigate("/(profile)/profile")
   }
 
   function handleCoin(): void {
-    console.log("Coins")
+    router.push("/Coins")
   }
 
   return (
