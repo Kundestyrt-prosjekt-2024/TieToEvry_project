@@ -5,6 +5,7 @@ import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } 
 import AntDesign from "@expo/vector-icons/AntDesign"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const Profile = () => {
   const router = useRouter()
@@ -56,6 +57,16 @@ const Profile = () => {
     },
   ]
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("user")
+
+      router.replace("/(auth)/login")
+    } catch (error) {
+      console.error("Failed to log out:", error)
+    }
+  }
+
   return (
     <View className="h-full bg-white">
       <ScrollView>
@@ -89,11 +100,7 @@ const Profile = () => {
             >
               <Text className="text-xl">Mine foreldre</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              className="py-3 px-14 w-64 items-center"
-              onPress={() => console.log("Logg ut")}
-              activeOpacity={0.8}
-            >
+            <TouchableOpacity className="py-3 px-14 w-64 items-center" onPress={handleLogout} activeOpacity={0.8}>
               <Text className="text-xl text-red-600">Logg ut</Text>
             </TouchableOpacity>
           </View>
