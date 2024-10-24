@@ -10,7 +10,7 @@ interface PropsDetailedView {
 
 const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick }) => {
   return (
-    <View className="bg-[#CCF2F5] p-4 rounded-lg space-y-2 items-center justify-center w-full">
+    <View className="bg-[#CCF2F5] p-4 rounded-lg space-y-2 items-center justify-between w-full">
       <View className="w-full flex flex-row justify-between border-b border-teal-300 py-2">
         <View className="">
           <Text className="text-sm color-slate-400">Oppgave:</Text>

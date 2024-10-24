@@ -1,5 +1,5 @@
 import AppHeader from "@/components/AppHeader";
-import { View, Text, StyleSheet, Pressable, Image, Modal } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image, Modal, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Chore } from "../types/chores";
 import React from "react";
@@ -9,6 +9,8 @@ import ChoresDetailedView from "@/components/chores/choresDetailedView";
 import { HandPlatter } from "lucide-react-native";
 import Button from "@/components/ui/button";
 import Popover from "@/components/chores/chorePopover";
+
+const { width, height } = Dimensions.get("window")
 
 const Chores = () => {
   const [viewChore, toggleView] = React.useState(false);
@@ -119,8 +121,11 @@ const Chores = () => {
   const toggleModal = () => {
     toggleView((prevState) => !prevState);
   }
+  
+  const scrollHeight = height*0.34;
+
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white h-full">
       <AppHeader />
       <View className="h-full bg-white flex flex-col px-8 py-4 space-y-2">
         <View className="bg-slate-50 rounded-2xl p-4">
@@ -151,13 +156,15 @@ const Chores = () => {
           <Text className="text-lg pb-2 text-center border-b border-teal-300">
             Aktive gjøremål 👇
           </Text>
-          <ScrollView className="h-[280px] mb-2 border-b-2 border-teal-300">
-            {chores.map((chore, index) => (
-              <View key={index}>
-                <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
-              </View>
-            ))}
-          </ScrollView>
+          <View style={{height: scrollHeight}} className="mb-2 border-b-2 border-teal-300">
+            <ScrollView className="" showsVerticalScrollIndicator={false}>
+              {chores.map((chore, index) => (
+                <View key={index}>
+                  <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
+                </View>
+              ))}
+            </ScrollView>
+          </View>
           <View className="border-b border-teal-300"></View>
           {choreOfInterest && (
             <Modal
@@ -173,7 +180,7 @@ const Chores = () => {
               </View>
             </Modal>
           )}
-        </View>
+        </View >
             <View className="flex flex-row justify-between">
               <View>
                 <Button text="Se alle gjøremål" onClick={() => setShowPopover(true)}></Button>

@@ -1,4 +1,4 @@
-import { Modal, Text, View, Image } from "react-native";
+import { Modal, Text, View, Image, Dimensions } from "react-native";
 import { Chore } from "@/app/types/chores";
 import { ScrollView } from "react-native-gesture-handler";
 import ChoreList from "../chore";
@@ -11,6 +11,7 @@ interface Props {
   onClick: () => void;
 }
 
+const {width, height} = Dimensions.get("window");
 
 const Requested: React.FC<Props> = ({ chores, onClick }) => {
   const [viewChore, toggleView] = React.useState(false);
@@ -31,6 +32,7 @@ const Requested: React.FC<Props> = ({ chores, onClick }) => {
     return acc;
   },0);
 
+  const scrollHeight = height*0.26;
   return (
     <View className="w-full flex flex-col items-center justify-center py-4 space-y-2">
       <View className="flex flex-row space-x-2">
@@ -46,15 +48,17 @@ const Requested: React.FC<Props> = ({ chores, onClick }) => {
             resizeMode="contain" />
         </View>
       </View>
-      <ScrollView className="h-[210px] mb-2 border-b-2 border-teal-300">
-        {chores.map((chore, index) => (
-          chore.status === "Forespurt" && (
-            <View key={index}>
-              <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
-            </View>
-          )
-        ))}
-      </ScrollView>
+      <View style={{height: scrollHeight}} className="mb-2 border-b-2 border-teal-300">
+        <ScrollView >
+          {chores.map((chore, index) => (
+            chore.status === "Forespurt" && (
+              <View key={index}>
+                <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
+              </View>
+            )
+          ))}
+        </ScrollView>
+      </View>
       {choreOfInterest && (
         <Modal
           visible={viewChore}
@@ -75,7 +79,7 @@ const Requested: React.FC<Props> = ({ chores, onClick }) => {
           <Text className="w-full text-left px-2 py-1 font-semibold text-xl text-green-600">{earnedCoin} NOK</Text>
           {/* <View className="flex flex-row w-full"> */}
             <Text className="w-full my-1">Foreslå et til så tjener du mer!</Text>
-            <Button classname="py-1" text="Foreslå gjøremål" onClick={() => console.log("Hello world from foreslå gjøremål")}></Button>
+            <Button classname="py-1" text="Foreslå gjøremål" onClick={() => console.log("Hello Kira how are you")}></Button>
           {/* </View> */}
         </View>
         <Image
