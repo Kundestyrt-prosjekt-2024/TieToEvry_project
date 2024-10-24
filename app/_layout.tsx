@@ -17,6 +17,27 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="PaymentHistory"
+          options={({ route }) => {
+            const { name } = route.params as { name: string }
+            return {
+              headerBackTitle: "Tilbake",
+              title: name ? `${name}` : "Betalingshistorikk",
+            }
+          }}
+        />
+        <Stack.Screen
+          name="AskSend"
+          options={({ route }) => {
+            const { ask } = route.params as { ask: string }
+            const isAsk = ask === "true"
+            return {
+              headerBackTitle: "Tilbake",
+              title: isAsk ? "Be Om" : "Send" + " penger",
+            }
+          }}
+        />
+        <Stack.Screen
           name="(profile)/settings"
           options={{ headerBackTitle: "Tilbake", headerTitle: "Innstillinger" }}
         />
