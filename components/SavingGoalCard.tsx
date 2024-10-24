@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
+import {Shirt, MonitorSmartphone, Ticket, Bike }  from 'lucide-react-native';
+
 
 const Card = ({onAddMoney}: { onAddMoney: () => void }) => {
   const progress = 0.5; 
@@ -10,7 +12,9 @@ const Card = ({onAddMoney}: { onAddMoney: () => void }) => {
         
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
-            <Image style={{ width: 60, height: 60 }} source={require('@/assets/images/bike.png')}/>
+            <View style={{ width: 50, height: 50 }} className='bg-white rounded-full border-2 justify-center items-center'>
+              <Bike color="black" style={{ width: 40, height: 40 }}/>
+            </View>
             <Text className="text-xl ml-2">Sykkel</Text>
           </View>
           <View className="items-center  ">

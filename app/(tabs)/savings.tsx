@@ -4,7 +4,7 @@ import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import React, { useCallback, useRef, useState } from "react"
 import { Text, View, Image, ScrollView, TouchableOpacity, Pressable, TextInput, FlatList, TouchableWithoutFeedback, Keyboard } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import Carousel from 'react-native-snap-carousel';
+import {Shirt, MonitorSmartphone, Ticket, Bike }  from 'lucide-react-native';
 
 
 const Savings = () => {
@@ -41,50 +41,11 @@ const Savings = () => {
     dismissKeyboard();
   }
 
-  {/**Icon images for change icon functionality */}
-  const icons = [
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-    {
-      source: require("@/assets/images/bike.png"),
-    },
-  ]
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className=" bg-white">
       <AppHeader />
-      <View className="h-full bg-white">
+      <View className="h-full">
 
         <View className="items-center py-2">
           <Text>Spare med Sphare! Her finner du sparetips som kan hjelpe deg å nå målet ditt!</Text>
@@ -95,9 +56,9 @@ const Savings = () => {
             <Image className="w-85 h-154" source={require("@/assets/images/sphare.png")} />
           </View>
           <View className="flex-col justify-end">
-            <View className="relative justify-start px-8 py-4">
+            <View className="relative justify-center px-8 py-4 items-center">
               <Image className="" source={require("@/assets/images/figma_bubble.png")}/>
-              <Text className="absolute top-11 left-12 text-sm text-black text-center">Du er halvveis til målet ditt! Hurra!</Text>
+              <Text className="absolute pl-2 pt-1 text-sm text-black text-center">Du er halvveis til målet ditt! Hurra!</Text>
             </View>
             <View className="justify-end px-8">
               <Text className="text-2xl">Dine sparemål</Text>
@@ -113,7 +74,7 @@ const Savings = () => {
         </ScrollView>
 
         <View className="absolute flex-col items-center bottom-20 right-5">
-          <TouchableOpacity className="bg-[#52D1DC] w-10 h-10 rounded-full" onPress={handleNewGoalPress}>
+          <TouchableOpacity className="bg-[#FFC5D3] w-10 h-10 rounded-full" onPress={handleNewGoalPress}>
                 <Text className="w-10 h-10 text-center text-3xl">+</Text>
           </TouchableOpacity>
           <Text className="text-xs text-center">Nytt mål</Text>
@@ -128,7 +89,7 @@ const Savings = () => {
 
             <View className="w-full flex-row justify-end pr-6">
               <Pressable onPress={handleClosePress}>
-                <Text className="text-[#52D1DC] underline" >Avbryt</Text>
+                <Text className="text-[#52D1DC]" >Avbryt</Text>
               </Pressable>
             </View>
 
@@ -144,28 +105,41 @@ const Savings = () => {
               <TextInput keyboardType='numeric' placeholder="Hvor mye vil du spare?" placeholderTextColor="#8D8E8E"></TextInput>
             </View>
 
-            <View style={{ width: 245, height: 70 }} className="mt-3 items-center flex-row justify-around">
-              <Image style={{ width: 60, height: 60 }} source={require('@/assets/images/bike.png')}/>
+            <View style={{ width: 393, height: 110 }} className=" justify-center flex-row items-center">
+              <View className="flex-col items-center justify-center">
+              <TouchableOpacity className="w-12 h-12 mx-4 my-2 rounded-full justify-center bg-white border-2 items-center" onPress={handleChangeIcon}>
+                <Shirt color="black" className="h-7 w-7"></Shirt>
+              </TouchableOpacity>
+              <Text className="text-xs text-center">Klær</Text>
+              </View>
+
+              <View className="flex-col items-center justify-center">
+              <TouchableOpacity className="w-12 h-12 mx-4 my-2 rounded-full justify-center bg-white  border-2 items-center" onPress={handleChangeIcon}>
+                <Ticket color="black" className="h-7 w-7"></Ticket>
+              </TouchableOpacity>
+              <Text className="text-xs text-center">Arrangement</Text>
+              </View>
+
+              <View className="flex-col items-center justify-center">
+              <TouchableOpacity className="w-12 h-12 mx-4 my-2 rounded-full justify-center bg-white  border-2 items-center" onPress={handleChangeIcon}>
+                <MonitorSmartphone color="black" className="h-7 w-7"></MonitorSmartphone>
+              </TouchableOpacity>
+              <Text className="text-xs text-center">Elektronikk</Text>
+              </View>
+
+              <View className="flex-col items-center justify-center">
+              <TouchableOpacity className="w-12 h-12 mx-4 my-2 rounded-full justify-center bg-white border-2 items-center" onPress={handleChangeIcon}>
+                <Bike color="black" className="h-7 w-7"></Bike>
+              </TouchableOpacity>
+              <Text className="text-xs text-center">Sport</Text>
+              </View>
+
             </View>
 
-            <View style={{ width: 131, height: 45 }} className="mt-2 items-center justify-center ">
-              <TouchableOpacity  className="bg-[#52D1DC] w-full h-full rounded-full" onPress={handleClosePress}>
+            <View style={{ width: 131, height: 45 }} className=" items-center justify-center ">
+              <TouchableOpacity  className="bg-[#FFC5D3] w-full h-full rounded-full" onPress={handleClosePress}>
                 <Text className="text-center justify-center mt-3 text-sm">Opprett Sparemål</Text>
               </TouchableOpacity>
-            </View>
-
-            <View style={{ width: 393, height: 275 }} className="pt-4 justify-center flex-col items-center">
-              <FlatList
-                  data={icons}
-                  numColumns={4}
-                  renderItem={({ item }) => (
-                    <Pressable className="w-12 h-12 mx-4 my-2" onPress={handleChangeIcon}>
-                      <Image source={item.source} className="h-full w-full"></Image>
-                    </Pressable>
-                  )}
-                  keyExtractor={(_item, index) => index.toString()}
-                  scrollEnabled={false}
-                />
             </View>
 
           </View>
@@ -179,7 +153,7 @@ const Savings = () => {
 
             <View className="w-full flex-row justify-end pr-6">
               <Pressable onPress={handleClosePress}>
-                <Text className="text-[#52D1DC] underline" >Avbryt</Text>
+                <Text className="text-[#52D1DC]" >Avbryt</Text>
               </Pressable>
             </View>
 
@@ -188,8 +162,8 @@ const Savings = () => {
               <Text className="text-3xl text-center">Sykkel</Text>
             </View>
 
-            <View className="mt-2">
-              <Image style={{ width: 60, height: 60 }} source={require('@/assets/images/bike.png')}/>
+            <View style={{ width: 50, height: 50 }} className="mt-2 border-2 rounded-full items-center justify-center">
+              <Bike color='black' style={{ width: 40, height: 40 }}/>
             </View>
 
             <View className="mt-3">
@@ -202,7 +176,7 @@ const Savings = () => {
             </View>
 
             <View style={{ width: 131, height: 45 }} className="mt-2 items-center justify-center ">
-            <TouchableOpacity  className="bg-[#52D1DC] w-full h-full rounded-full" onPress={handleClosePress}>
+            <TouchableOpacity  className="bg-[#FFC5D3] w-full h-full rounded-full" onPress={handleClosePress}>
                 <Text className="text-center justify-center mt-3 text-sm">Legg til Penger</Text>
               </TouchableOpacity>
             </View>
