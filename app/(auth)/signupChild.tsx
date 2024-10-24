@@ -81,8 +81,8 @@ const signupChild = () => {
       <View className="w-full items-center">
         {!isLoggedIn ? (
           <>
-            <Text className="mb-8">Før du kan registrere ditt barn må du logge inn selv.</Text>
-            {error && <Text className="mb-4 text-red-500 w-4/5">{error}</Text>}
+            <Text className="mb-4">Før du kan registrere ditt barn må du logge inn selv.</Text>
+            <View className="min-h-[36px] w-4/5 mb-4">{error && <Text className="text-red-500">{error}</Text>}</View>
             {/* Email Input */}
             <TextInput
               autoCapitalize="none"
@@ -112,10 +112,13 @@ const signupChild = () => {
           <>
             <Text className="mb-8 text-xl font-bold">Registrer ditt barn</Text>
 
-            {error && <Text className="text-red-500 mb-4">{error}</Text>}
-
-            {/* Display success message if registration is successful */}
-            {success && <Text className="text-green-500 mb-4">Registrering vellykket</Text>}
+            <View className="min-h-[36px] w-4/5 mb-4">
+              {error ? (
+                <Text className="text-red-500">{error}</Text>
+              ) : success ? (
+                <Text className="text-green-500">Registrering vellykket</Text>
+              ) : null}
+            </View>
 
             {/* Name Input */}
             <TextInput

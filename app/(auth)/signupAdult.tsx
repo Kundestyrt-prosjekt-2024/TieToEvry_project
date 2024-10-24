@@ -60,11 +60,13 @@ const signupAdult = () => {
       <View className="w-full items-center">
         <Text className="text-2xl font-bold mb-4">Registrer deg</Text>
 
-        {/* Display error message if there's an issue */}
-        {error && <Text className="text-red-500 mb-4">{error}</Text>}
-
-        {/* Display success message if registration is successful */}
-        {success && <Text className="text-green-500 mb-4">Registrering vellykket</Text>}
+        <View className="h-5 w-4/5 mb-4">
+          {error ? (
+            <Text className="text-red-500">{error}</Text>
+          ) : success ? (
+            <Text className="text-green-500">Registrering vellykket</Text>
+          ) : null}
+        </View>
 
         {/* Name Input */}
         <TextInput

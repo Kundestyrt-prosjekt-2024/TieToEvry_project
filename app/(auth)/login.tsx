@@ -43,7 +43,8 @@ export default function Login() {
         {/* Welcome Text */}
         <Text className="text-2xl font-bold mb-8">Velkommen til Sphare!</Text>
 
-        {error && <Text className="mb-4 text-red-500 w-4/5">{error}</Text>}
+        <View className="min-h-[36px] mb-4 w-4/5">{error && <Text className="text-red-500">{error}</Text>}</View>
+
         {/* Email Input */}
         <TextInput
           autoCapitalize="none"
