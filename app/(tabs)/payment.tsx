@@ -108,11 +108,21 @@ const PaymentScreen = () => {
   }
 
   function handleSend() {
-    console.log("Send")
+    router.push({
+      pathname: "../AskSend",
+      params: {
+        ask: "false",
+      },
+    })
   }
 
   function handleAsk() {
-    console.log("Ask")
+    router.push({
+      pathname: "../AskSend",
+      params: {
+        ask: "true",
+      },
+    })
   }
 
   function renderUser(user: User) {
