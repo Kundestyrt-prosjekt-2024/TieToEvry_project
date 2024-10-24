@@ -125,7 +125,7 @@ const Chores = () => {
   const scrollHeight = height*0.34;
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="bg-white">
       <AppHeader />
       <View style={{height: height}} className="h- bg-white flex flex-col px-8 py-4 space-y-2">
         <View className="bg-slate-50 rounded-2xl p-4 h-[30%]">
