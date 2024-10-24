@@ -14,7 +14,6 @@ const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
     <Pressable onPress={onClick}>
       <View className="w-full flex-row justify-between p-2 px-5 items-center bg-slate-50 rounded-2xl mb-2.5">
         <View className="flex-row items-center space-x-2.5">
-            {/* <Text className="mr-2.5 text-black">{chore.icon ? chore.icon : "Icon"}</Text> */}
           <View className="flex-col justify-center">
             <Text className="text-base">{chore.name}</Text>
             <View className="flex-row items-center space-x-1.5">

@@ -1,4 +1,4 @@
-import { Modal, Text, View, Image } from "react-native";
+import { Modal, Text, View, Image, Dimensions } from "react-native";
 import { Chore } from "@/app/types/chores";
 import { ScrollView } from "react-native-gesture-handler";
 import ChoreList from "../chore";
@@ -10,6 +10,8 @@ interface Props {
   chores: Chore[];
   onClick: () => void;
 }
+
+const {width, height } = Dimensions.get('window');
 
 
 const Done: React.FC<Props> = ({ chores, onClick }) => {
@@ -31,9 +33,11 @@ const Done: React.FC<Props> = ({ chores, onClick }) => {
     return acc;
   },0);
 
+  const scrollHeight = height*0.27;
+
   return (
-    <View className="w-full flex flex-col items-center justify-between py-4 space-y-2">
-      <View className="flex flex-row w-full space-x-2">
+    <View style={{height:height}} className="w-full flex flex-col justify-start py-4 space-y-2">
+      <View className="flex flex-row w-full justify-center items-center space-x-2 h-[15%] pb-2">
         <Image
           className="rounded-md"
           source={require("@/assets/images/sphare3.png")}
@@ -44,15 +48,18 @@ const Done: React.FC<Props> = ({ chores, onClick }) => {
           </Text>
         </View>
       </View>
-      <ScrollView className="h-[210px] mb-2 border-b-2 border-teal-300">
-        {chores.map((chore, index) => (
-          chore.completed && (
-            <View key={index}>
-              <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
-            </View>
-          )
-        ))}
-      </ScrollView>
+      {/* <View style={{height: scrollHeight}} className="mb-2 border-b-2 border-teal-300"> */}
+      <View className="h-[30%]  mb-2 border-b-2 border-teal-300">
+        <ScrollView className="">
+          {chores.map((chore, index) => (
+            chore.completed && (
+              <View key={index}>
+                <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
+              </View>
+            )
+          ))}
+        </ScrollView>
+      </View>
       {choreOfInterest && (
         <Modal
           visible={viewChore}
@@ -67,7 +74,7 @@ const Done: React.FC<Props> = ({ chores, onClick }) => {
           </View>
         </Modal>
       )}
-      <View className="w-full flex flex-col justify-center items-center rounded-lg bg-[#E6FDFF] p-4">
+      <View className="w-full h-[20%] flex flex-col justify-center items-center rounded-lg bg-[#E6FDFF] p-4">
         <Text className="w-full text-left">Du har tjent så mye de siste to ukene:</Text>
         <Text className="w-full text-center p-2 font-semibold text-xl text-green-600">{earnedCoin} NOK</Text>
         {/* <View className="flex flex-row w-full"> */}

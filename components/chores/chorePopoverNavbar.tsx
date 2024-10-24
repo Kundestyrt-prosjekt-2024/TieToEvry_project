@@ -5,15 +5,19 @@ import { ChoreNavbarState } from "@/app/types/chores";
 interface Props {
   onClick: (changeState: ChoreNavbarState) => void;
   state: ChoreNavbarState;
+  closeOverlay: () => void;
 }
 
-const ChoreNavbar: React.FC<Props> = ({ onClick, state }) => {
+const ChoreNavbar: React.FC<Props> = ({ onClick, state, closeOverlay }) => {
   const selectedColor = "#52D1DC";  // Color for the selected option
   const defaultColor = "#FFFFFF";   // Default color for unselected options
 
   return (
     <View className="flex flex-col items-center justify-between w-full">
-      <Text className="w-full text-left text-xl font-semibold">Gjøremål</Text>
+      <View className="flex flex-row justify-between w-full">
+        <Text className="text-left text-xl font-semibold">Gjøremål</Text>
+        <Text className="text-left text-xl font-semibold" onPress={() => closeOverlay()}>Lukk</Text>
+      </View>
       <View className="flex flex-row items-center justify-between w-full py-2 border-b border-teal-300">
         <Pressable
           className={`px-2 py-1 rounded-xl ${state === ChoreNavbarState.GJENNOMFØRT ? "bg-[#52D1DC]" : "bg-[#FFFFFF]"}`}
