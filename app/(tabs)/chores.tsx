@@ -127,8 +127,8 @@ const Chores = () => {
   return (
     <SafeAreaView className="bg-white h-full">
       <AppHeader />
-      <View className="h-full bg-white flex flex-col px-8 py-4 space-y-2">
-        <View className="bg-slate-50 rounded-2xl p-4">
+      <View style={{height: height}} className="h- bg-white flex flex-col px-8 py-4 space-y-2">
+        <View className="bg-slate-50 rounded-2xl p-4 h-[30%]">
           <View className="border-b border-teal-300">
             <Text className="text-lg font-regular text-center pb-2 ">Her kan du spare med Sphare!</Text>
           </View>
@@ -152,7 +152,7 @@ const Chores = () => {
             </View>
           </View>
         </View>
-        <View className="flex flex-col items-center">
+        <View className="flex flex-col items-center h-[40%]">
           <Text className="text-lg pb-2 text-center border-b border-teal-300">
             Aktive gjøremål 👇
           </Text>
@@ -181,14 +181,14 @@ const Chores = () => {
             </Modal>
           )}
         </View >
-            <View className="flex flex-row justify-between">
-              <View>
-                <Button text="Se alle gjøremål" onClick={() => setShowPopover(true)}></Button>
-              </View>
-              <View>
-                <Button text="Foreslå gjøremål" onClick={() => console.log("Helloworld2")}></Button>
-              </View>
-            </View>
+        <View className="h-[10%] flex flex-row justify-between">
+          <View>
+            <Button text="Se alle gjøremål" onClick={() => setShowPopover(true)}></Button>
+          </View>
+          <View>
+            <Button text="Foreslå gjøremål" onClick={() => console.log("Helloworld2")}></Button>
+          </View>
+        </View>
       </View>
       <Popover chore={chores}
        onClick={() => setShowPopover(false)}
