@@ -30,7 +30,7 @@ export default function Login() {
 
   // Function to handle sign-up action
   const handleSignUp = () => {
-    router.navigate("/(auth)/signup")
+    router.navigate("/(auth)/signupAdult")
     // Add navigation to sign-up screen
   }
 

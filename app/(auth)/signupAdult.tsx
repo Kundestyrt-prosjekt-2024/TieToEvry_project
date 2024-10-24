@@ -1,9 +1,10 @@
-import { View, Text, TextInput } from "react-native"
+import { View, Text, TextInput, Button, Pressable } from "react-native"
 import { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { registerUser } from "@/backend/src/authentication"
 import { useRouter } from "expo-router"
+import Ionicons from "@expo/vector-icons/Ionicons"
 
 const signupAdult = () => {
   const router = useRouter()
@@ -48,7 +49,14 @@ const signupAdult = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 justify-center items-center">
+    <SafeAreaView className="flex-1 justify-center items-center relative">
+      <Pressable
+        className="absolute top-20 left-4 flex-row items-center gap-2"
+        onPress={() => router.navigate("/(auth)/login")}
+      >
+        <Ionicons name="chevron-back" size={24} color="#3b82f6" />
+        <Text className="text-blue-500">Tilbake</Text>
+      </Pressable>
       <View className="w-full items-center">
         <Text className="text-2xl font-bold mb-4">Registrer deg</Text>
 
@@ -108,6 +116,14 @@ const signupAdult = () => {
         <TouchableOpacity className="bg-blue-500 w-4/5 p-4 rounded-lg" onPress={handleSignUp}>
           <Text className="text-white text-center text-lg font-bold">Registrer deg</Text>
         </TouchableOpacity>
+
+        {/* Register child */}
+        <View className="mt-4 w-4/5">
+          <Text className="mt-8">Ønsker du å opprette en konto for ditt barn?</Text>
+          <Pressable onPress={() => router.navigate("/(auth)/signupChild")}>
+            <Text className="text-blue-500">Registrer ditt barn her!</Text>
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   )

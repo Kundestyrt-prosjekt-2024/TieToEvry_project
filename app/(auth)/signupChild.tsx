@@ -1,9 +1,10 @@
-import { View, Text, TextInput } from "react-native"
+import { View, Text, TextInput, Pressable } from "react-native"
 import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { loginUser, registerChild, registerUser } from "@/backend/src/authentication"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { useRouter } from "expo-router"
+import Ionicons from "@expo/vector-icons/Ionicons"
 
 const signupChild = () => {
   const router = useRouter()
@@ -69,7 +70,14 @@ const signupChild = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 justify-center items-center">
+    <SafeAreaView className="flex-1 justify-center items-center relative">
+      <Pressable
+        className="absolute top-20 left-4 flex-row items-center gap-2"
+        onPress={() => router.navigate("/(auth)/signupAdult")}
+      >
+        <Ionicons name="chevron-back" size={24} color="#3b82f6" />
+        <Text className="text-blue-500">Tilbake</Text>
+      </Pressable>
       <View className="w-full items-center">
         {!isLoggedIn ? (
           <>
