@@ -99,6 +99,7 @@ const dummyData: MoneyRequest[] = [
 
 const PaymentScreen = () => {
   const router = useRouter()
+  const balance = 1425503
   const [lastScrollY, setLastScrollY] = useState(0)
   const translateY = useRef(new Animated.Value(0)).current
 
@@ -203,7 +204,7 @@ const PaymentScreen = () => {
           keyExtractor={(req) => req.uid}
           showsHorizontalScrollIndicator={false}
         ></FlatList>
-        <Text style={styles.balance}>1 425 503,-</Text>
+        <Text style={styles.balance}>{new Intl.NumberFormat("nb-NO").format(balance)}</Text>
       </View>
     )
   }
@@ -255,11 +256,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
   },
   userList: {
     width: "100%",
-    height: 100,
+    height: 70,
     flexGrow: 1,
     alignContent: "center",
   },
@@ -284,19 +284,21 @@ const styles = StyleSheet.create({
   },
   balance: {
     fontSize: 50,
+    marginTop: 10,
     color: "#52D1DC",
+    textAlign: "center",
   },
   requestList: {
     width: "100%",
     flexGrow: 1,
     alignContent: "center",
-    marginTop: 10,
+    paddingTop: 20,
   },
   request: {
     padding: 10,
     paddingHorizontal: 20,
     marginHorizontal: 20,
-    marginVertical: 15,
+    marginVertical: 10,
     borderRadius: 30,
     height: 70,
     justifyContent: "space-between",
