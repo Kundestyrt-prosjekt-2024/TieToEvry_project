@@ -1,9 +1,10 @@
 import AppHeader from "@/components/AppHeader"
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { MoneyRequest } from "@/types"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
+import { useRef, useState } from "react"
 
 export type User = {
   uid: string
@@ -98,6 +99,8 @@ const dummyData: MoneyRequest[] = [
 
 const PaymentScreen = () => {
   const router = useRouter()
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const translateY = useRef(new Animated.Value(0)).current
 
   function handleCancel() {
     console.log("Cancel")
@@ -123,6 +126,19 @@ const PaymentScreen = () => {
         ask: "true",
       },
     })
+  }
+
+  function handleScroll(event: { nativeEvent: { contentOffset: { y: any } } }) {
+    const currentY = event.nativeEvent.contentOffset.y
+    const goingDown = currentY > lastScrollY
+
+    Animated.timing(translateY, {
+      toValue: goingDown ? 120 : 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start()
+
+    setLastScrollY(currentY)
   }
 
   function renderUser(user: User) {
@@ -174,10 +190,9 @@ const PaymentScreen = () => {
     }
   }
 
-  return (
-    <SafeAreaView className="h-full bg-white" edges={["top", "left", "right"]}>
-      <AppHeader />
-      <View style={styles.container}>
+  function renderListHeader() {
+    return (
+      <View>
         <FlatList
           style={styles.userList}
           scrollEnabled={true}
@@ -189,15 +204,26 @@ const PaymentScreen = () => {
           showsHorizontalScrollIndicator={false}
         ></FlatList>
         <Text style={styles.balance}>1 425 503,-</Text>
+      </View>
+    )
+  }
+
+  return (
+    <SafeAreaView className="h-full bg-white" edges={["top", "left", "right"]}>
+      <AppHeader />
+      <View style={styles.container}>
         <FlatList
           style={styles.requestList}
           contentContainerStyle={styles.listContent}
           data={dummyData}
           renderItem={(req) => renderPayment(req.item)}
+          ListHeaderComponent={renderListHeader}
+          scrollEnabled={true}
+          onScroll={handleScroll}
           keyExtractor={(req) => req.id}
           showsVerticalScrollIndicator={false}
         ></FlatList>
-        <View style={styles.bottomContainer}>
+        <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>
           <View style={styles.combinedButtonContainer}>
             <TouchableOpacity style={styles.leftButton} onPress={handleAsk} activeOpacity={0.7}>
               <View style={styles.iconContainer}>
@@ -218,7 +244,7 @@ const PaymentScreen = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.buttonBackground} />
-        </View>
+        </Animated.View>
       </View>
     </SafeAreaView>
   )
