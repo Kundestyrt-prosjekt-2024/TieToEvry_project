@@ -5,11 +5,12 @@ import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } 
 import AntDesign from "@expo/vector-icons/AntDesign"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import useUserStore from "@/store/userStore"
 
 const Profile = () => {
   const router = useRouter()
   const bottomSheetRef = useRef<BottomSheet>(null)
+  const logout = useUserStore((state) => state.logout)
 
   const handleClosePress = useCallback(() => {
     bottomSheetRef.current?.close()
@@ -58,13 +59,8 @@ const Profile = () => {
   ]
 
   const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("userID")
-
-      router.replace("/(auth)/login")
-    } catch (error) {
-      console.error("Failed to log out:", error)
-    }
+    logout()
+    router.replace("/(auth)/login")
   }
 
   return (
