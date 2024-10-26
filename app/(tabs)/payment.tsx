@@ -135,7 +135,7 @@ const PaymentScreen = () => {
 
     Animated.timing(translateY, {
       toValue: goingDown ? 120 : 0,
-      duration: 500,
+      duration: 300,
       useNativeDriver: true,
     }).start()
 
@@ -225,26 +225,22 @@ const PaymentScreen = () => {
           showsVerticalScrollIndicator={false}
         ></FlatList>
         <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>
-          <View style={styles.combinedButtonContainer}>
-            <TouchableOpacity style={styles.leftButton} onPress={handleAsk} activeOpacity={0.7}>
-              <View style={styles.iconContainer}>
-                <AwesomeIcon name="money" color={"#363534"} size={30} />
-                <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
-              </View>
-              <Text style={styles.buttonText}>Be om</Text>
-            </TouchableOpacity>
-
-            <View style={styles.verticalDivider} />
-
-            <TouchableOpacity style={styles.rightButton} onPress={handleSend} activeOpacity={0.7}>
-              <View style={styles.iconContainer}>
-                <AwesomeIcon name="money" color={"#363534"} size={30} />
-                <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
-              </View>
-              <Text style={styles.buttonText}>Send</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonBackground} />
+          <TouchableOpacity style={styles.bottomButton} onPress={handleAsk} activeOpacity={0.5}>
+            <View style={styles.iconContainer}>
+              <AwesomeIcon name="money" size={30} />
+              <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
+            </View>
+            <Text style={styles.buttonText}>Be om</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.bottomButton} onPress={handleSend} activeOpacity={0.5}>
+            <View style={styles.iconContainer}>
+              <AwesomeIcon name="money" size={30} />
+              <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
+            </View>
+            <Text style={styles.buttonText}>Send</Text>
+          </TouchableOpacity>
+          <View style={styles.buttonBackgroundLeft} />
+          <View style={styles.buttonBackgroundRight} />
         </Animated.View>
       </View>
     </SafeAreaView>
@@ -312,9 +308,10 @@ const styles = StyleSheet.create({
   bottomContainer: {
     position: "absolute",
     width: "100%",
-    alignItems: "flex-end",
-    bottom: 15,
-    right: 15,
+    bottom: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
   combinedButtonContainer: {
     flexDirection: "row",
@@ -380,6 +377,38 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 120,
+  },
+  bottomButton: {
+    height: 100,
+    width: 100,
+    padding: 10,
+    paddingHorizontal: 20,
+    marginHorizontal: 40,
+    marginTop: 20,
+    borderRadius: 50,
+    backgroundColor: "#52D1DC",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonBackgroundLeft: {
+    position: "absolute",
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    left: 40,
+    top: 20,
+    zIndex: -1,
+    backgroundColor: "#fff",
+  },
+  buttonBackgroundRight: {
+    position: "absolute",
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    right: 40,
+    top: 20,
+    zIndex: -1,
+    backgroundColor: "#fff",
   },
 })
 
