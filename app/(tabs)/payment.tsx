@@ -101,6 +101,7 @@ const PaymentScreen = () => {
   const router = useRouter()
   const balance = 1425503
   const [lastScrollY, setLastScrollY] = useState(0)
+  const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
 
   function handleCancel() {
@@ -129,15 +130,27 @@ const PaymentScreen = () => {
     })
   }
 
-  function handleScroll(event: { nativeEvent: { contentOffset: { y: any } } }) {
+  function handleScroll(event: any) {
     const currentY = event.nativeEvent.contentOffset.y
+    const contentHeight = event.nativeEvent.contentSize.height
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height
+
     const goingDown = currentY > lastScrollY
 
-    Animated.timing(translateY, {
-      toValue: goingDown ? 120 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start()
+    const threshold = 10
+    const atTop = currentY <= 0
+    const atBottom = currentY >= contentHeight - layoutHeight
+
+    if (!atTop && !atBottom && Math.abs(currentY - lastScrollY) > threshold) {
+      if ((goingDown && scrollDirection === "up") || (!goingDown && scrollDirection === "down")) {
+        setScrollDirection(goingDown ? "down" : "up")
+        Animated.timing(translateY, {
+          toValue: goingDown ? 120 : 0,
+          duration: 200,
+          useNativeDriver: true,
+        }).start()
+      }
+    }
 
     setLastScrollY(currentY)
   }
@@ -215,7 +228,7 @@ const PaymentScreen = () => {
       <View style={styles.container}>
         <FlatList
           style={styles.requestList}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{ paddingBottom: 40 }}
           data={dummyData}
           renderItem={(req) => renderPayment(req.item)}
           ListHeaderComponent={renderListHeader}
@@ -374,9 +387,6 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#000",
     alignSelf: "center",
-  },
-  listContent: {
-    paddingBottom: 120,
   },
   bottomButton: {
     height: 100,
