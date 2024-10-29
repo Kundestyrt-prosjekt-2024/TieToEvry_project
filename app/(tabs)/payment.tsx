@@ -1,9 +1,10 @@
 import AppHeader from "@/components/AppHeader"
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { MoneyRequest } from "@/types"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
+import { useRef, useState } from "react"
 
 export type User = {
   uid: string
@@ -98,6 +99,10 @@ const dummyData: MoneyRequest[] = [
 
 const PaymentScreen = () => {
   const router = useRouter()
+  const balance = 1425503
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const [scrollDirection, setScrollDirection] = useState("up")
+  const translateY = useRef(new Animated.Value(0)).current
 
   function handleCancel() {
     console.log("Cancel")
@@ -123,6 +128,31 @@ const PaymentScreen = () => {
         ask: "true",
       },
     })
+  }
+
+  function handleScroll(event: any) {
+    const currentY = event.nativeEvent.contentOffset.y
+    const contentHeight = event.nativeEvent.contentSize.height
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height
+
+    const goingDown = currentY > lastScrollY
+
+    const threshold = 0
+    const atTop = currentY <= 0
+    const atBottom = currentY >= contentHeight - layoutHeight
+
+    if (!atTop && !atBottom && Math.abs(currentY - lastScrollY) > threshold) {
+      if ((goingDown && scrollDirection === "up") || (!goingDown && scrollDirection === "down")) {
+        setScrollDirection(goingDown ? "down" : "up")
+        Animated.timing(translateY, {
+          toValue: goingDown ? 120 : 0,
+          duration: 200,
+          useNativeDriver: true,
+        }).start()
+      }
+    }
+
+    setLastScrollY(currentY)
   }
 
   function renderUser(user: User) {
@@ -174,10 +204,9 @@ const PaymentScreen = () => {
     }
   }
 
-  return (
-    <SafeAreaView className="h-full bg-white" edges={["top", "left", "right"]}>
-      <AppHeader />
-      <View style={styles.container}>
+  function renderListHeader() {
+    return (
+      <View>
         <FlatList
           style={styles.userList}
           scrollEnabled={true}
@@ -188,37 +217,44 @@ const PaymentScreen = () => {
           keyExtractor={(req) => req.uid}
           showsHorizontalScrollIndicator={false}
         ></FlatList>
-        <Text style={styles.balance}>1 425 503,-</Text>
+        <Text style={styles.balance}>{new Intl.NumberFormat("nb-NO").format(balance)}</Text>
+      </View>
+    )
+  }
+
+  return (
+    <SafeAreaView className="h-full bg-white" edges={["top", "left", "right"]}>
+      <AppHeader />
+      <View style={styles.container}>
         <FlatList
           style={styles.requestList}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{ paddingBottom: 40 }}
           data={dummyData}
           renderItem={(req) => renderPayment(req.item)}
+          ListHeaderComponent={renderListHeader}
+          scrollEnabled={true}
+          onScroll={handleScroll}
           keyExtractor={(req) => req.id}
           showsVerticalScrollIndicator={false}
         ></FlatList>
-        <View style={styles.bottomContainer}>
-          <View style={styles.combinedButtonContainer}>
-            <TouchableOpacity style={styles.leftButton} onPress={handleAsk} activeOpacity={0.7}>
-              <View style={styles.iconContainer}>
-                <AwesomeIcon name="money" color={"#363534"} size={30} />
-                <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
-              </View>
-              <Text style={styles.buttonText}>Be om</Text>
-            </TouchableOpacity>
-
-            <View style={styles.verticalDivider} />
-
-            <TouchableOpacity style={styles.rightButton} onPress={handleSend} activeOpacity={0.7}>
-              <View style={styles.iconContainer}>
-                <AwesomeIcon name="money" color={"#363534"} size={30} />
-                <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
-              </View>
-              <Text style={styles.buttonText}>Send</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonBackground} />
-        </View>
+        <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>
+          <TouchableOpacity style={styles.bottomButton} onPress={handleAsk} activeOpacity={0.5}>
+            <View style={styles.iconContainer}>
+              <AwesomeIcon name="money" size={30} />
+              <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
+            </View>
+            <Text style={styles.buttonText}>Be om</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.bottomButton} onPress={handleSend} activeOpacity={0.5}>
+            <View style={styles.iconContainer}>
+              <AwesomeIcon name="money" size={30} />
+              <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
+            </View>
+            <Text style={styles.buttonText}>Send</Text>
+          </TouchableOpacity>
+          <View style={styles.buttonBackgroundLeft} />
+          <View style={styles.buttonBackgroundRight} />
+        </Animated.View>
       </View>
     </SafeAreaView>
   )
@@ -229,11 +265,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
   },
   userList: {
     width: "100%",
-    height: 100,
+    height: 70,
     flexGrow: 1,
     alignContent: "center",
   },
@@ -258,19 +293,21 @@ const styles = StyleSheet.create({
   },
   balance: {
     fontSize: 50,
+    marginTop: 10,
     color: "#52D1DC",
+    textAlign: "center",
   },
   requestList: {
     width: "100%",
     flexGrow: 1,
     alignContent: "center",
-    marginTop: 10,
+    paddingTop: 20,
   },
   request: {
     padding: 10,
     paddingHorizontal: 20,
     marginHorizontal: 20,
-    marginVertical: 15,
+    marginVertical: 10,
     borderRadius: 30,
     height: 70,
     justifyContent: "space-between",
@@ -284,9 +321,10 @@ const styles = StyleSheet.create({
   bottomContainer: {
     position: "absolute",
     width: "100%",
-    alignItems: "flex-end",
-    bottom: 15,
-    right: 15,
+    bottom: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
   combinedButtonContainer: {
     flexDirection: "row",
@@ -350,8 +388,37 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     alignSelf: "center",
   },
-  listContent: {
-    paddingBottom: 120,
+  bottomButton: {
+    height: 100,
+    width: 100,
+    padding: 10,
+    paddingHorizontal: 20,
+    marginHorizontal: 40,
+    marginTop: 20,
+    borderRadius: 50,
+    backgroundColor: "#52D1DC",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonBackgroundLeft: {
+    position: "absolute",
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    left: 40,
+    top: 20,
+    zIndex: -1,
+    backgroundColor: "#fff",
+  },
+  buttonBackgroundRight: {
+    position: "absolute",
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    right: 40,
+    top: 20,
+    zIndex: -1,
+    backgroundColor: "#fff",
   },
 })
 
