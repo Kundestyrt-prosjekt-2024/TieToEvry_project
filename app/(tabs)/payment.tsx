@@ -137,7 +137,7 @@ const PaymentScreen = () => {
 
     const goingDown = currentY > lastScrollY
 
-    const threshold = 10
+    const threshold = 0
     const atTop = currentY <= 0
     const atBottom = currentY >= contentHeight - layoutHeight
 
