@@ -137,11 +137,10 @@ const PaymentScreen = () => {
 
     const goingDown = currentY > lastScrollY
 
-    const threshold = 0
     const atTop = currentY <= 0
     const atBottom = currentY >= contentHeight - layoutHeight
 
-    if (!atTop && !atBottom && Math.abs(currentY - lastScrollY) > threshold) {
+    if (!atTop && !atBottom) {
       if ((goingDown && scrollDirection === "up") || (!goingDown && scrollDirection === "down")) {
         setScrollDirection(goingDown ? "down" : "up")
         Animated.timing(translateY, {
