@@ -1,16 +1,31 @@
 import HorizontalLine from "@/components/HorizontalLine"
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
-import { useCallback, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } from "react-native"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
 import useUserStore from "@/store/userStore"
+import { getUser } from "@/backend/src/UserDAO"
+import { User } from "@/backend/types/user"
 
 const Profile = () => {
   const router = useRouter()
   const bottomSheetRef = useRef<BottomSheet>(null)
-  const logout = useUserStore((state) => state.logout)
+  const logout = useUserStore((state: { logout: any }) => state.logout)
+  const userID = useUserStore((state) => state.userID)
+  const [currUser, setCurruser] = useState<User | undefined>(undefined)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (userID) {
+        const id = userID.substring(1, userID.length - 1)
+        const user = await getUser(id)
+        setCurruser(user)
+      }
+    }
+    fetchUser()
+  }, [userID])
 
   const handleClosePress = useCallback(() => {
     bottomSheetRef.current?.close()
@@ -79,8 +94,8 @@ const Profile = () => {
             </View>
           </View>
           <HorizontalLine />
-          <Text className="text-lg">Navn Navnesen</Text>
-          <Text className="text-lg">11 år</Text>
+          <Text className="text-lg">{currUser?.name}</Text>
+          <Text className="text-lg">{}</Text>
           <View className="flex-col items-center gap-4 mt-8">
             <TouchableOpacity
               className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
