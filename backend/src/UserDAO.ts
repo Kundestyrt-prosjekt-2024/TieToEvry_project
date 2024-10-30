@@ -1,15 +1,14 @@
 import { db } from "@/constants/firebaseConfig"
-import "firebase/firestore"
-import { setDoc, doc, Firestore, getDoc, updateDoc, arrayUnion } from "firebase/firestore"
+import { setDoc, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore"
 import { User } from "../types/user"
-
-
-const database: Firestore = db
 
 
 export async function addUser(uid: string, data: User): Promise<string | undefined> {
   try {
-    const docRef = doc(database, "users", uid)
+    const docRef = doc(db, "users", uid)
+    if (data.profilePicture == "" || data.profilePicture == undefined) {
+      data.profilePicture = "https://firebasestorage.googleapis.com/v0/b/mobile-banking-app-dacb3.appspot.com/o/Profile%20Pictures%2FDefault_pfp.png?alt=media&token=3c5ea107-33ee-4b7b-8df6-4ab8b3522aaa"
+    }
     await setDoc(docRef, data)
     return uid
   } catch (error: any) {
@@ -19,10 +18,10 @@ export async function addUser(uid: string, data: User): Promise<string | undefin
 
 export async function addChildToParent(parentUid: string, childUid: string, data: User): Promise<string | undefined> {
   try {
-    const childDocRef = doc(database, "users", childUid)
+    const childDocRef = doc(db, "users", childUid)
     await setDoc(childDocRef, data, { merge: true })
 
-    const parentDocRef = doc(database, "users", parentUid)
+    const parentDocRef = doc(db, "users", parentUid)
     await updateDoc(parentDocRef, {
       children: arrayUnion(childUid),
     })
@@ -35,12 +34,23 @@ export async function addChildToParent(parentUid: string, childUid: string, data
 
 export async function getUser(uid: string): Promise<User | undefined> {
   try {
-    const userDoc = await getDoc(doc(database, "users", uid))
+    const userDoc = await getDoc(doc(db, "users", uid))
     if (userDoc.exists()) {
       return userDoc.data() as User
     } else { 
       throw new Error("User not found")
     }
+  } catch (error: any) {
+    throw new Error(error.message)
+  }
+}
+
+export async function setProfilePictureFS(uid: string, url: string): Promise<void> {
+  try {
+    const userDocRef = doc(db, "users", uid)
+    await updateDoc(userDocRef, {
+      profilePicture: url,
+    })
   } catch (error: any) {
     throw new Error(error.message)
   }

@@ -13,6 +13,7 @@ const UserSchema = z.object({
     phonenumber: z.number(),
     children: z.array(z.string()).optional(),
     parents: z.array(z.string()).optional(),
+    profilePicture: z.string().optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;

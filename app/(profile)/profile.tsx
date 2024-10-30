@@ -7,9 +7,10 @@ import AntDesign from "@expo/vector-icons/AntDesign"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
 import useUserStore from "@/store/userStore"
-import { getUser } from "@/backend/src/UserDAO"
+import { getUser, setProfilePictureFS } from "@/backend/src/UserDAO"
 import { User } from "@/backend/types/user"
 import { FirestoreTimestamp } from "@/backend/types/user"
+import { getProfilePictures } from "@/backend/src/ProfileDAO"
 
 const Profile = () => {
   const router = useRouter()
@@ -19,6 +20,10 @@ const Profile = () => {
   const [isFetching, setIsFetching] = useState(true)
   const [currUser, setCurruser] = useState<User | undefined>(undefined)
   const [age, setAge] = useState<number | undefined>(undefined)
+  const [profilePictures, setProfilePictures] = useState<string[]>([])
+  const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined)
+  const defaultProfilePicture =
+    "https://firebasestorage.googleapis.com/v0/b/mobile-banking-app-dacb3.appspot.com/o/Profile%20Pictures%2FDefault_pfp.png?alt=media&token=3c5ea107-33ee-4b7b-8df6-4ab8b3522aaa"
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -28,11 +33,20 @@ const Profile = () => {
         const user = await getUser(id)
         setCurruser(user)
         setAge(calculateAge(user?.birthdate as FirestoreTimestamp))
+        setProfilePicture(user?.profilePicture ? user.profilePicture : defaultProfilePicture)
         setIsFetching(false)
       }
     }
     fetchUser()
   }, [userID])
+
+  useEffect(() => {
+    const fetchProfilePictures = async () => {
+      const pictures = await getProfilePictures()
+      setProfilePictures(pictures)
+    }
+    fetchProfilePictures()
+  }, [])
 
   const handleClosePress = useCallback(() => {
     bottomSheetRef.current?.close()
@@ -46,39 +60,6 @@ const Profile = () => {
     (props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />,
     []
   )
-
-  const data = [
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-    {
-      source: require("@/assets/images/animal-pfp.png"),
-    },
-  ]
 
   const handleLogout = async () => {
     logout()
@@ -106,8 +87,8 @@ const Profile = () => {
                 >
                   <FontAwesome name="pencil" size={24} color="black" />
                 </Pressable>
-                <View className="w-72 h-72 rounded-full border border-black justify-center items-center">
-                  <Image className="w-full h-full" source={require("@/assets/images/Default_pfp.png")} />
+                <View className="w-72 h-72 rounded-full border border-black justify-center items-center overflow-hidden">
+                  <Image source={{ uri: profilePicture }} className="w-full h-full" style={{ resizeMode: "cover" }} />
                 </View>
               </View>
               <HorizontalLine />
@@ -138,7 +119,7 @@ const Profile = () => {
       </ScrollView>
       <BottomSheet
         ref={bottomSheetRef}
-        snapPoints={["50%"]}
+        snapPoints={["70%"]}
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
         index={-1}
@@ -153,12 +134,18 @@ const Profile = () => {
           <ScrollView>
             <View className="pt-6 justify-center">
               <FlatList
-                data={data}
+                data={profilePictures}
                 numColumns={4}
                 renderItem={({ item }) => (
-                  <Pressable className="w-12 h-12 mx-4 my-2" onPress={() => console.log("Endrer pfp")}>
-                    <Image source={item.source} className="h-full w-full" />
-                  </Pressable>
+                  <TouchableOpacity
+                    className="w-12 h-12 mx-4 my-2"
+                    onPress={() => {
+                      userID && setProfilePictureFS(userID.substring(1, userID.length - 1), item),
+                        setProfilePicture(item)
+                    }}
+                  >
+                    <Image source={{ uri: item }} className="h-full w-full" />
+                  </TouchableOpacity>
                 )}
                 keyExtractor={(_item, index) => index.toString()}
                 scrollEnabled={false}
