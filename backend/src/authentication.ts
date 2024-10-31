@@ -2,7 +2,7 @@ import { auth } from '../../constants/firebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
 import { User } from '../types/user';
 import { Timestamp } from 'firebase/firestore';
-import UserDAO from './UserDAO';
+import { addChildToParent, addUser, getUser } from './UserDAO';
 
 const registerUser = async (
   email: string,
@@ -24,8 +24,7 @@ const registerUser = async (
       children: [],
     };
 
-    const userDAO = new UserDAO();
-    const userId = await userDAO.addUser(user.uid, newUser);
+    const userId = await addUser(user.uid, newUser);
     return userId;
 
   } catch (error: any) {
@@ -55,8 +54,7 @@ const registerChild = async (
       parents: [parentUid],
     };
 
-    const userDAO = new UserDAO();
-    const userId = await userDAO.addChildToParent(parentUid, child.uid, newUser);
+    const userId = await addChildToParent(parentUid, child.uid, newUser);
     return userId;
 
   } catch (error: any) {
@@ -67,8 +65,7 @@ const registerChild = async (
 const loginUser = async (email: string, password: string) => {
   try {
     const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
-    const userDAO = new UserDAO();
-    await userDAO.getUser(userCredential.user.uid);
+    getUser(userCredential.user.uid);
     return userCredential.user.uid;
   } catch (error: any) {
     throw new Error(error.message);
