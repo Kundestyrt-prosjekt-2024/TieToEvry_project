@@ -150,7 +150,6 @@ const PaymentScreen = () => {
         }).start()
       }
     }
-
     setLastScrollY(currentY)
   }
 
@@ -222,7 +221,7 @@ const PaymentScreen = () => {
   }
 
   return (
-    <SafeAreaView className="h-full bg-white" edges={["top", "left", "right"]}>
+    <SafeAreaView className="h-full bg-white" edges={["top"]}>
       <AppHeader />
       <View style={styles.container}>
         <FlatList
