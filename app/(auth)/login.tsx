@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { loginUser } from "@/backend/src/authentication"
 import { useRouter } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import useUserStore from "@/store/userStore"
 
 export default function Login() {
   const router = useRouter()
@@ -12,17 +11,14 @@ export default function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
-  const setUserID = useUserStore((state) => state.setUserID)
 
   const handleLogin = async () => {
     setError(null)
 
     try {
-      const user = await loginUser(email, password)
-      if (user) {
-        const userData = JSON.stringify(user)
-        await AsyncStorage.setItem("userID", userData)
-        setUserID(userData)
+      const userID = await loginUser(email, password)
+      if (userID) {
+        await AsyncStorage.setItem("userID", userID)
         router.push("/(tabs)/home")
       }
     } catch (error) {
