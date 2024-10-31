@@ -14,7 +14,7 @@ export const useGetUser = (userID: string) => {
   return useQuery({
     queryKey: ["user", userID],
     queryFn: () => getUser(userID),
-    enabled: userID.length !== 0
+    enabled: userID.length !== 0 // only fetch data when userID is not empty
   })
 }
 
