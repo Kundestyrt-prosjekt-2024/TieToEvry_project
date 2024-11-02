@@ -51,13 +51,18 @@ const signupChild = () => {
     const phoneNumberNumeric = Number(phonenumber)
     const birthdateDate = new Date(birthdate)
 
+    const birthdateTimestamp = {
+      seconds: Math.floor(birthdateDate.getTime() / 1000),
+      nanoseconds: 0,
+    }
+
     if (isNaN(phoneNumberNumeric)) {
       setError("Telefonnummer må være et gyldig nummer.")
       return
     }
 
     try {
-      await registerChild(email, password, name, phoneNumberNumeric, birthdateDate, parentID)
+      await registerChild(email, password, name, phoneNumberNumeric, birthdateTimestamp, parentID)
       setSuccess(true)
 
       setTimeout(() => {

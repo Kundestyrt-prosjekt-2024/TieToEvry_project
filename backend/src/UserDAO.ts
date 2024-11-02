@@ -45,7 +45,7 @@ export async function getUser(uid: string): Promise<User | undefined> {
   }
 }
 
-export async function setProfilePictureFS(uid: string, url: string): Promise<void> {
+export async function updateProfilePicture(uid: string, url: string): Promise<void> {
   try {
     const userDocRef = doc(db, "users", uid)
     await updateDoc(userDocRef, {
@@ -55,4 +55,3 @@ export async function setProfilePictureFS(uid: string, url: string): Promise<voi
     throw new Error(error.message)
   }
 }
-

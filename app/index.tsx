@@ -1,30 +1,17 @@
 import { Redirect } from "expo-router"
-import { View, Text, ActivityIndicator } from "react-native"
-import useUserStore from "@/store/userStore"
-import { useEffect } from "react"
+import { useGetUserID } from "@/hooks/useGetFirestoreData"
+import DataLoading from "@/components/DataLoading"
 
 export default function Index() {
-  const loadUserID = useUserStore((state) => state.loadUserID)
-  const isLoading = useUserStore((state) => state.isLoading)
-  const userID = useUserStore((state) => state.userID)
-
-  useEffect(() => {
-    // Load userID from AsyncStorage when the index screen mounts
-    loadUserID()
-  }, [loadUserID])
+  const userID = useGetUserID()
 
   // Render a loading state while checking AsyncStorage
-  if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text className="text-lg mt-2">Loading...</Text>
-      </View>
-    )
+  if (userID.isPending) {
+    return <DataLoading />
   }
 
   // Conditionally redirect based on user data
-  if (userID) {
+  if (userID.data) {
     return <Redirect href="/(tabs)/home" />
   } else {
     return <Redirect href="/(auth)/login" />
