@@ -1,10 +1,10 @@
 import React, { useRef } from "react"
 import { View, Text, Animated, StyleSheet } from "react-native"
 import { PanGestureHandler } from "react-native-gesture-handler"
-import { Payment } from "@/types"
+import { Transaction } from "@/types"
 
 type PaymentBubbleProps = {
-  payment: Payment
+  payment: Transaction
   userId: string
   name: string
   showDateDivider: boolean

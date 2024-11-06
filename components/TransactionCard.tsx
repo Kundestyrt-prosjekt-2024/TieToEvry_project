@@ -1,26 +1,37 @@
-import { MoneyRequest } from "@/types"
+import { MoneyRequest, Transaction } from "@/types"
 import { Text, View, StyleSheet } from "react-native"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 
-const TransactionCard = ({ transaction }: { transaction: MoneyRequest }) => {
+const TransactionCard = ({
+  transaction,
+  showDateDivider,
+  formatDate,
+}: {
+  transaction: Transaction
+  showDateDivider: boolean
+  formatDate: (date: Date) => string
+}) => {
   const isPositive = transaction.amount > 0
-
+  console.log(showDateDivider)
   return (
-    <View style={styles.transaction}>
-      <View style={styles.leftTransaction}>
-        <View style={styles.iconContainer}>
-          <AwesomeIcon name="money" size={25} />
-          {isPositive ? (
-            <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={20} />
-          ) : (
-            <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={20} />
-          )}
+    <View style={{ alignSelf: "center" }}>
+      {showDateDivider && <Text style={styles.dateDivider}>{formatDate(transaction.sentAt)}</Text>}
+      <View style={styles.transaction}>
+        <View style={styles.leftTransaction}>
+          <View style={styles.iconContainer}>
+            <AwesomeIcon name="money" size={25} />
+            {isPositive ? (
+              <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={20} />
+            ) : (
+              <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={20} />
+            )}
+          </View>
+          <Text style={styles.transactionText}>{transaction.message}</Text>
         </View>
-        <Text style={styles.transactionText}>{transaction.message}</Text>
+        <Text style={{ ...styles.transactionText, color: isPositive ? "green" : "red" }}>
+          {new Intl.NumberFormat("nb-NO").format(transaction.amount)}
+        </Text>
       </View>
-      <Text style={{ ...styles.transactionText, color: isPositive ? "green" : "red" }}>
-        {new Intl.NumberFormat("nb-NO").format(transaction.amount)}
-      </Text>
     </View>
   )
 }
@@ -57,6 +68,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 15,
+  },
+  dateDivider: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+    textAlign: "center",
+    color: "#555",
   },
 })
 

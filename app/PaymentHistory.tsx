@@ -1,12 +1,10 @@
 import React, { useEffect } from "react"
 import { useLocalSearchParams } from "expo-router"
 import { View, FlatList, StyleSheet } from "react-native"
-import { Payment } from "@/types"
+import { Transaction } from "@/types"
 import PaymentBubble from "@/components/PaymentBubble"
 
-export type Transaction = [id: string, type: string, amount: number, date: string]
-
-const dummyData: Payment[] = [
+const dummyData: Transaction[] = [
   {
     id: "1",
     receiver: "1",
@@ -45,14 +43,15 @@ const PaymentHistory = () => {
   const params = useLocalSearchParams()
   const userId = params.userId as string
   const name = params.name as string
-  const [payments, setPayments] = React.useState<Payment[]>([])
+  const [payments, setPayments] = React.useState<Transaction[]>([])
 
   useEffect(() => {
     fetchTransactions(userId)
   }, [userId])
 
   function fetchTransactions(userId: string): void {
-    setPayments(dummyData)
+    const sortedPayments = dummyData.sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime())
+    setPayments(sortedPayments)
   }
 
   function formatDate(date: Date) {
@@ -70,7 +69,7 @@ const PaymentHistory = () => {
     }).format(date)
   }
 
-  function renderItem({ item, index }: { item: Payment; index: number }) {
+  function renderItem({ item, index }: { item: Transaction; index: number }) {
     const previousItem = payments[index - 1]
     const showDateDivider = !previousItem || formatDate(item.sentAt) !== formatDate(previousItem.sentAt)
 
