@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import {Shirt, MonitorSmartphone, Ticket, Bike }  from 'lucide-react-native';
+import { SavingGoal } from '@/backend/types/savingGoal';
 
+interface SavingGoalCardProps {
+  //goal: SavingGoal;
+  onAddMoney: () => void;
+}
 
-const Card = ({onAddMoney}: { onAddMoney: () => void }) => {
+const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ onAddMoney }) => {
   {/**TODO: This should be dynamic */}
   const progress = 0.5; 
 
@@ -47,6 +52,6 @@ const Card = ({onAddMoney}: { onAddMoney: () => void }) => {
   );
 };
 
-export default Card;
+export default SavingGoalCard;
 
 
