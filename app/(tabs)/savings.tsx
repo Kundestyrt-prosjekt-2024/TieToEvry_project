@@ -5,12 +5,25 @@ import NewGoalContent from '@/components/savings/NewGoalContent';
 import AddMoneyContent from '@/components/savings/AddMoneyContent';
 import AppHeader from '@/components/AppHeader';
 import SavingGoalCard from '@/components/savings/SavingGoalCard';
+import { useGetUserID, useGetSavingGoals } from '@/hooks/useGetFirestoreData';
 
 const Savings = () => {
 
   //States for showing/hiding bottom sheets
   const [isNewGoalVisible, setIsNewGoalVisible] = useState(false);
   const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false);
+
+  const { data: userID, isLoading: isUserIDLoading } = useGetUserID();
+  const userIDValue = userID ?? '';
+  const { data: savingGoals, isLoading: isSavingGoalsLoading } = useGetSavingGoals(userIDValue);
+
+  if (isUserIDLoading || isSavingGoalsLoading) {
+    return (
+      <SafeAreaView className="bg-white flex-1 justify-center items-center">
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
 
   //Functions to handle showing/hiding bottom sheets
   const handleAddMoney = () => {
@@ -63,7 +76,13 @@ const Savings = () => {
         {/** Current savings goals displayed in cards.
          * TODO: Saving goal data should be mapped across cards */}
           <View className="flex-col items-center py-5 pb-20">
-            <SavingGoalCard onAddMoney={handleAddMoney} />
+          {savingGoals && savingGoals.length > 0 ? (
+    savingGoals.map((goal) => (
+      <SavingGoalCard key={goal.id} goal={goal} onAddMoney={handleAddMoney} />
+    ))
+  ) : (
+    <Text>Du har ingen aktive sparemål!</Text>
+  )}
           </View>
 
         </ScrollView>
@@ -84,7 +103,10 @@ const Savings = () => {
       {/**Bottom sheet for creating new goal */}
       <TouchableWithoutFeedback onPress={ () => { dismissKeyboard() } }>
       <ReusableBottomSheet isVisible={isNewGoalVisible} onClose={handleCloseNewGoal}>
-        <NewGoalContent onClose={handleCloseNewGoal} />
+      <NewGoalContent
+          onClose={handleCloseNewGoal}
+          userId={userIDValue}
+        />
       </ReusableBottomSheet>
       </TouchableWithoutFeedback>
 

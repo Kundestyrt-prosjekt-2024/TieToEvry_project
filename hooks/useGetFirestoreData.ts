@@ -1,7 +1,10 @@
 import { getProfilePictures } from '@/backend/src/ProfileDAO';
+import { addSavingGoal, getSavingGoals } from '@/backend/src/SavingsDAO';
 import { getUser } from '@/backend/src/UserDAO';
+import { SavingGoal } from '@/backend/types/savingGoal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery } from '@tanstack/react-query';
+import { UseMutationResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 
 export const useGetUserID = () => {
   return useQuery({
@@ -24,3 +27,15 @@ export const useGetProfilePictures = () => {
     queryFn: () => getProfilePictures()
   })
 }
+
+export const useGetSavingGoals = (userId: string) => {
+  return useQuery({
+    queryKey: ['savingGoals', userId],
+    queryFn: () => getSavingGoals(userId),
+    enabled: userId.length !== 0,
+  });
+};
+
+/**
+ * TODO: Add a hook for updating the current_amount field in the saving goal.
+ */

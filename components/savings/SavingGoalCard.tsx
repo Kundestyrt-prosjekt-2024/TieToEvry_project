@@ -4,13 +4,12 @@ import {Shirt, MonitorSmartphone, Ticket, Bike }  from 'lucide-react-native';
 import { SavingGoal } from '@/backend/types/savingGoal';
 
 interface SavingGoalCardProps {
-  //goal: SavingGoal;
+  goal: SavingGoal;
   onAddMoney: () => void;
 }
 
-const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ onAddMoney }) => {
-  {/**TODO: This should be dynamic */}
-  const progress = 0.5; 
+const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ goal, onAddMoney }) => {
+  const progress = goal.current_amount / goal.goal_amount;
 
   return (
     <View className="flex-col items-center pb-1">
@@ -18,14 +17,16 @@ const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ onAddMoney }) => {
         
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
-            {/** TODO: Pass in saving goal icon */}
             <View style={{ width: 50, height: 50 }} className='bg-white rounded-full border-2 justify-center items-center'>
-              <Bike color="black" style={{ width: 40, height: 40 }}/>
+              {/* Use the icon based on goal.icon_id */}
+              {goal.icon_id === 'Bike' && <Bike color="black" style={{ width: 40, height: 40 }} />}
+              {goal.icon_id === 'Shirt' && <Shirt color="black" style={{ width: 40, height: 40 }} />}
+              {goal.icon_id === 'Ticket' && <Ticket color="black" style={{ width: 40, height: 40 }} />}
+              {goal.icon_id === 'MonitorSmartphone' && <MonitorSmartphone color="black" style={{ width: 40, height: 40 }} />}
             </View>
-            {/** TODO: Pass in saving goal name */}
-            <Text className="text-xl ml-2">Goal Name</Text>
+            <Text className="text-xl ml-2">{goal.title}</Text>
           </View>
-          <View className="items-center  ">
+          <View className="items-center">
             <TouchableOpacity className="bg-[#6DE272] items-center border-2 border-black justify-center rounded-full" style={{ width: 35, height: 35 }} onPress={onAddMoney}>
               <Text className="text-black text-2xl">+</Text>
             </TouchableOpacity>
@@ -34,16 +35,17 @@ const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ onAddMoney }) => {
         </View>
 
         <View className="flex-row my-0">
-          {/**TODO: Should be dynamic with saving goal data */}
-          <Text className="flex-1 text-sm text-left">0 kr</Text>
-          <Text className="flex-1 text-sm text-center">Goal/2</Text>
-          <Text className="flex-1 text-sm text-right">Goal</Text>
+          <Text className="flex-1 text-sm text-left">{goal.current_amount} kr</Text>
+          <Text className="flex-1 text-sm text-center">{(goal.goal_amount / 2).toFixed(2)} kr</Text>
+          <Text className="flex-1 text-sm text-right">{goal.goal_amount} kr</Text>
         </View>
 
         <View className="my-0">
-          {/**TODO: Fill should be dynamic with saving goal data */}
           <View className="w-full h-7 bg-[#1A801E] border-2 border-black rounded-full">
-            <View className="h-full bg-[#72E977] border-1 border-black rounded-full" style={{ width: `${progress * 100}%` }}/>
+            <View
+              className="h-full bg-[#72E977] border-1 border-black rounded-full"
+              style={{ width: `${Math.min(progress * 100, 100)}%` }}
+            />
           </View>
         </View>
 
