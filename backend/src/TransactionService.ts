@@ -6,7 +6,7 @@ import { db } from '../../constants/firebaseConfig';
 
 //Sends money from one user to another.
 
-export async function sendMoney(senderUID: string, receiverUID: string, amount: number, description: string) {
+export async function transferMoney(senderUID: string, receiverUID: string, amount: number, description: string, type: string) {
     try {
         // Retrieve bank accounts for sender and receiver
         const senderAccount = await getBankAccountByUID(senderUID);
@@ -27,7 +27,7 @@ export async function sendMoney(senderUID: string, receiverUID: string, amount: 
             receiverAccount.id, // toAccountId
             amount,
             description,
-            'transfer' // transaction type
+            type // transaction type
         );
 
         console.log("Money sent successfully from", senderUID, "to", receiverUID);

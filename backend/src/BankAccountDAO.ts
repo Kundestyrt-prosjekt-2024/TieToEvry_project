@@ -1,6 +1,8 @@
 import { db } from '../../constants/firebaseConfig';
 import { collection, query, where, getDocs, doc, updateDoc, DocumentData } from 'firebase/firestore';
 
+
+//Get Account Number by User ID
 interface BankAccount {
     id: string;
     balance: number;
@@ -42,4 +44,4 @@ export async function getBankAccountByUID(userUID: string): Promise<BankAccount>
         } catch (error) {
             throw new Error('Failed to update balance');
         }
-    }
+}

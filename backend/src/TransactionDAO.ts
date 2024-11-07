@@ -29,7 +29,6 @@ export async function logTransaction(fromAccountId: string, toAccountId: string,
     }
 }
 
-
 //Retrieves the transaction history for a given account.
 export async function getTransactionHistory(accountId: string) {
     const transactionsRef = collection(db, 'transactions');
