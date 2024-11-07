@@ -1,17 +1,14 @@
 import { db } from '../../constants/firebaseConfig';
 import { collection, query, where, getDocs, doc, updateDoc, DocumentData } from 'firebase/firestore';
+import { BankAccount } from '../types/bankAccount';
 
-
-//Get Account Number by User ID
-interface BankAccount {
-    id: string;
-    balance: number;
-    [key: string]: any; // Allows additional properties if present
-}
-
-export async function getBankAccountByUID(userUID: string): Promise<BankAccount> {
+/**Funtion is used to get a bank account by its a users userID
+ * 
+ * @param userUID A string of the id of the user.
+ * @returns the id of the account and the account information
+ */
+export async function getBankAccountByUID(userUID: string): Promise<BankAccount & {id: string}> {
     try {
-        console.log("Searching for bank account with UID:", userUID);
         const bankAccountsRef = collection(db, 'bankAccounts');
         const q = query(bankAccountsRef, where("UID", "==", userUID));
         
@@ -21,27 +18,30 @@ export async function getBankAccountByUID(userUID: string): Promise<BankAccount>
         }
         
         const doc = querySnapshot.docs[0];
-        const data = doc.data() as DocumentData;
+        const data = doc.data() as BankAccount;
 
-        // Check if balance exists and is a number
         if (typeof data.balance !== 'number') {
             throw new Error("Invalid or missing 'balance' field in bank account document");
         }
 
-        return { id: doc.id, ...data } as BankAccount;
+        return {id: doc.id,
+            ...data};
     } catch (error) {
-        console.error("Error in getBankAccountByUID:", error);
-        throw error;
+        throw new Error('Failed to get bank account by UID');
     }
 }
 
-//Updates the balance of a bank account
-    export async function updateBalance(accountId: string, newBalance: number) {
-        const accountDocRef = doc(db, 'bankAccounts', accountId);
-    
-        try {
-            await updateDoc(accountDocRef, { balance: newBalance });
-        } catch (error) {
-            throw new Error('Failed to update balance');
-        }
+/**Function is used to update the balance of a bank account.
+ * 
+ * @param accountId A string of the id of the account.
+ * @param newBalance A number of the new balance of the account.
+ */
+export async function updateBalance(accountId: string, newBalance: number) {
+    const accountDocRef = doc(db, 'bankAccounts', accountId);
+
+    try {
+        await updateDoc(accountDocRef, { balance: newBalance });
+    } catch (error) {
+        throw new Error('Failed to update balance');
+    }
 }
