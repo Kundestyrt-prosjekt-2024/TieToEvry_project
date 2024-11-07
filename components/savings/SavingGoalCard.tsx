@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import {Shirt, MonitorSmartphone, Ticket, Bike }  from 'lucide-react-native';
 import { SavingGoal } from '@/backend/types/savingGoal';
 

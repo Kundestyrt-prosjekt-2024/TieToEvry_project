@@ -1,9 +1,9 @@
 import { getProfilePictures } from '@/backend/src/ProfileDAO';
-import { addSavingGoal, getSavingGoals } from '@/backend/src/SavingsDAO';
+//import { getSavingGoals } from '@/backend/src/SavingsDAO';
 import { getUser } from '@/backend/src/UserDAO';
-import { SavingGoal } from '@/backend/types/savingGoal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UseMutationResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { getSavingGoals } from '@/backend/src/SavingsDAO';
 
 
 export const useGetUserID = () => {
@@ -27,6 +27,7 @@ export const useGetProfilePictures = () => {
     queryFn: () => getProfilePictures()
   })
 }
+
 
 export const useGetSavingGoals = (userId: string) => {
   return useQuery({

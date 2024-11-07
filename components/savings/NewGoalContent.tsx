@@ -4,7 +4,7 @@ import { Bike, MonitorSmartphone, Shirt, Ticket } from 'lucide-react-native';
 
 interface NewGoalContentProps {
   onClose: () => void;
-  userId: string;
+  //userId: string;
 }
 
 const NewGoalContent: React.FC<NewGoalContentProps> = ({ onClose }) => {

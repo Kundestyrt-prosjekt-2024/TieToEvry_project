@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Keyboard, Image, TouchableWithoutFeedback } from 'react-native';
 import ReusableBottomSheet from '@/components/ReusableBottomSheet';
 import NewGoalContent from '@/components/savings/NewGoalContent';
 import AddMoneyContent from '@/components/savings/AddMoneyContent';
 import AppHeader from '@/components/AppHeader';
 import SavingGoalCard from '@/components/savings/SavingGoalCard';
-import { useGetUserID, useGetSavingGoals } from '@/hooks/useGetFirestoreData';
+import { useGetUserID, /**useGetSavingGoals*/ } from '@/hooks/useGetFirestoreData';
+import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '@/constants/firebaseConfig';
+import { SavingGoal } from '@/backend/types/savingGoal';
 
 const Savings = () => {
 
+ 
   //States for showing/hiding bottom sheets
   const [isNewGoalVisible, setIsNewGoalVisible] = useState(false);
   const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false);
-
+  
+  const [savingGoals, setSavingGoals] = useState<SavingGoal[]>([]);
+  const [loading, setLoading] = useState(true);
+  /**
   const { data: userID, isLoading: isUserIDLoading } = useGetUserID();
   const userIDValue = userID ?? '';
   const { data: savingGoals, isLoading: isSavingGoalsLoading } = useGetSavingGoals(userIDValue);
@@ -24,7 +31,7 @@ const Savings = () => {
       </SafeAreaView>
     );
   }
-
+ */
   //Functions to handle showing/hiding bottom sheets
   const handleAddMoney = () => {
     setIsAddMoneyVisible(true);
@@ -77,12 +84,12 @@ const Savings = () => {
          * TODO: Saving goal data should be mapped across cards */}
           <View className="flex-col items-center py-5 pb-20">
           {savingGoals && savingGoals.length > 0 ? (
-    savingGoals.map((goal) => (
-      <SavingGoalCard key={goal.id} goal={goal} onAddMoney={handleAddMoney} />
-    ))
-  ) : (
-    <Text>Du har ingen aktive sparemål!</Text>
-  )}
+            savingGoals.map((goal) => (
+              <SavingGoalCard key={goal.id} goal={goal} onAddMoney={handleAddMoney} />
+            ))
+          ) : (
+            <Text>Du har ingen aktive sparemål!</Text>
+          )}
           </View>
 
         </ScrollView>
@@ -105,7 +112,7 @@ const Savings = () => {
       <ReusableBottomSheet isVisible={isNewGoalVisible} onClose={handleCloseNewGoal}>
       <NewGoalContent
           onClose={handleCloseNewGoal}
-          userId={userIDValue}
+          //userId={userID}
         />
       </ReusableBottomSheet>
       </TouchableWithoutFeedback>
