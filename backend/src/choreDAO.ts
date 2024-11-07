@@ -1,13 +1,11 @@
 import { db } from '../../constants/firebaseConfig';
-import { transferMoney } from '../../backend/src/TransactionService'; 
+import { transferMoney } from '../../backend/src/TransactionService'; //File will be available when merged
 import { firestore } from 'firebase-admin';
 import { collection, query, where, getDocs, setDoc, doc, updateDoc, DocumentReference } from 'firebase/firestore';
 
-
-
 type ChoreData = {
-    chore_description: string;
-    reward_amount: number;
+    chore_description?: string;
+    reward_amount?: number;
     time_limit?: Date;
     is_repeatable?: boolean;
     recurrence?: 'daily' | 'weekly' | 'monthly';
@@ -109,66 +107,75 @@ export async function declineCompletedChore(choreID: string) {
 }
 
 //Parents can approve a completed chore to set it as paid and trigger the transfer
-export async function approveCompletedChore(choreID: string, childUID: string, rewardAmount: number) {
+export async function approveCompletedChore(choreID: string, parentUID: string, childUID: string, rewardAmount: number) {
     try {
         const choreRef = doc(db, 'chores', choreID);
         await updateDoc(choreRef, {
             status: 'paid',
             updated_at: new Date(),
         });
-        await transferMoney(childUID, rewardAmount);
+        await transferMoney(parentUID, childUID, rewardAmount, "Chore Completion Reward", "chore_reward");
     } catch (error) {
         console.error('Error approving completed chore:', error);
         throw new Error('Failed to approve completed chore');
     }
 }
 
+//Parents can fetch all chores that are suggested by a child with a childUID
+export async function fetchPendingApprovalChores(childUID: string): Promise<ChoreData[]> {
+    const chores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID),
+            where('status', '==', 'pending')
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        querySnapshot.forEach((doc) => {
+            chores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+    } catch (error) {
+        console.error('Error fetching pending approval chores:', error);
+        throw new Error('Failed to fetch pending approval chores');
+    }
+    return chores;
+}
 
+//Parents can fetch all chores that are completed and awaiting approval and payout
+export async function fetchPendingPayoutChores(childUID: string): Promise<ChoreData[]> {
+    const chores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID),
+            where('status', '==', 'completed')
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        querySnapshot.forEach((doc) => {
+            chores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+    } catch (error) {
+        console.error('Error fetching pending payout chores:', error);
+        throw new Error('Failed to fetch pending payout chores');
+    }
+    return chores;
+}
 
-
-
-//Over funker
-
-const ChoreDAO = {
-
-    async approveSuggestedChore(){
-
-    },
-
-    async declineSuggestedChore(){
-
-    },
-
-    async markChoreComplete(){
-
-    },
-
-    async declineCompletedChore(){
-
-    },
-
-    async approveCompletedChore(){
-
-        // Trigger transferMoney function for the reward amount
-        // Mark Chore as paid
-    },
-
-
-    async fetchPendingApprovalChores(){
-
-    }, 
-
-    async fetchPendingPayoutChores(){
-
-    },
-    
-
-
-    async fetchAllChoresForChild(childUID: string){
-
-        
-    },
-
-}; 
-
-export default ChoreDAO;
+//All chores for a child can be fetched, including all the different chore statuses
+export async function fetchAllChoresForChild(childUID: string): Promise<ChoreData[]> {
+    const allChores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID)
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        querySnapshot.forEach((doc) => {
+            allChores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+    } catch (error) {
+        console.error('Error fetching all chores for child:', error);
+        throw new Error('Failed to fetch all chores for child');
+    }
+    return allChores;
+}
