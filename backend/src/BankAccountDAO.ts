@@ -1,5 +1,5 @@
 import { db } from '../../constants/firebaseConfig';
-import { collection, query, where, getDocs, doc, updateDoc, DocumentData } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { BankAccount } from '../types/bankAccount';
 
 /**Funtion is used to get a bank account by its a users userID
