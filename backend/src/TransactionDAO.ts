@@ -1,10 +1,16 @@
 import { db } from '../../constants/firebaseConfig';
 import { collection, addDoc, query, where, getDocs, updateDoc, doc, Timestamp } from 'firebase/firestore';
 
-//Logs a transaction
-export async function logTransaction(fromAccountId: string, toAccountId: string, amount: number, description: string, transactionType: string = 'transfer') {
+/**Function is used to add a transaction to the database.
+ * 
+ * @param fromAccountId A string of the id of the sender.
+ * @param toAccountId A string of the id of the receiver.
+ * @param amount A number of the amount of money to be transferred.
+ * @param description A string of the description of the transaction.
+ * @param transactionType A string of the type of the transaction. Has to be 'transfer' or 'chore'.
+ */
+export async function logTransaction(fromAccountId: string, toAccountId: string, amount: number, description: string, transactionType: string) {
     try {
-        // Log the transaction
         await addDoc(collection(db, 'transactions'), {
             account_id_from: `/bankAccounts/${fromAccountId}`,
             account_id_to: `/bankAccounts/${toAccountId}`,
@@ -14,22 +20,22 @@ export async function logTransaction(fromAccountId: string, toAccountId: string,
             transactions_date: Timestamp.now(),
         });
 
-        // Update last_activity_date of sender bank account
         const senderRef = doc(db, 'bankAccounts', fromAccountId);
         await updateDoc(senderRef, { last_activity_date: Timestamp.now() });
 
-        // Update last_activity_date of receiver bank account
         const receiverRef = doc(db, 'bankAccounts', toAccountId);
         await updateDoc(receiverRef, { last_activity_date: Timestamp.now() });
 
-        console.log('Transaction logged and last activity dates updated.');
     } catch (error) {
-        console.error('Failed to log transaction and update activity dates:', error);
         throw new Error('Failed to log transaction and update activity dates');
     }
 }
 
-//Retrieves the transaction history for a given account.
+/**Function is used to get all transactions made from an account.
+ * 
+ * @param accountId A string of the id of the account.
+ * @returns an array of transactions made from the account.
+ */
 export async function getTransactionHistory(accountId: string) {
     const transactionsRef = collection(db, 'transactions');
 
