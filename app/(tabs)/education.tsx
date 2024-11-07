@@ -1,5 +1,5 @@
 import AppHeader from "@/components/AppHeader"
-import { View, StyleSheet, Text, Image } from "react-native"
+import { View, Text, Image } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import React from "react"
 import { WebView } from "react-native-webview"
@@ -23,7 +23,17 @@ const Education = () => {
   return (
     <SafeAreaView className="flex-1 bg-white relative">
       <AppHeader />
-      <View className="flex flex-row absolute top-32" style={styles.centeredView}>
+      <WebView
+        originWhitelist={["*"]}
+        source={{ html: htmlContent }}
+        className="flex-1 z-10"
+        mediaPlaybackRequiresUserAction={true} // Stops auto-play on iOS
+        allowsInlineMediaPlayback={true} // Allows inline playback on iOS
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        scrollEnabled={false}
+      />
+      <View className="flex flex-row justify-center mt-4">
         <View>
           <Image className="" source={require("@/assets/images/sphare_small.png")} />
         </View>
@@ -34,25 +44,8 @@ const Education = () => {
           </Text>
         </View>
       </View>
-      <WebView
-        originWhitelist={["*"]}
-        source={{ html: htmlContent }}
-        className="flex-1 top-32"
-        mediaPlaybackRequiresUserAction={true} // Stops auto-play on iOS
-        allowsInlineMediaPlayback={true} // Allows inline playback on iOS
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        scrollEnabled={false}
-      />
     </SafeAreaView>
   )
 }
-
-const styles = StyleSheet.create({
-  centeredView: {
-    left: "50%",
-    transform: [{ translateX: -130 }],
-  },
-})
 
 export default Education
