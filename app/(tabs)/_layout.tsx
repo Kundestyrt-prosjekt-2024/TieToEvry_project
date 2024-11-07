@@ -4,6 +4,7 @@ import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { Tabs } from "expo-router"
 import { Coins, DollarSign, GraduationCap, House, ListCheck, PiggyBank, Rabbit } from "lucide-react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
+import { Text } from "react-native"
 
 const TabsLayout = () => {
   const userID = useGetUserID()
@@ -24,12 +25,42 @@ const TabsLayout = () => {
   return (
     <Tabs>
       <Tabs.Screen
+        name="choresParent"
+        redirect={!hideParentTabs}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => <ListCheck color={focused ? "#52D1DC" : color} size={size} />,
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Gjøremål
+            </Text>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="overview"
         redirect={!hideParentTabs}
         options={{
           headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => <House color={focused ? "#52D1DC" : color} size={size} />,
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Oversikt
+            </Text>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="savingsParent"
+        redirect={!hideParentTabs}
+        options={{
+          headerShown: false,
           tabBarIcon: ({ color, size, focused }) => <PiggyBank color={focused ? "#52D1DC" : color} size={size} />,
-          tabBarLabel: "Oversikt",
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Sparemål
+            </Text>
+          ),
         }}
       />
       <Tabs.Screen
@@ -39,7 +70,11 @@ const TabsLayout = () => {
           headerShown: false,
           // tabBarShowLabel: false,
           tabBarIcon: ({ color, size, focused }) => <PiggyBank color={focused ? "#52D1DC" : color} size={size} />,
-          tabBarLabel: "Spare",
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Spare
+            </Text>
+          ),
         }}
       />
       <Tabs.Screen
@@ -49,7 +84,11 @@ const TabsLayout = () => {
           headerShown: false,
           // tabBarShowLabel: false,
           tabBarIcon: ({ color, size, focused }) => <ListCheck color={focused ? "#52D1DC" : color} size={size} />,
-          tabBarLabel: "Gjøremål",
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Gjøremål
+            </Text>
+          ),
         }}
       />
       <Tabs.Screen
@@ -59,7 +98,11 @@ const TabsLayout = () => {
           headerShown: false,
           // tabBarShowLabel: false,
           tabBarIcon: ({ color, size, focused }) => <House color={focused ? "#52D1DC" : color} size={size} />,
-          tabBarLabel: "Hjem",
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Hjem
+            </Text>
+          ),
         }}
       />
       <Tabs.Screen
@@ -69,7 +112,11 @@ const TabsLayout = () => {
           headerShown: false,
           // tabBarShowLabel: false,
           tabBarIcon: ({ color, size, focused }) => <DollarSign color={focused ? "#52D1DC" : color} size={size} />,
-          tabBarLabel: "Be om penger",
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Be om penger
+            </Text>
+          ),
         }}
       />
       <Tabs.Screen
@@ -79,7 +126,11 @@ const TabsLayout = () => {
           headerShown: false,
           // tabBarShowLabel: false,
           tabBarIcon: ({ color, size, focused }) => <GraduationCap color={focused ? "#52D1DC" : color} size={size} />,
-          tabBarLabel: "Lær mer",
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Lær mer
+            </Text>
+          ),
         }}
       />
     </Tabs>

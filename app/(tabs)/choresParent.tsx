@@ -1,15 +1,15 @@
 import { View, Text } from "react-native"
 import React from "react"
-import AppHeader from "@/components/AppHeader"
 import { SafeAreaView } from "react-native-safe-area-context"
+import AppHeader from "@/components/AppHeader"
 
-const overview = () => {
+const choresParent = () => {
   return (
     <SafeAreaView className="bg-white h-full">
       <AppHeader parent />
-      <Text>overview</Text>
+      <Text>choresParent</Text>
     </SafeAreaView>
   )
 }
 
-export default overview
+export default choresParent
