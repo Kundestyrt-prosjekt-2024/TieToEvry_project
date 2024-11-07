@@ -1,7 +1,7 @@
 import { db } from '../../constants/firebaseConfig';
 import { transferMoney } from '../../backend/src/TransactionService'; //File will be available when merged
 import { firestore } from 'firebase-admin';
-import { collection, query, where, getDocs, setDoc, doc, updateDoc, DocumentReference } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc, updateDoc, DocumentReference, orderBy } from 'firebase/firestore';
 
 type ChoreData = {
     chore_description?: string;
@@ -167,15 +167,56 @@ export async function fetchAllChoresForChild(childUID: string): Promise<ChoreDat
     try {
         const choresQuery = query(
             collection(db, 'chores'),
-            where('child_id', '==', childUID)
+            where('child_id', '==', childUID),
         );
         const querySnapshot = await getDocs(choresQuery);
         querySnapshot.forEach((doc) => {
             allChores.push({ id: doc.id, ...doc.data() } as ChoreData);
         });
+        const recurringChores = allChores.filter(chore => chore.recurrence);
+        const nonRecurringChores = allChores.filter(chore => !chore.recurrence);
+        const updatedRecurringChores = await handleRecurringChores(recurringChores);
+        return [...nonRecurringChores, ...updatedRecurringChores];
     } catch (error) {
         console.error('Error fetching all chores for child:', error);
         throw new Error('Failed to fetch all chores for child');
     }
-    return allChores;
+}
+
+// Updates the time_limit of recurring chores that have passed their time_limit
+export async function handleRecurringChores(recurringChores: ChoreData[]) {
+    try {
+        const updatedChores: ChoreData[] = [];
+        const now = new Date();
+        recurringChores.forEach(chore => {
+            if (!chore.time_limit) {
+                return;
+            }
+            if (now > chore.time_limit) {
+                const nextTimeLimit = new Date(chore.time_limit);
+                switch (chore.recurrence) {
+                    case 'daily':
+                        nextTimeLimit.setDate(nextTimeLimit.getDate() + 1);
+                        break;
+                    case 'weekly':
+                        nextTimeLimit.setDate(nextTimeLimit.getDate() + 7);
+                        break;
+                    case 'monthly':
+                        nextTimeLimit.setMonth(nextTimeLimit.getMonth() + 1);
+                        break;
+                }
+                const updatedChore: ChoreData = {
+                    ...chore,
+                    time_limit: nextTimeLimit,
+                };
+                updatedChores.push(updatedChore);
+            } else {
+                updatedChores.push(chore);
+            }
+        });
+        return updatedChores;
+    } catch (error) {
+        console.error('Error handling recurring chores:', error);
+        throw new Error('Failed to handle recurring chores');
+    }
 }
