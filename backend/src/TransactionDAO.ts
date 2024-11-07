@@ -44,3 +44,24 @@ export async function getTransactionHistory(accountId: string) {
 
     return querySnapshot.docs.map(doc => doc.data());
 }
+
+/**Function is used to get all money requests made by a user.
+ * 
+ * @param userId A string of the id of the user.
+ * @returns an array of money requests made by the user.
+ */
+async function getMoneyRequests(userId: string) {
+    const moneyRequestsRef = collection(db, 'moneyRequests');
+
+    const requesterQuery = query(moneyRequestsRef, where('requesterId', '==', userId));
+    const requesterSnapshot = await getDocs(requesterQuery);
+    const requesterResults = requesterSnapshot.docs.map(doc => doc.data());
+
+    const senderQuery = query(moneyRequestsRef, where('senderId', '==', userId));
+    const senderSnapshot = await getDocs(senderQuery);
+    const senderResults = senderSnapshot.docs.map(doc => doc.data());
+
+    const combinedResults = [...requesterResults, ...senderResults];
+    
+    return combinedResults;
+}

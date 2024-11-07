@@ -3,41 +3,47 @@ import { logTransaction } from './TransactionDAO';
 import { collection, addDoc, query, where, getDocs, doc, updateDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../../constants/firebaseConfig';
 
-
-//Sends money from one user to another.
-
+/**Function is used to transfer money from one account to another.
+ * 
+ * @param senderUID A string of the id of the sender.
+ * @param receiverUID A string of the id of the receiver.
+ * @param amount A number of the amount of money to be transferred.
+ * @param description A string of the description of the transaction.
+ * @param type A string of the type of the transaction. Has to be 'transfer' or 'chore'.
+ */
 export async function transferMoney(senderUID: string, receiverUID: string, amount: number, description: string, type: string) {
     try {
-        // Retrieve bank accounts for sender and receiver
         const senderAccount = await getBankAccountByUID(senderUID);
         const receiverAccount = await getBankAccountByUID(receiverUID);
 
-        // Check if the sender has sufficient balance
         if (senderAccount.balance < amount) {
             throw new Error('Insufficient funds');
         }
 
-        // Update balances
         await updateBalance(senderAccount.id, senderAccount.balance - amount);
         await updateBalance(receiverAccount.id, receiverAccount.balance + amount);
 
-        // Log the transaction
         await logTransaction(
-            senderAccount.id, // fromAccountId
-            receiverAccount.id, // toAccountId
+            senderUID,
+            receiverUID, 
             amount,
             description,
-            type // transaction type
+            type 
         );
 
-        console.log("Money sent successfully from", senderUID, "to", receiverUID);
     } catch (error) {
-        console.error('Error in sendMoney:', error);
-        throw error;
+        throw new Error('Failed to transfer money');
     }
 }
 
-//Requests money from another user
+/**Function is used to request money from another user.
+ * 
+ * @param requesterUID A string of the id of the requester.
+ * @param recipientUID A string of the id of the recipient.
+ * @param amount A number of the amount of money to be requested.
+ * @param description A string of the description of the transaction.
+ * @returns the id of the request created.
+ */
 export async function requestMoney(requesterUID: string, recipientUID: string, amount: number, description: string) {
     try {
         const requestDocRef = await addDoc(collection(db, 'moneyRequests'), {
@@ -56,23 +62,33 @@ export async function requestMoney(requesterUID: string, recipientUID: string, a
     }
 }
 
-//Accept a request
+/**Function is used to accept a money request. 
+ * It will update the status of the request to 'accepted' and transfer the money 
+ * from the sender to the receiver.
+ * 
+ * @param requestId A string of the id of the request. Should be gettable.
+ * @param senderUID A string of the id of the sender.
+ * @param receiverUID A string of the id of the receiver.
+ * @param amount A number of the amount of money to be accepted.
+ * @param description A string of the description of the transaction.
+ */
 export async function acceptMoneyRequest(requestId: string, senderUID: string, receiverUID: string, amount: number, description: string) {
     try {
-        // Retrieve bank accounts for both sender and receiver
         const senderAccount = await getBankAccountByUID(senderUID);
         const receiverAccount = await getBankAccountByUID(receiverUID);
 
-        // Check if the sender has sufficient balance
         if (senderAccount.balance < amount) {
             throw new Error('Insufficient funds');
         }
 
-        // Perform the money transfer by updating balances
+        const requestDocRef = doc(db, 'moneyRequests', requestId);
+        await updateDoc(requestDocRef, {
+            status: 'accepted',
+        });
+
         await updateBalance(senderAccount.id, senderAccount.balance - amount);
         await updateBalance(receiverAccount.id, receiverAccount.balance + amount);
 
-        // Log the transaction in the transactions collection
         await logTransaction(
             `/bankAccounts/${senderAccount.id}`,
             `/bankAccounts/${receiverAccount.id}`,
@@ -81,21 +97,17 @@ export async function acceptMoneyRequest(requestId: string, senderUID: string, r
             'transfer'
         );
 
-        // Update the money request status to 'accepted'
-        const requestDocRef = doc(db, 'moneyRequests', requestId);
-        await updateDoc(requestDocRef, {
-            status: 'accepted',
-        });
     } catch (error) {
-        console.error('Failed to accept money request:', error);
-        throw error;
+        throw new Error('Failed to accept money request');
     }
 }
 
-//Decline a request
+/**Funtion is used to reject a money request.
+ * 
+ * @param requestId A string of the id of the request
+ */
 export async function rejectMoneyRequest(requestId: string) {
     try {
-        // Update the money request status to 'rejected'
         const requestDocRef = doc(db, 'moneyRequests', requestId);
         await updateDoc(requestDocRef, {
             status: 'rejected'
