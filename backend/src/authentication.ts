@@ -19,7 +19,6 @@ const registerUser = async (
       created_at: Timestamp.now(),
       birthdate: birthdate,
       name: name,
-      passphrase: password,
       phonenumber: phonenumber,
       children: [],
       profilePicture: "https://firebasestorage.googleapis.com/v0/b/mobile-banking-app-dacb3.appspot.com/o/Profile%20Pictures%2FDefault_pfp.png?alt=media&token=3c5ea107-33ee-4b7b-8df6-4ab8b3522aaa"
@@ -49,7 +48,6 @@ const registerChild = async (
       created_at: Timestamp.now(),
       birthdate: birthdate,
       name: name,
-      passphrase: password,
       phonenumber: phonenumber,
       children: [],
       parents: [parentUid],
