@@ -25,19 +25,6 @@ const TabsLayout = () => {
   return (
     <Tabs>
       <Tabs.Screen
-        name="choresParent"
-        redirect={!hideParentTabs}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size, focused }) => <ListCheck color={focused ? "#52D1DC" : color} size={size} />,
-          tabBarLabel: ({ color, focused }) => (
-            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
-              Gjøremål
-            </Text>
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="overview"
         redirect={!hideParentTabs}
         options={{
@@ -46,6 +33,19 @@ const TabsLayout = () => {
           tabBarLabel: ({ color, focused }) => (
             <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
               Oversikt
+            </Text>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="choresParent"
+        redirect={!hideParentTabs}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => <ListCheck color={focused ? "#52D1DC" : color} size={size} />,
+          tabBarLabel: ({ color, focused }) => (
+            <Text className="text-xs" style={{ color: focused ? "#52D1DC" : color }}>
+              Gjøremål
             </Text>
           ),
         }}

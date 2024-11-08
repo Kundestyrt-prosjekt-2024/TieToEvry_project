@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredent
 import { FirestoreTimestamp, User } from '../types/user';
 import { Timestamp } from 'firebase/firestore';
 import { addChildToParent, addUser, getUser } from './UserDAO';
+import { createBankAccount } from './bankAccountDAO';
 
 const registerUser = async (
   email: string,
@@ -26,6 +27,7 @@ const registerUser = async (
     };
 
     const userId = await addUser(user.uid, newUser);
+    await createBankAccount(user.uid)
     return userId;
 
   } catch (error: any) {
@@ -57,6 +59,7 @@ const registerChild = async (
     };
 
     const userId = await addChildToParent(parentUid, child.uid, newUser);
+    await createBankAccount(child.uid)
     return userId;
 
   } catch (error: any) {
