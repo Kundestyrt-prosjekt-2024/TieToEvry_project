@@ -175,6 +175,8 @@ export async function fetchAllChoresForChild(childUID: string): Promise<ChoreDat
         });
         const recurringChores = allChores.filter(chore => chore.recurrence);
         const nonRecurringChores = allChores.filter(chore => !chore.recurrence);
+
+        // Update recurring chores if their time_limit has passed and return the combined list
         const updatedRecurringChores = await handleRecurringChores(recurringChores);
         return [...nonRecurringChores, ...updatedRecurringChores];
     } catch (error) {
@@ -182,6 +184,157 @@ export async function fetchAllChoresForChild(childUID: string): Promise<ChoreDat
         throw new Error('Failed to fetch all chores for child');
     }
 }
+
+//Fetch only pending chores for child
+export async function fetchPendingChoresForChild(childUID: string): Promise<ChoreData[]> {
+    const pendingChores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID),
+            where('status', '==', 'pending')
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        
+        // Collect all chores marked as 'pending'
+        querySnapshot.forEach((doc) => {
+            pendingChores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+
+        // Separate chores into recurring and non-recurring
+        const recurringChores = pendingChores.filter(chore => chore.recurrence);
+        const nonRecurringChores = pendingChores.filter(chore => !chore.recurrence);
+
+        // Update recurring chores if their time_limit has passed and return the combined list
+        const updatedRecurringChores = await handleRecurringChores(recurringChores);
+        return [...nonRecurringChores, ...updatedRecurringChores];
+    } catch (error) {
+        console.error('Error fetching pending chores for child:', error);
+        throw new Error('Failed to fetch pending chores for child');
+    }
+}
+
+
+
+//Fetch only approved chores for child
+export async function fetchApprovedChoresForChild(childUID: string): Promise<ChoreData[]> {
+    const approvedChores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID),
+            where('status', '==', 'approved')
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        
+        // Collect all chores marked as 'approved'
+        querySnapshot.forEach((doc) => {
+            approvedChores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+
+        // Separate chores into recurring and non-recurring
+        const recurringChores = approvedChores.filter(chore => chore.recurrence);
+        const nonRecurringChores = approvedChores.filter(chore => !chore.recurrence);
+
+        // Update recurring chores if their time_limit has passed and return the combined list
+        const updatedRecurringChores = await handleRecurringChores(recurringChores);
+        return [...nonRecurringChores, ...updatedRecurringChores];
+    } catch (error) {
+        console.error('Error fetching approved chores for child:', error);
+        throw new Error('Failed to fetch approved chores for child');
+    }
+}
+
+//Fetch only completed chores for child
+export async function fetchCompletedChoresForChild(childUID: string): Promise<ChoreData[]> {
+    const completedChores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID),
+            where('status', '==', 'completed')
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        
+        // Collect all chores marked as 'completed'
+        querySnapshot.forEach((doc) => {
+            completedChores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+
+        // Separate chores into recurring and non-recurring
+        const recurringChores = completedChores.filter(chore => chore.recurrence);
+        const nonRecurringChores = completedChores.filter(chore => !chore.recurrence);
+
+        // Update recurring chores if their time_limit has passed and return the combined list
+        const updatedRecurringChores = await handleRecurringChores(recurringChores);
+        return [...nonRecurringChores, ...updatedRecurringChores];
+    } catch (error) {
+        console.error('Error fetching completed chores for child:', error);
+        throw new Error('Failed to fetch completed chores for child');
+    }
+}
+
+
+//Fetch only paid chores for child
+export async function fetchPaidChoresForChild(childUID: string): Promise<ChoreData[]> {
+    const paidChores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID),
+            where('status', '==', 'paid')
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        
+        // Collect all chores marked as 'paid'
+        querySnapshot.forEach((doc) => {
+            paidChores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+
+        // Separate chores into recurring and non-recurring
+        const recurringChores = paidChores.filter(chore => chore.recurrence);
+        const nonRecurringChores = paidChores.filter(chore => !chore.recurrence);
+
+        // Update recurring chores if their time_limit has passed and return the combined list
+        const updatedRecurringChores = await handleRecurringChores(recurringChores);
+        return [...nonRecurringChores, ...updatedRecurringChores];
+    } catch (error) {
+        console.error('Error fetching paid chores for child:', error);
+        throw new Error('Failed to fetch paid chores for child');
+    }
+}
+
+
+//Fetch only declined chores for child
+export async function fetchDeclinedChoresForChild(childUID: string): Promise<ChoreData[]> {
+    const declinedChores: ChoreData[] = [];
+    try {
+        const choresQuery = query(
+            collection(db, 'chores'),
+            where('child_id', '==', childUID),
+            where('status', '==', 'declined')
+        );
+        const querySnapshot = await getDocs(choresQuery);
+        
+        // Collect all chores marked as 'declined'
+        querySnapshot.forEach((doc) => {
+            declinedChores.push({ id: doc.id, ...doc.data() } as ChoreData);
+        });
+
+        // Separate chores into recurring and non-recurring
+        const recurringChores = declinedChores.filter(chore => chore.recurrence);
+        const nonRecurringChores = declinedChores.filter(chore => !chore.recurrence);
+
+        // Update recurring chores if their time_limit has passed and return the combined list
+        const updatedRecurringChores = await handleRecurringChores(recurringChores);
+        return [...nonRecurringChores, ...updatedRecurringChores];
+    } catch (error) {
+        console.error('Error fetching delined chores for child:', error);
+        throw new Error('Failed to fetch declined chores for child');
+    }
+}
+
+
 
 // Updates the time_limit of recurring chores that have passed their time_limit
 export async function handleRecurringChores(recurringChores: ChoreData[]) {
