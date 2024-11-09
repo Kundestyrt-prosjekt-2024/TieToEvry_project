@@ -1,5 +1,5 @@
 import { db } from "@/constants/firebaseConfig";
-import { collection, getDocs, query, where, doc, setDoc, getDocsFromServer } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, setDoc, getDocsFromServer, getDocsFromCache, updateDoc, increment } from "firebase/firestore";
 import { SavingGoal, SavingGoalSchema } from "../types/savingGoal";
 
 //Function that returns an array of saving goals for a specific user based on the user's id
@@ -9,23 +9,18 @@ export async function getSavingGoals(userId: string): Promise<SavingGoal[]> {
 
     const q = query(savingGoalsCollection, where("child_id", "==", userId));
 
-    // Can use getDocs or getDocsFromcache instead, but for this case we want to fetch from the server
-    // Get docs from the server
-    const querySnapshot = await getDocsFromServer(q);
-    // console.log(querySnapshot);
+    // Can use getDocsFromServer or getDocsFromCache instead if we want spesific fetching.
+    const querySnapshot = await getDocs(q);
 
-    // Does not seem to fetch newest data from the server. Only fetches two instances.
     const savingGoals: SavingGoal[] = [];
     querySnapshot.forEach((docSnap) => {
-      console.log(docSnap.data());
-      // if (docSnap.exists()) {
-      //   savingGoals.push({
-      //     id: docSnap.id,
-      //     ...(docSnap.data() as SavingGoal),
-      //   });
-      // }
+      if (docSnap.exists()) {
+        savingGoals.push({
+          id: docSnap.id,
+          ...(docSnap.data() as SavingGoal),
+        });
+      }
     });
-
     if (savingGoals.length === 0) {
       throw new Error("No saving goals found for this user");
     }
@@ -37,22 +32,40 @@ export async function getSavingGoals(userId: string): Promise<SavingGoal[]> {
 }
 
 // Function for creating new saving goal
-
 export async function addSavingGoal(savingGoal: SavingGoal): Promise<boolean> {
     try {
         const savingGoals = doc(collection(db, 'savingGoals'));
         // Use zod parse to ensure that the savingGoal object is of the correct type
         SavingGoalSchema.parse(savingGoal);
-        // Store the saving goal in the database
-        await setDoc(savingGoals, {savingGoal});
+
+        // Need to spread the data in the object as we dont want to store the object itself, but rather the data in the object.
+        await setDoc(savingGoals, {...savingGoal});
+        console.log('New goal created:', savingGoal);
         return true
     } catch (error) {
         console.error('Error creating saving goal:', error);
-        throw new Error('Failed to create chore');
+        throw new Error('Failed to create saving goal');
     }
 }
 
-/**
- * TODO: Add updateSavingGoal function for adding money to the current_amount field.
- */
+// Function for updating a saving goal with new amount
+export async function updateSavingGoal(savingGoal: SavingGoal, amount: number): Promise<boolean> {
+  try {
+    if (!savingGoal.id) {
+      throw new Error("Saving goal ID is undefined");
+    }
+    const docRef = doc(db, "savingGoals", savingGoal.id);
+
+    // Use atomic increment to safely update the current amount
+    await updateDoc(docRef, {
+      current_amount: increment(amount)
+    });
+
+    console.log('Updated saving goal:', savingGoal);
+    return true;
+  } catch (error) {
+    console.error("Could not update saving goal:", error);
+    throw new Error("Failed to update saving goal");
+  }
+}
 

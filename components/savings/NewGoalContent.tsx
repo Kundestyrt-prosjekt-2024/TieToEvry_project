@@ -45,7 +45,6 @@ const NewGoalContent: React.FC<NewGoalContentProps> = ({ onClose, userId, refetc
     const addedNewSavingGoal = await addSavingGoal(newGoal);
     // Check for new goal creation
     if (addedNewSavingGoal) {
-      console.log('New goal created:', newGoal);
       refetch();
       refreshInput();
       onClose();

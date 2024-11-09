@@ -16,9 +16,12 @@ const Savings = () => {
   const userIDValue = userID ?? '';
   const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue);
 
-  //States for showing/hiding bottom sheets
+  // States for showing/hiding bottom sheets
   const [isNewGoalVisible, setIsNewGoalVisible] = useState(false);
   const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false);
+
+  // Saving goal to see when bottom sheet for adding money is in focus
+  const [savingGoal, setSavingGoal] = useState<SavingGoal | undefined>();
  
   // Makes us not see the page before data is present.
   if (isUserIDLoading || isSavingGoalsLoading) {
@@ -28,7 +31,6 @@ const Savings = () => {
       </SafeAreaView>
     );
   }
-  console.log(savingGoals?.length);
  
   //Functions to handle showing/hiding bottom sheets
   const handleAddMoney = () => {
@@ -82,7 +84,7 @@ const Savings = () => {
           <View className="flex-col items-center py-5 pb-20">
           {savingGoals && savingGoals.length > 0 ? (
             savingGoals.map((goal) => (
-              <SavingGoalCard key={goal.id} goal={goal} onAddMoney={handleAddMoney} />
+              <SavingGoalCard key={goal.id} goal={goal} onAddMoney={handleAddMoney} setSavingGoal={() => setSavingGoal(goal)} />
             ))
           ) : (
             <Text>Du har ingen aktive sparemål!</Text>
@@ -118,7 +120,7 @@ const Savings = () => {
       {/**Bottom sheets for adding money to a goal */}
       <TouchableWithoutFeedback onPress={ () => { dismissKeyboard() } }>
       <ReusableBottomSheet isVisible={isAddMoneyVisible} onClose={handleCloseAddMoney}>
-        <AddMoneyContent onClose={handleCloseAddMoney} />
+        <AddMoneyContent savingGoal={savingGoal} onClose={handleCloseAddMoney} refetch={refetch} />
       </ReusableBottomSheet>
       </TouchableWithoutFeedback>
 

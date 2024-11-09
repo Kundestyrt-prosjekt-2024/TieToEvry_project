@@ -6,9 +6,10 @@ import { SavingGoal } from '@/backend/types/savingGoal';
 interface SavingGoalCardProps {
   goal: SavingGoal;
   onAddMoney: () => void;
+  setSavingGoal: () => void;
 }
 
-const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ goal, onAddMoney }) => {
+const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ goal, onAddMoney, setSavingGoal }) => {
   const progress = goal.current_amount / goal.goal_amount;
 
   return (
@@ -27,7 +28,7 @@ const SavingGoalCard: React.FC<SavingGoalCardProps> = ({ goal, onAddMoney }) => 
             <Text className="text-xl ml-2">{goal.title}</Text>
           </View>
           <View className="items-center">
-            <TouchableOpacity className="bg-[#6DE272] items-center border-2 border-black justify-center rounded-full" style={{ width: 35, height: 35 }} onPress={onAddMoney}>
+            <TouchableOpacity className="bg-[#6DE272] items-center border-2 border-black justify-center rounded-full" style={{ width: 35, height: 35 }} onPress={() => { onAddMoney(); setSavingGoal(); }}>
               <Text className="text-black text-2xl">+</Text>
             </TouchableOpacity>
             <Text className="text-xs text-center">Spar</Text>
