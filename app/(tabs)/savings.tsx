@@ -82,13 +82,13 @@ const Savings = () => {
         
         {/* Current savings goals displayed in cards. */}
           <View className="flex-col items-center py-5 pb-20">
-          {savingGoals && savingGoals.length > 0 ? (
-            savingGoals.map((goal) => (
+            {savingGoals && savingGoals.length > 0 ? (
+            savingGoals.sort((a, b) => Number(b.current_amount) - Number(a.current_amount)).map((goal) => (
               <SavingGoalCard key={goal.id} goal={goal} onAddMoney={handleAddMoney} setSavingGoal={() => setSavingGoal(goal)} />
             ))
-          ) : (
+            ) : (
             <Text>Du har ingen aktive sparemål!</Text>
-          )}
+            )}
           </View>
         </ScrollView>
 

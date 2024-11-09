@@ -11,6 +11,7 @@ export const SavingGoalSchema = z.object({
   goal_amount: z.number(),
   icon_id: z.string(),
   title: z.string(),
+  complete: z.boolean().default(false),
 });
 
 export type SavingGoal = z.infer<typeof SavingGoalSchema>;

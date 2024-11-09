@@ -53,7 +53,7 @@ export async function addSavingGoal(savingGoal: SavingGoal): Promise<boolean> {
 
         // Need to spread the data in the object as we dont want to store the object itself, but rather the data in the object.
         await setDoc(savingGoals, {...savingGoal});
-        console.log('New goal created:', savingGoal);
+        console.log('New goal created:', savingGoal.title);
         return true
     } catch (error) {
         console.error('Error creating saving goal:', error);
@@ -81,10 +81,10 @@ export async function updateSavingGoal(savingGoal: SavingGoal, amount: number): 
       // Use atomic increment to safely update the current amount
       await updateDoc(docRef, {current_amount: increment(amount)});
       await adjustBalance(account.id, -amount);
-      console.log('Updated saving goal:', savingGoal);
+      console.log('Updated saving goal:', savingGoal.title);
       return true;
     } else{
-      console.log('Not enough funds to update saving goal:', savingGoal);
+      console.log('Not enough funds to update saving goal:', savingGoal.title);
       return false;
     }
 
@@ -94,3 +94,21 @@ export async function updateSavingGoal(savingGoal: SavingGoal, amount: number): 
   }
 }
 
+export async function completedGoal(savingGoal: SavingGoal): Promise<boolean> {
+  try {
+    if (!savingGoal.id) {
+      throw new Error("Saving goal ID is undefined");
+    }
+    const docRef = doc(db, "savingGoals", savingGoal.id);
+    const account = await getBankAccountByUID(savingGoal.child_id);
+
+    await adjustBalance(account.id, savingGoal.goal_amount);
+    await updateDoc(docRef, {complete: true});
+    console.log('Completed saving goal. Money deposited', savingGoal.title, ":", savingGoal.goal_amount);
+    return true;
+
+  } catch (error) {
+    console.error("Could not deposit money:", error);
+    throw new Error("Failed to complete saving goal");
+  }
+}
