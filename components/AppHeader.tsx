@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native"
 import Awesome5Icon from "react-native-vector-icons/FontAwesome5"
 import { useRouter } from "expo-router"
 
-const AppHeader = () => {
+const AppHeader = ({ parent = false }: { parent?: boolean }) => {
   const router = useRouter()
 
   function handleProfile(): void {
@@ -15,11 +15,13 @@ const AppHeader = () => {
   }
 
   return (
-    <View style={styles.header}>
-      <Pressable style={styles.coinButton} onPress={handleCoin}>
-        <Text style={styles.headerText}>2387</Text>
-        <Image style={styles.coin} source={require("@/assets/images/coin.png")} />
-      </Pressable>
+    <View style={[styles.header, parent ? { justifyContent: "flex-end" } : { justifyContent: "space-between" }]}>
+      {!parent && (
+        <Pressable style={styles.coinButton} onPress={handleCoin}>
+          <Text style={styles.headerText}>2387</Text>
+          <Image style={styles.coin} source={require("@/assets/images/coin.png")} />
+        </Pressable>
+      )}
       <Pressable onPress={handleProfile}>
         <Awesome5Icon name="user-circle" size={35} />
       </Pressable>
