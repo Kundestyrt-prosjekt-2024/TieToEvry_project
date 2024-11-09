@@ -1,5 +1,5 @@
 import { db } from '../../constants/firebaseConfig';
-import { collection, query, where, getDocs, doc, updateDoc, Timestamp, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, Timestamp, addDoc, getDoc } from 'firebase/firestore';
 import { BankAccount } from '../types/bankAccount';
 
 /**
@@ -57,17 +57,32 @@ export async function getBankAccountByUID(userUID: string): Promise<BankAccount 
     }
 }
 
-/**Function is used to update the balance of a bank account.
+/**
+ * Function is used to adjust the balance of a bank account by a specified amount.
  * 
  * @param accountId A string of the id of the account.
- * @param newBalance A number of the new balance of the account.
+ * @param amount A number representing the amount to adjust the balance by (can be positive or negative).
  */
-export async function updateBalance(accountId: string, newBalance: number) {
-    const accountDocRef = doc(db, 'bankAccounts', accountId);
+export async function adjustBalance(accountId: string, amount: number) {
+  const accountDocRef = doc(db, 'bankAccounts', accountId);
 
-    try {
-        await updateDoc(accountDocRef, { balance: newBalance });
-    } catch (error) {
-        throw new Error('Failed to update balance');
-    }
+  try {
+      // Retrieve the current balance
+      const accountSnapshot = await getDoc(accountDocRef);
+
+      if (!accountSnapshot.exists()) {
+          throw new Error('Account not found');
+      }
+
+      // Get the current balance
+      const currentBalance = accountSnapshot.data().balance;
+
+      // Calculate the new balance
+      const newBalance = currentBalance + amount;
+
+      // Update the document with the new balance
+      await updateDoc(accountDocRef, { balance: newBalance });
+  } catch (error) {
+      throw new Error('Failed to adjust balance');
+  }
 }
