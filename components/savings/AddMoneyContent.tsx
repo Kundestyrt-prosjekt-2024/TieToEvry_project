@@ -37,6 +37,9 @@ const AddMoneyContent: React.FC<AddMoneyContentProps> = ({ onClose, savingGoal, 
         refetch();
         onClose();
       }
+      else{
+        Alert.alert("Ikke høy nok saldo", "Kunne ikke legge til sparemål på grunn av manglende saldo.");
+      }
     } catch (error) {
       console.error("Failed to add amount:", error);
       Alert.alert("Error", "Could not add amount. Please try again.");

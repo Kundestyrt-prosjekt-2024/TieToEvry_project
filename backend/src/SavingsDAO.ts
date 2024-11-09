@@ -1,8 +1,15 @@
 import { db } from "@/constants/firebaseConfig";
 import { collection, getDocs, query, where, doc, setDoc, getDocsFromServer, getDocsFromCache, updateDoc, increment } from "firebase/firestore";
 import { SavingGoal, SavingGoalSchema } from "../types/savingGoal";
+import { adjustBalance, getBankAccountByUID } from "./bankAccountDAO";
 
-//Function that returns an array of saving goals for a specific user based on the user's id
+/**
+ * Function that returns an array of saving goals for a specific user based on the user's id
+ * 
+ * @param userId A string of the id of the user.
+ * @returns the saving goals for a given user ID.
+ * 
+ */
 export async function getSavingGoals(userId: string): Promise<SavingGoal[]> {
   try {
     const savingGoalsCollection = collection(db, "savingGoals");
@@ -31,7 +38,13 @@ export async function getSavingGoals(userId: string): Promise<SavingGoal[]> {
   }
 }
 
-// Function for creating new saving goal
+/**
+ * Function for creating new saving goal for a user.
+ * 
+ * @param savingGoal A saving goal object.
+ * @returns a boolean value that indicates if the saving goal was created successfully.
+ * 
+ */
 export async function addSavingGoal(savingGoal: SavingGoal): Promise<boolean> {
     try {
         const savingGoals = doc(collection(db, 'savingGoals'));
@@ -48,21 +61,33 @@ export async function addSavingGoal(savingGoal: SavingGoal): Promise<boolean> {
     }
 }
 
-// Function for updating a saving goal with new amount
+/**
+ * Function for updating a saving goal with new amount
+ * 
+ * @param savingGoal A saving goal object.
+ * @param amount A number that represents how much a user wants to allocate to the saving goal.
+ * @returns a boolean value that indicates if the saving goal was updated successfully.
+ * 
+ */
 export async function updateSavingGoal(savingGoal: SavingGoal, amount: number): Promise<boolean> {
   try {
     if (!savingGoal.id) {
       throw new Error("Saving goal ID is undefined");
     }
     const docRef = doc(db, "savingGoals", savingGoal.id);
+    const account = await getBankAccountByUID(savingGoal.child_id);
 
-    // Use atomic increment to safely update the current amount
-    await updateDoc(docRef, {
-      current_amount: increment(amount)
-    });
+    if (account.balance - amount >= 0){
+      // Use atomic increment to safely update the current amount
+      await updateDoc(docRef, {current_amount: increment(amount)});
+      await adjustBalance(account.id, -amount);
+      console.log('Updated saving goal:', savingGoal);
+      return true;
+    } else{
+      console.log('Not enough funds to update saving goal:', savingGoal);
+      return false;
+    }
 
-    console.log('Updated saving goal:', savingGoal);
-    return true;
   } catch (error) {
     console.error("Could not update saving goal:", error);
     throw new Error("Failed to update saving goal");
