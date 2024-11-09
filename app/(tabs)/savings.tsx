@@ -5,25 +5,22 @@ import NewGoalContent from '@/components/savings/NewGoalContent';
 import AddMoneyContent from '@/components/savings/AddMoneyContent';
 import AppHeader from '@/components/AppHeader';
 import SavingGoalCard from '@/components/savings/SavingGoalCard';
-import { useGetUserID, /**useGetSavingGoals*/ } from '@/hooks/useGetFirestoreData';
+import { useGetSavingGoals, useGetUserID, /**useGetSavingGoals*/ } from '@/hooks/useGetFirestoreData';
 import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '@/constants/firebaseConfig';
 import { SavingGoal } from '@/backend/types/savingGoal';
 
 const Savings = () => {
+  // Hooks for UserID and saving goals.  
+  const { data: userID, isLoading: isUserIDLoading } = useGetUserID();
+  const userIDValue = userID ?? '';
+  const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue);
 
- 
   //States for showing/hiding bottom sheets
   const [isNewGoalVisible, setIsNewGoalVisible] = useState(false);
   const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false);
-  
-  const [savingGoals, setSavingGoals] = useState<SavingGoal[]>([]);
-  const [loading, setLoading] = useState(true);
-  /**
-  const { data: userID, isLoading: isUserIDLoading } = useGetUserID();
-  const userIDValue = userID ?? '';
-  const { data: savingGoals, isLoading: isSavingGoalsLoading } = useGetSavingGoals(userIDValue);
-
+ 
+  // Makes us not see the page before data is present.
   if (isUserIDLoading || isSavingGoalsLoading) {
     return (
       <SafeAreaView className="bg-white flex-1 justify-center items-center">
@@ -31,7 +28,8 @@ const Savings = () => {
       </SafeAreaView>
     );
   }
- */
+  console.log(savingGoals?.length);
+ 
   //Functions to handle showing/hiding bottom sheets
   const handleAddMoney = () => {
     setIsAddMoneyVisible(true);
@@ -80,8 +78,7 @@ const Savings = () => {
           </View>
         </View>
         
-        {/** Current savings goals displayed in cards.
-         * TODO: Saving goal data should be mapped across cards */}
+        {/* Current savings goals displayed in cards. */}
           <View className="flex-col items-center py-5 pb-20">
           {savingGoals && savingGoals.length > 0 ? (
             savingGoals.map((goal) => (
@@ -112,7 +109,8 @@ const Savings = () => {
       <ReusableBottomSheet isVisible={isNewGoalVisible} onClose={handleCloseNewGoal}>
       <NewGoalContent
           onClose={handleCloseNewGoal}
-          //userId={userID}
+          userId={userIDValue}
+          refetch={refetch}
         />
       </ReusableBottomSheet>
       </TouchableWithoutFeedback>
