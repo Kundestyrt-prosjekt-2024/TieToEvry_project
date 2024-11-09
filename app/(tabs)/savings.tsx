@@ -29,34 +29,34 @@ const Savings = () => {
       <SafeAreaView className="bg-white flex-1 justify-center items-center">
         <Text>Loading...</Text>
       </SafeAreaView>
-    );
+    )
   }
  
   //Functions to handle showing/hiding bottom sheets
   const handleAddMoney = () => {
-    setIsAddMoneyVisible(true);
-    dismissKeyboard();
-  };
+    setIsAddMoneyVisible(true)
+    dismissKeyboard()
+  }
 
   const handleCloseAddMoney = () => {
-    setIsAddMoneyVisible(false);
-    dismissKeyboard();
-  };
+    setIsAddMoneyVisible(false)
+    dismissKeyboard()
+  }
 
   const handleNewGoalPress = () => {
-    setIsNewGoalVisible(true);
-    dismissKeyboard();
-  };
+    setIsNewGoalVisible(true)
+    dismissKeyboard()
+  }
 
   const handleCloseNewGoal = () => {
-    setIsNewGoalVisible(false);
-    dismissKeyboard();
-  };
+    setIsNewGoalVisible(false)
+    dismissKeyboard()
+  }
 
   //Hiding keyboard
   const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+    Keyboard.dismiss()
+  }
 
   return (
     <SafeAreaView className="bg-white">
@@ -90,20 +90,15 @@ const Savings = () => {
             <Text>Du har ingen aktive sparemål!</Text>
           )}
           </View>
-
         </ScrollView>
 
         {/**Static button to create new saving goal */}
         <View className="absolute flex-col items-center bottom-20 right-5 mb-7">
-          <TouchableOpacity
-            className="bg-[#FFC5D3] w-10 h-10 rounded-full"
-            onPress={handleNewGoalPress}
-          >
+          <TouchableOpacity className="bg-[#FFC5D3] w-10 h-10 rounded-full" onPress={handleNewGoalPress}>
             <Text className="w-10 h-10 text-center text-3xl">+</Text>
           </TouchableOpacity>
           <Text className="text-xs text-center">Nytt mål</Text>
         </View>
-
       </View>
 
       {/**Bottom sheet for creating new goal */}
@@ -123,9 +118,8 @@ const Savings = () => {
         <AddMoneyContent savingGoal={savingGoal} onClose={handleCloseAddMoney} refetch={refetch} />
       </ReusableBottomSheet>
       </TouchableWithoutFeedback>
-
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default Savings;
+export default Savings
