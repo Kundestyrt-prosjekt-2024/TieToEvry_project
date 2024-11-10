@@ -12,7 +12,7 @@ const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
 
   return (
     <Pressable onPress={onClick}>
-      <View className="w-full flex-row justify-between p-2 px-5 items-center bg-slate-50 rounded-2xl mb-2.5">
+      <View className="w-full flex-row justify-between p-2 px-5 items-center bg-[#CBF1F4] rounded-2xl mb-2.5">
         <View className="flex-row items-center space-x-2.5">
           <View className="flex-col justify-center">
             <Text className="text-base">{chore.name}</Text>
