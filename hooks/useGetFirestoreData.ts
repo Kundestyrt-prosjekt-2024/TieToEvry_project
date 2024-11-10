@@ -1,5 +1,5 @@
 import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
-import { createChore } from "@/backend/src/choresDAO"
+import { createChore, getChoreIcons } from "@/backend/src/choresDAO"
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
 import { getUser } from "@/backend/src/UserDAO"
@@ -58,5 +58,12 @@ export const useGetSavingGoals = (userId: string) => {
 export const useCreateChore = () => {
   return useMutation({
     mutationFn: (chore: Chore) => createChore(chore),
+  })
+}
+
+export const useGetChoreIcons = () => {
+  return useQuery({
+    queryKey: ["choreIcons"],
+    queryFn: () => getChoreIcons(),
   })
 }
