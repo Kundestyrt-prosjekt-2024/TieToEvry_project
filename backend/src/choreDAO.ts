@@ -1,7 +1,9 @@
-import { db } from '../../constants/firebaseConfig';
-import { transferMoney } from '../../backend/src/TransactionService'; //File will be available when merged
+import { getDownloadURL, listAll, ref } from 'firebase/storage';
+import { db, storage } from '../../constants/firebaseConfig';
+import { transferMoney } from './transactionService'; //File will be available when merged
 import { firestore } from 'firebase-admin';
-import { collection, query, where, getDocs, setDoc, doc, updateDoc, DocumentReference, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc, addDoc, updateDoc, DocumentReference, orderBy } from 'firebase/firestore';
+import { Chore } from '../types/chore';
 
 type ChoreData = {
     chore_description?: string;
@@ -14,23 +16,27 @@ type ChoreData = {
     updated_at?: Date;
 };
 
-//Parents can create chores which are set as approved by default
-export async function createChore(childUID: string, choreData: ChoreData) {
+export async function createChore(chore: Chore) {
     try {
-        const choreRef = doc(collection(db, 'chores'));
-        await setDoc(choreRef, {
-            ...choreData,
-            child_id: childUID,
-            status: 'approved',
-            created_at: new Date(),
-            updated_at: new Date(),
-        });
+      await addDoc(collection(db, "chores"), chore)
     } catch (error) {
-        console.error('Error creating chore:', error);
-        throw new Error('Failed to create chore');
+      throw new Error("Failed to add chore")
     }
-}
-
+  }
+  
+  export async function getChoreIcons() {
+    const folderRef = ref(storage, "Icons")
+    try {
+      const result = await listAll(folderRef)
+  
+      const urlPromises = result.items.map((itemRef) => getDownloadURL(itemRef))
+      const urls = await Promise.all(urlPromises)
+      return urls
+    } catch (error) {
+      console.error("Error fetching chore icons:", error)
+      return []
+    }
+  }
 
 //Kids can create chores but they are set to pending awaiting approval by parents
 export async function suggestChore(childUID: string, choreData: ChoreData) {
@@ -114,7 +120,7 @@ export async function approveCompletedChore(choreID: string, parentUID: string, 
             status: 'paid',
             updated_at: new Date(),
         });
-        await transferMoney(parentUID, childUID, rewardAmount, "Chore Completion Reward", "chore_reward");
+        await transferMoney(parentUID, childUID, rewardAmount, "Chore Completion Reward");
     } catch (error) {
         console.error('Error approving completed chore:', error);
         throw new Error('Failed to approve completed chore');

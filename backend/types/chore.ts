@@ -13,7 +13,7 @@ const ChoreSchema = z.object({
   chore_status: z.string(),
   created_at: FirestoreTimestampSchema,
   is_repeatable: z.boolean(),
-  recurrence: z.string(),
+  recurrence: z.enum(["daily", "weekly", "monthly"]),
   reward_amount: z.number(),
   time_limit: FirestoreTimestampSchema,
 })
