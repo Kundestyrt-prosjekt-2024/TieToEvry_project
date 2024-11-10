@@ -1,5 +1,5 @@
 import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
-import { createChore, getChoreIcons } from "@/backend/src/choresDAO"
+import { createChore, getChoreIcons } from "@/backend/src/choreDAO"
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
 import { getUser } from "@/backend/src/UserDAO"
