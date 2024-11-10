@@ -1,9 +1,11 @@
 import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
+import { createChore } from "@/backend/src/choresDAO"
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
 import { getUser } from "@/backend/src/UserDAO"
+import { Chore } from "@/backend/types/chore"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useQueries, useQuery } from "@tanstack/react-query"
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query"
 
 export const useGetUserID = () => {
   return useQuery({
@@ -50,5 +52,11 @@ export const useGetSavingGoals = (userId: string) => {
     queryKey: ["savingGoals", userId],
     queryFn: () => getSavingGoals(userId),
     enabled: userId.length !== 0,
+  })
+}
+
+export const useCreateChore = () => {
+  return useMutation({
+    mutationFn: (chore: Chore) => createChore(chore),
   })
 }
