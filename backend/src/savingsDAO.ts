@@ -77,16 +77,11 @@ export async function updateSavingGoal(savingGoal: SavingGoal, amount: number): 
     const docRef = doc(db, "savingGoals", savingGoal.id);
     const account = await getBankAccountByUID(savingGoal.child_id);
 
-    if (account.balance - amount >= 0){
       // Use atomic increment to safely update the current amount
-      await updateDoc(docRef, {current_amount: increment(amount)});
       await adjustBalance(account.id, -amount);
+      await updateDoc(docRef, {current_amount: increment(amount)});
       console.log('Updated saving goal:', savingGoal.title);
       return true;
-    } else{
-      console.log('Not enough funds to update saving goal:', savingGoal.title);
-      return false;
-    }
 
   } catch (error) {
     console.error("Could not update saving goal:", error);
