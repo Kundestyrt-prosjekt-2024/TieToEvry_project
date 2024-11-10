@@ -59,7 +59,7 @@ const Overview = () => {
       <View className="flex flex-col items-center justify-center mt-10">
         <Text className="font-semibold text-2xl">Saldo: {childBankAccount.data?.balance},-</Text>
         <Pressable className="py-3 px-10 bg-blue-300 rounded-md mt-6" onPress={() => router.push("/Transactions")}>
-          <Text className="text-lg">Se transakjoner</Text>
+          <Text className="text-lg">Se transaksjoner</Text>
         </Pressable>
       </View>
     </SafeAreaView>

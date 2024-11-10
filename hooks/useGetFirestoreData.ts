@@ -1,16 +1,16 @@
-import { getBankAccountByUID } from '@/backend/src/bankAccountDAO';
-import { getProfilePictures } from '@/backend/src/ProfileDAO';
-//import { getSavingGoals } from '@/backend/src/SavingsDAO';
-import { getUser } from '@/backend/src/UserDAO';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import { getSavingGoals } from '@/backend/src/SavingsDAO';
-
+import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
+import { createChore, getChoreIcons } from "@/backend/src/choresDAO"
+import { getProfilePictures } from "@/backend/src/ProfileDAO"
+import { getSavingGoals } from "@/backend/src/savingsDAO"
+import { getUser } from "@/backend/src/UserDAO"
+import { Chore } from "@/backend/types/chore"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query"
 
 export const useGetUserID = () => {
   return useQuery({
     queryKey: ["userID"],
-    queryFn: () => AsyncStorage.getItem("userID")
+    queryFn: () => AsyncStorage.getItem("userID"),
   })
 }
 
@@ -18,14 +18,14 @@ export const useGetUser = (userID: string) => {
   return useQuery({
     queryKey: ["user", userID],
     queryFn: () => getUser(userID),
-    enabled: userID.length !== 0 // only fetch data when userID is not empty
+    enabled: userID.length !== 0, // only fetch data when userID is not empty
   })
 }
 
 export const useGetProfilePictures = () => {
   return useQuery({
     queryKey: ["profilePictures"],
-    queryFn: () => getProfilePictures()
+    queryFn: () => getProfilePictures(),
   })
 }
 
@@ -34,8 +34,8 @@ export const useGetChildren = (childrenIDs: string[]) => {
     queries: childrenIDs.map((id) => ({
       queryKey: ["user", id],
       queryFn: () => getUser(id),
-      enabled: childrenIDs.length !== 0
-    }))
+      enabled: childrenIDs.length !== 0,
+    })),
   })
 }
 
@@ -43,19 +43,27 @@ export const useGetBankAccount = (userID: string) => {
   return useQuery({
     queryKey: ["bankAccount", userID],
     queryFn: () => getBankAccountByUID(userID),
-    enabled: userID.length !== 0
+    enabled: userID.length !== 0,
   })
 }
 
-
 export const useGetSavingGoals = (userId: string) => {
   return useQuery({
-    queryKey: ['savingGoals', userId],
+    queryKey: ["savingGoals", userId],
     queryFn: () => getSavingGoals(userId),
     enabled: userId.length !== 0,
-  });
-};
+  })
+}
 
-/**
- * TODO: Add a hook for updating the current_amount field in the saving goal.
- */
+export const useCreateChore = () => {
+  return useMutation({
+    mutationFn: (chore: Chore) => createChore(chore),
+  })
+}
+
+export const useGetChoreIcons = () => {
+  return useQuery({
+    queryKey: ["choreIcons"],
+    queryFn: () => getChoreIcons(),
+  })
+}

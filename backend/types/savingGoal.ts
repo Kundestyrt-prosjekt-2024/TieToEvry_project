@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 //The type as it is defined in Firestore
 export const SavingGoalSchema = z.object({
@@ -12,6 +12,6 @@ export const SavingGoalSchema = z.object({
   icon_id: z.string(),
   title: z.string(),
   complete: z.boolean().default(false),
-});
+})
 
-export type SavingGoal = z.infer<typeof SavingGoalSchema>;
+export type SavingGoal = z.infer<typeof SavingGoalSchema>
