@@ -2,7 +2,14 @@ import { View, Text, FlatList, Pressable, Image, TextInput, Modal, Switch } from
 import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AppHeader from "@/components/AppHeader"
-import { useCreateChore, useGetChildren, useGetChoreIcons, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import {
+  useCreateChore,
+  useGetChildren,
+  useGetChoreIcons,
+  useGetChores,
+  useGetUser,
+  useGetUserID,
+} from "@/hooks/useGetFirestoreData"
 import DataLoading from "@/components/DataLoading"
 import { ScrollView } from "react-native-gesture-handler"
 import Ionicons from "@expo/vector-icons/Ionicons"
@@ -13,9 +20,6 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 const choresParent = () => {
   const parentID = useGetUserID()
   const parent = useGetUser(parentID.data || "")
-  const children = useGetChildren(parent.data?.children || [])
-
-  const choreIcons = useGetChoreIcons()
 
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("Aktive")
@@ -23,13 +27,18 @@ const choresParent = () => {
   const [description, setDescription] = useState("")
   const [icon, setIcon] = useState("")
   const [isRepeatable, setIsRepeatable] = useState(false)
-  const [recurrence, setRecurrence] = useState("")
+  const [recurrence, setRecurrence] = useState<"daily" | "weekly" | "monthly">("daily")
   const [rewardAmount, setRewardAmount] = useState("")
   const [timeLimit, setTimeLimit] = useState(new Date())
 
-  const createChore = useCreateChore()
-
   const selectedChildID = parent.data?.children?.[selectedChildIndex]
+
+  const children = useGetChildren(parent.data?.children || [])
+  const childChores = useGetChores(selectedChildID ?? "")
+
+  const choreIcons = useGetChoreIcons()
+
+  const createChore = useCreateChore()
 
   const handleCreateChore = () => {
     setShowModal(false)
@@ -38,7 +47,7 @@ const choresParent = () => {
       parent_id: parentID.data!,
       chore_description: description,
       icon: icon,
-      chore_status: "Gjennomførbar",
+      chore_status: "approved",
       created_at: Timestamp.now(),
       is_repeatable: isRepeatable,
       recurrence: recurrence,
@@ -140,7 +149,7 @@ const choresParent = () => {
               <TextInput
                 placeholder="Recurrence (e.g., Daily, Weekly)"
                 value={recurrence}
-                onChangeText={setRecurrence}
+                onChangeText={(text) => setRecurrence(text as "daily" | "weekly" | "monthly")}
                 className="border border-gray-300 rounded p-2 mb-4"
               />
             )}
