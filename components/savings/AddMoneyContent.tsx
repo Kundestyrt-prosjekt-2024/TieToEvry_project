@@ -2,7 +2,7 @@ import { SavingGoal } from '@/backend/types/savingGoal';
 import React, { useState } from 'react';
 import { View, Text, Pressable, TextInput, TouchableOpacity, GestureResponderEvent, Alert } from 'react-native';
 import { Bike } from 'lucide-react-native';
-import { updateSavingGoal } from '@/backend/src/SavingsDAO';
+import { updateSavingGoal } from '@/backend/src/savingsDAO';
 
 interface AddMoneyContentProps {
   savingGoal: SavingGoal | undefined;

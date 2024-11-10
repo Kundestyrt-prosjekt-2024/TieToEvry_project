@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Bike, MonitorSmartphone, Shirt, Ticket } from 'lucide-react-native';
-import { addSavingGoal } from '@/backend/src/SavingsDAO';
+import { addSavingGoal } from '@/backend/src/savingsDAO';
 import { SavingGoal } from '@/backend/types/savingGoal';
 
 interface NewGoalContentProps {
@@ -40,6 +40,7 @@ const NewGoalContent: React.FC<NewGoalContentProps> = ({ onClose, userId, refetc
       goal_amount: goalAmount,
       icon_id: selectedIcon,
       title: goalName,
+      complete: false,
     };
 
     const addedNewSavingGoal = await addSavingGoal(newGoal);

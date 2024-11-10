@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import {Shirt, MonitorSmartphone, Ticket, Bike, Check }  from 'lucide-react-native';
 import { SavingGoal } from '@/backend/types/savingGoal';
-import { completedGoal } from '@/backend/src/SavingsDAO';
+import { completedGoal } from '@/backend/src/savingsDAO';
 
 interface SavingGoalCardProps {
   goal: SavingGoal;
