@@ -68,7 +68,8 @@ const Profile = () => {
           <View className="relative">
             <Pressable
               onPress={handleOpenPress}
-              className="bg-[#52D1DC] rounded-full w-10 h-10 justify-center items-center absolute right-6 top-6 z-10 border border-black"
+              className="bg-[#52D1DC] rounded-full w-10 h-10 justify-center items-center absolute right-6 top-6 z-10 border border-black" 
+              testID="edit-profile-picture-button"
             >
               <FontAwesome name="pencil" size={24} color="black" />
             </Pressable>
@@ -77,6 +78,7 @@ const Profile = () => {
                 source={{ uri: user.data?.profilePicture }}
                 className="w-full h-full"
                 style={{ resizeMode: "cover" }}
+                testID="profile-image"
               />
             </View>
           </View>
@@ -111,9 +113,9 @@ const Profile = () => {
         backdropComponent={renderBackdrop}
         index={-1}
       >
-        <View className="flex-col items-center">
+        <View className="flex-col items-center" testID="profile-bottom-sheet">
           <View className="w-full flex-row justify-end pr-6">
-            <Pressable onPress={handleClosePress}>
+            <Pressable onPress={handleClosePress} testID="close-bottom-sheet-button">
               <AntDesign name="close" size={32} color="black" />
             </Pressable>
           </View>
