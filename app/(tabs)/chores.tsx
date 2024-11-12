@@ -1,14 +1,14 @@
 import AppHeader from "@/components/AppHeader"
 import { View, Text, StyleSheet, Pressable, Image, Modal, Dimensions, FlatList, Animated } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Chore } from "../types/chores"
-import React, { useRef, useState } from "react"
+import { Chore } from "../../backend/types/chore"
+import React, { useMemo, useRef, useState } from "react"
 import ChoreList from "@/components/chores/chore"
-import { ScrollView } from "react-native-gesture-handler"
 import ChoresDetailedView from "@/components/chores/choresDetailedView"
-import { HandPlatter } from "lucide-react-native"
 import Button from "@/components/ui/button"
 import Popover from "@/components/chores/chorePopover"
+import { useGetChores, useGetUserID } from "@/hooks/useGetFirestoreData"
+
 
 const { height } = Dimensions.get("window")
 
@@ -19,100 +19,25 @@ const Chores = () => {
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
+  const {data: userID} = useGetUserID()
+  const {data, isLoading, isError, refetch} = useGetChores(userID ?? "");
 
-  const chores: Chore[] = [
-    {
-      icon: <HandPlatter />,
-      chore: "chore1",
-      name: "Vask opp",
-      description: "Vask opp alle tallerkner, glass og bestikk",
-      rewardNOK: 75,
-      rewardCoins: 5,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
-      completed: false,
-      status: "Gjennomførbar",
-      assignee: "Mamma",
-    },
-    {
-      chore: "chore2",
-      name: "Rydde rommet",
-      description: "Rommet ditt er rotete og må ryddes. Du vet hvordan det skal være",
-      rewardNOK: 50,
-      rewardCoins: 2,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 6)),
-      completed: false,
-      status: "Gjennomførbar",
-      assignee: "Mamma",
-    },
-    {
-      chore: "chore3",
-      name: "Gå tur med Laila",
-      description: "Du har ikke gått tur med Laila denne uken. Det kan du gjøre.",
-      rewardNOK: 100,
-      rewardCoins: 5,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 9)),
-      completed: true,
-      status: "Gjennomførbar",
-      assignee: "Pappa",
-    },
-    {
-      chore: "chore4",
-      name: "Vaske sjarken",
-      description: "Sjarken er skitten og trenger en vask. Husk å skrubbe dekket godt! Onkel blir fornøyd.",
-      rewardNOK: 200,
-      rewardCoins: 15,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 4)),
-      completed: false,
-      status: "Gjennomførbar",
-      assignee: "Pappa",
-    },
-    {
-      chore: "chore5",
-      name: "Vaske fesken",
-      description: "Fesken har blitt skitten og trenger en vask. Husk å skrubbe den godt! Vi vil ikke ha skitten fesk.",
-      rewardNOK: 30,
-      rewardCoins: 1,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 2)),
-      status: "Ferdig",
-      completed: true,
-      assignee: "Mamma",
-    },
-    {
-      chore: "chore6",
-      name: "Gjøre lekser",
-      description: "Du har fått lekser av lærer Saddam. Gjør de!",
-      rewardNOK: 60,
-      rewardCoins: 2,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 2)),
-      completed: false,
-      status: "Ferdig",
-      assignee: "Pappa",
-    },
-    {
-      chore: "chore7",
-      name: "Gjøre lekser",
-      description: "Du har fått lekser av lærer Saddam. Gjør de!",
-      rewardNOK: 60,
-      rewardCoins: 2,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 2)),
-      completed: false,
-      status: "Gjennomførbar",
-      assignee: "Pappa",
-    },
-    {
-      chore: "chore8",
-      name: "Gjøre lekser",
-      description: "Du har fått lekser av lærer Saddam. Gjør de!",
-      rewardNOK: 60,
-      rewardCoins: 2,
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 2)),
-      completed: true,
-      status: "Forespurt",
-      assignee: "Pappa",
-    },
-  ]
+  if (isLoading) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    )
+  } else if (isError && !data) {
+    return (
+      <View>
+        <Text>Error</Text>
+      </View>
+    )
+  }
 
-  const cashMulla = {
+
+  const cashMullaCoin = {
     mulla: 14243545,
     sphareCoin: 3245,
   }
@@ -164,14 +89,14 @@ const Chores = () => {
             <Image className="rounded-md" source={require("@/assets/images/sphare1.png")} resizeMode="contain" />
             <View className="flex flex-col h-36 justify-between items-center ">
               <Text className="text-3xl font-normal text-teal-500">Du har tjent:</Text>
-              <Text className="text-2xl font-light text-center">{cashMulla.mulla},-</Text>
+              <Text className="text-2xl font-light text-center">{cashMullaCoin.mulla},-</Text>
               <View className="flex-row items-center">
                 <Image
                   className="w-9 h-9 rounded-md"
                   source={require("@/assets/images/coin.png")}
                   resizeMode="contain"
                 />
-                <Text className="text-xl font-light">x{cashMulla.sphareCoin}</Text>
+                <Text className="text-xl font-light">x{cashMullaCoin.sphareCoin}</Text>
               </View>
             </View>
           </View>
@@ -180,7 +105,6 @@ const Chores = () => {
       </>
     )
   }
-
   return (
     <SafeAreaView className="bg-white flex-1" edges={["top"]}>
       <AppHeader />
@@ -188,12 +112,12 @@ const Chores = () => {
         <FlatList
           style={{ paddingTop: 20 }}
           contentContainerStyle={{ paddingBottom: 30 }}
-          data={chores}
+          data={data}
           renderItem={(chore) => renderChore(chore.item)}
           ListHeaderComponent={renderTop}
           scrollEnabled={true}
           onScroll={handleScroll}
-          keyExtractor={(chore) => chore.chore}
+          keyExtractor={(chore) => chore.chore_description}
           showsVerticalScrollIndicator={false}
         ></FlatList>
         <Animated.View
@@ -213,7 +137,7 @@ const Chores = () => {
           </View>
         </Modal>
       )}
-      <Popover chore={chores} onClick={() => setShowPopover(false)} showPopover={showPopover} />
+      <Popover chore={data || []} onClick={() => setShowPopover(false)} showPopover={showPopover} />
     </SafeAreaView>
   )
 }
