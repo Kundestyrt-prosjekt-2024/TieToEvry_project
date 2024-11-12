@@ -74,6 +74,7 @@ const AskSend = () => {
           renderItem={(req) => renderUser(req.item)}
           keyExtractor={(req) => req.uid}
           showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
         ></FlatList>
       </View>
       <View style={styles.mainContainer}>
