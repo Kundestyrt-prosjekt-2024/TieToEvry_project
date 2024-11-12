@@ -8,7 +8,7 @@ export type MoneyRequest = {
     requestedAt: Date;
 }
 
-export type Payment = {
+export type Transaction = {
     id: string;
     receiver: string;
     sender: string;
