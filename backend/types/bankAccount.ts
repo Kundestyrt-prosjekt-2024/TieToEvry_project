@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getSpendingLimit } from "../src/bankAccountDAO";
 
 const FirestoreTimestampSchema = z.object({
     seconds: z.number(),
@@ -12,6 +13,7 @@ const BankAccountSchema = z.object({
     balance: z.number(),
     currency: z.string(),
     date_opened: FirestoreTimestampSchema,
+    spending_limit: z.number().optional(),
 });
 
 export type BankAccount = z.infer<typeof BankAccountSchema>;
