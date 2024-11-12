@@ -1,6 +1,7 @@
 import { db } from "../../constants/firebaseConfig"
 import { collection, query, where, getDoc, getDocs, doc, updateDoc, Timestamp, addDoc } from "firebase/firestore"
 import { BankAccount } from "../types/bankAccount"
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry"
 
 export async function createBankAccount(userUID: string) {
   const bankAccount: BankAccount = {
@@ -73,5 +74,24 @@ export async function adjustBalance(accountId: string, amount: number) {
     await updateDoc(accountDocRef, { balance: newBalance })
   } catch (e) {
     throw new Error("Failed to adjust balance: " + e)
+  }
+}
+
+export async function setSpendingLimit(childId: string, limit: number) {
+  try {
+    const childAccount = await getBankAccountByUID(childId)
+    await updateDoc(doc(db, "bankAccounts", childAccount.id), 
+    { spending_limit: limit })
+  } catch (error: any) {
+    throw new Error("Failed to set spending limit: " + error.message)
+  }
+}
+
+export async function getSpendingLimit(childId: string) {
+  try {
+    const childAccount = await getBankAccountByUID(childId)
+    return childAccount.spending_limit
+  } catch (error: any) {
+    throw new Error("Failed to get spending limit: " + error.message)
   }
 }
