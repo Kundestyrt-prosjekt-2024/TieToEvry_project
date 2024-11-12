@@ -2,20 +2,27 @@ import { View, Text, FlatList, Pressable, Image, TextInput, Modal, Switch } from
 import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AppHeader from "@/components/AppHeader"
-import { useCreateChore, useGetChildren, useGetChoreIcons, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import {
+  useCreateChore,
+  useGetChildren,
+  useGetChoreIcons,
+  useGetChores,
+  useGetUser,
+  useGetUserID,
+} from "@/hooks/useGetFirestoreData"
 import DataLoading from "@/components/DataLoading"
 import { ScrollView } from "react-native-gesture-handler"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { Chore } from "@/backend/types/chore"
 import { Timestamp } from "firebase/firestore"
 import DateTimePicker from "@react-native-community/datetimepicker"
+import { useRouter } from "expo-router"
 
 const choresParent = () => {
+  const router = useRouter()
+
   const parentID = useGetUserID()
   const parent = useGetUser(parentID.data || "")
-  const children = useGetChildren(parent.data?.children || [])
-
-  const choreIcons = useGetChoreIcons()
 
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("Aktive")
@@ -23,13 +30,18 @@ const choresParent = () => {
   const [description, setDescription] = useState("")
   const [icon, setIcon] = useState("")
   const [isRepeatable, setIsRepeatable] = useState(false)
-  const [recurrence, setRecurrence] = useState("")
+  const [recurrence, setRecurrence] = useState<"daily" | "weekly" | "monthly">("daily")
   const [rewardAmount, setRewardAmount] = useState("")
   const [timeLimit, setTimeLimit] = useState(new Date())
 
-  const createChore = useCreateChore()
-
   const selectedChildID = parent.data?.children?.[selectedChildIndex]
+
+  const children = useGetChildren(parent.data?.children || [])
+  const childChores = useGetChores(selectedChildID ?? "")
+
+  const choreIcons = useGetChoreIcons()
+
+  const createChore = useCreateChore()
 
   const handleCreateChore = () => {
     setShowModal(false)
@@ -38,7 +50,7 @@ const choresParent = () => {
       parent_id: parentID.data!,
       chore_description: description,
       icon: icon,
-      chore_status: "Gjennomførbar",
+      chore_status: "approved",
       created_at: Timestamp.now(),
       is_repeatable: isRepeatable,
       recurrence: recurrence,
@@ -59,26 +71,38 @@ const choresParent = () => {
           <FlatList
             scrollEnabled={true}
             horizontal={true}
-            data={children.map((child) => child.data)}
+            data={[...children.map((child) => child.data), { isSpecialItem: true, name: "dummyText" }]}
             renderItem={({ item, index }) => {
-              const isSelected = selectedChildIndex === index
-              return (
-                <Pressable
-                  className="flex flex-col items-center justify-center gap-4"
-                  onPress={() => setSelectedChildIndex(index)}
-                >
-                  <View
-                    className={`rounded-full h-20 w-20 justify-center items-center overflow-hidden ${isSelected ? "border-4 border-blue-500" : ""}`}
+              if (!item) return null
+              if ("isSpecialItem" in item) {
+                return (
+                  <Pressable
+                    className="flex items-center justify-center mb-8 ml-4 w-16"
+                    onPress={() => router.push("/signupChild")}
                   >
-                    <Image
-                      source={{ uri: item?.profilePicture }}
-                      className="w-full h-full"
-                      style={{ resizeMode: "cover" }}
-                    />
-                  </View>
-                  <Text>{item?.name}</Text>
-                </Pressable>
-              )
+                    <Ionicons name="add" size={50} color="#3b82f6" />
+                  </Pressable>
+                )
+              } else {
+                const isSelected = selectedChildIndex === index
+                return (
+                  <Pressable
+                    className="flex flex-col items-center justify-center gap-4"
+                    onPress={() => setSelectedChildIndex(index)}
+                  >
+                    <View
+                      className={`rounded-full h-20 w-20 justify-center items-center overflow-hidden ${isSelected ? "border-4 border-blue-500" : ""}`}
+                    >
+                      <Image
+                        source={{ uri: item.profilePicture }}
+                        className="w-full h-full"
+                        style={{ resizeMode: "cover" }}
+                      />
+                    </View>
+                    <Text>{item.name}</Text>
+                  </Pressable>
+                )
+              }
             }}
             keyExtractor={(item) => item?.name || ""}
             showsHorizontalScrollIndicator={false}
@@ -140,7 +164,7 @@ const choresParent = () => {
               <TextInput
                 placeholder="Recurrence (e.g., Daily, Weekly)"
                 value={recurrence}
-                onChangeText={setRecurrence}
+                onChangeText={(text) => setRecurrence(text as "daily" | "weekly" | "monthly")}
                 className="border border-gray-300 rounded p-2 mb-4"
               />
             )}

@@ -10,12 +10,13 @@ const ChoreSchema = z.object({
   parent_id: z.string(),
   chore_description: z.string(),
   icon: z.string(),
-  chore_status: z.string(),
+  chore_status: z.enum(["pending", "approved", "completed", "paid", "declined"]),
   created_at: FirestoreTimestampSchema,
   is_repeatable: z.boolean(),
   recurrence: z.enum(["daily", "weekly", "monthly"]),
   reward_amount: z.number(),
   time_limit: FirestoreTimestampSchema,
+  id: z.string().optional(),
 })
 
 export type Chore = z.infer<typeof ChoreSchema>

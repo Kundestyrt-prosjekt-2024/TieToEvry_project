@@ -30,15 +30,15 @@ const Home = () => {
     <SafeAreaView style={styles.safeArea}>
       <AppHeader />
       <View style={styles.container}>
-        <Image style={styles.cardImage} source={require("@/assets/images/card.png")} />
+        <Image style={styles.cardImage} source={require("@/assets/images/card.png")} testID="card-image"/>
         <Text style={styles.balanceText}>{account.data?.balance},-</Text>
         <HorizontalLine />
         <View style={styles.budgetHeader}>
-          <Pressable onPress={handleLastMonth}>
+          <Pressable onPress={handleLastMonth} testID="left-arrow">
             <AntIcon name="left" size={25} color="#000" />
           </Pressable>
           <Text style={styles.monthText}>August</Text>
-          <Pressable onPress={handleNextMonth}>
+          <Pressable onPress={handleNextMonth} testID="right-arrow">
             <AntIcon name="right" size={25} color="#000" />
           </Pressable>
         </View>
