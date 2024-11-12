@@ -19,6 +19,24 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
       throw new Error("Insufficient funds")
     }
 
+    if (senderAccount.UID === receiverAccount.UID) {
+      throw new Error("Cannot transfer money to the same account")
+    }
+
+    if (senderAccount.currency !== receiverAccount.currency) {
+      throw new Error("Cannot transfer money between accounts with different currencies")
+    }
+
+    if (amount <= 0) {
+      throw new Error("Amount must be greater than 0")
+    }
+
+    if (senderAccount.spending_limit) {
+      if (senderAccount.spending_limit < amount) {
+        throw new Error("Amount exceeds spending limit")
+      }
+    }
+
     await adjustBalance(senderAccount.id, -amount)
     await adjustBalance(receiverAccount.id, amount)
 
