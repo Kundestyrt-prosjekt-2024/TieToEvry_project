@@ -1,7 +1,6 @@
 import { db } from "../../constants/firebaseConfig"
 import { collection, query, where, getDoc, getDocs, doc, updateDoc, Timestamp, addDoc } from "firebase/firestore"
 import { BankAccount } from "../types/bankAccount"
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry"
 
 export async function createBankAccount(userUID: string) {
   const bankAccount: BankAccount = {
