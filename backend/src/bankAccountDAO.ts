@@ -1,6 +1,7 @@
 import { db } from "../../constants/firebaseConfig"
-import { collection, query, where, getDoc, getDocs, doc, updateDoc, Timestamp, addDoc } from "firebase/firestore"
+import { collection, query, where, getDoc, getDocs, doc, updateDoc, Timestamp, addDoc, onSnapshot } from "firebase/firestore"
 import { BankAccount } from "../types/bankAccount"
+import { useGetBankAccount } from "@/hooks/useGetFirestoreData"
 
 export async function createBankAccount(userUID: string) {
   const bankAccount: BankAccount = {
@@ -24,7 +25,7 @@ export async function createBankAccount(userUID: string) {
  * @param userUID A string of the id of the user.
  * @returns the id of the account and the account information
  */
-export async function getBankAccountByUID(userUID: string): Promise<BankAccount & { id: string }> {
+export async function getBankAccountByUID(userUID: string, updateBankAccount: (updatedData: BankAccount) => void): Promise<BankAccount & { id: string }> {
   try {
     const bankAccountsRef = collection(db, "bankAccounts")
     const q = query(bankAccountsRef, where("UID", "==", userUID))
@@ -34,14 +35,24 @@ export async function getBankAccountByUID(userUID: string): Promise<BankAccount 
       throw new Error("Bank account not found")
     }
 
-    const doc = querySnapshot.docs[0]
-    const data = doc.data() as BankAccount
+    const docSnapshot = querySnapshot.docs[0]
+    const data = docSnapshot.data() as BankAccount
 
     if (typeof data.balance !== "number") {
       throw new Error("Invalid or missing 'balance' field in bank account document")
     }
 
-    return { id: doc.id, ...data }
+    const bankAccount = { id: docSnapshot.id, ...data };
+
+    // Listener
+    const unsubscribe = onSnapshot(doc(db, "bankAccounts", bankAccount.id), (updatedDoc) => {
+      if (updatedDoc.exists()) {
+        const updatedData = updatedDoc.data() as BankAccount;
+        updateBankAccount(updatedData);
+      }
+    });
+
+    return bankAccount;
   } catch (error) {
     throw new Error("Failed to get bank account by UID")
   }

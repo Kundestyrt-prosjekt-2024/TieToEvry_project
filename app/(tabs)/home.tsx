@@ -10,9 +10,8 @@ const { width, height } = Dimensions.get("window")
 
 const Home = () => {
   const router = useRouter()
-
-  const { data: userId } = useGetUserID();
-  const account = useGetBankAccount(userId || "");
+  const { data: userId } = useGetUserID()
+  const account = useGetBankAccount(userId || "")
 
   function handleLastMonth(): void {
     console.log("Last month")
@@ -30,8 +29,8 @@ const Home = () => {
     <SafeAreaView style={styles.safeArea}>
       <AppHeader />
       <View style={styles.container}>
-        <Image style={styles.cardImage} source={require("@/assets/images/card.png")} testID="card-image"/>
-        <Text style={styles.balanceText}>{account.data?.balance},-</Text>
+        <Image style={styles.cardImage} source={require("@/assets/images/card.png")} testID="card-image" />
+        <Text style={styles.balanceText}>{new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}</Text>
         <HorizontalLine />
         <View style={styles.budgetHeader}>
           <Pressable onPress={handleLastMonth} testID="left-arrow">
