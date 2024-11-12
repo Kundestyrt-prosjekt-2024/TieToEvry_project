@@ -56,6 +56,13 @@ export default function RootLayout() {
               title: "Gullrøtter",
             }}
           />
+          <Stack.Screen
+            name="signupChild"
+            options={{
+              headerBackTitle: "Tilbake",
+              title: "",
+            }}
+          />
         </Stack>
       </QueryClientProvider>
     </GestureHandlerRootView>
