@@ -9,11 +9,10 @@ const UserSchema = z.object({
     created_at: FirestoreTimestampSchema,
     birthdate: FirestoreTimestampSchema,
     name: z.string(),
-    passphrase: z.string(),
     phonenumber: z.number(),
     children: z.array(z.string()).optional(),
     parents: z.array(z.string()).optional(),
-    profilePicture: z.string().optional(),
+    profilePicture: z.string(),
 });
 
 export type User = z.infer<typeof UserSchema>;

@@ -4,11 +4,15 @@ import HorizontalLine from "@/components/HorizontalLine"
 import { Text, View, Image, StyleSheet, Pressable, Dimensions } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AntIcon from "react-native-vector-icons/AntDesign"
+import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
 
 const { width, height } = Dimensions.get("window")
 
 const Home = () => {
   const router = useRouter()
+
+  const { data: userId } = useGetUserID();
+  const account = useGetBankAccount(userId || "");
 
   function handleLastMonth(): void {
     console.log("Last month")
@@ -27,7 +31,7 @@ const Home = () => {
       <AppHeader />
       <View style={styles.container}>
         <Image style={styles.cardImage} source={require("@/assets/images/card.png")} />
-        <Text style={styles.balanceText}>1 425 503,-</Text>
+        <Text style={styles.balanceText}>{account.data?.balance},-</Text>
         <HorizontalLine />
         <View style={styles.budgetHeader}>
           <Pressable onPress={handleLastMonth}>

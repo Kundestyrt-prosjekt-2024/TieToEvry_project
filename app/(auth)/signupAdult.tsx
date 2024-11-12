@@ -30,13 +30,18 @@ const signupAdult = () => {
     const phoneNumberNumeric = Number(phonenumber)
     const birthdateDate = new Date(birthdate)
 
+    const birthdateTimestamp = {
+      seconds: Math.floor(birthdateDate.getTime() / 1000),
+      nanoseconds: 0,
+    }
+
     if (isNaN(phoneNumberNumeric)) {
       setError("Telefonnummer må være et gyldig nummer.")
       return
     }
 
     try {
-      await registerUser(email, password, name, phoneNumberNumeric, birthdateDate)
+      await registerUser(email, password, name, phoneNumberNumeric, birthdateTimestamp)
       setSuccess(true)
 
       setTimeout(() => {
