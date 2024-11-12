@@ -1,17 +1,19 @@
-import { View, Text, TextInput, Button, Pressable } from "react-native"
-import { useState } from "react"
+import { View, Text, TextInput, Pressable } from "react-native"
+import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { registerChild } from "@/backend/src/authentication"
 import { TouchableOpacity } from "react-native-gesture-handler"
-import { registerUser } from "@/backend/src/authentication"
 import { useRouter } from "expo-router"
 import Ionicons from "@expo/vector-icons/Ionicons"
+import { useGetUserID } from "@/hooks/useGetFirestoreData"
 
-const signupAdult = () => {
+const signupChild = () => {
   const router = useRouter()
+  const userID = useGetUserID()
 
-  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [name, setName] = useState("")
   const [phonenumber, setPhonenumber] = useState("")
   const [birthdate, setBirthdate] = useState("")
 
@@ -30,16 +32,6 @@ const signupAdult = () => {
     const phoneNumberNumeric = Number(phonenumber)
     const birthdateDate = new Date(birthdate)
 
-    const eighteenYearsAgo = new Date()
-    eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18)
-
-    const isUnder18 = birthdateDate > eighteenYearsAgo
-
-    if (isUnder18) {
-      setError("Du må være over 18 år for å opprette en konto")
-      return
-    }
-
     const birthdateTimestamp = {
       seconds: Math.floor(birthdateDate.getTime() / 1000),
       nanoseconds: 0,
@@ -50,12 +42,17 @@ const signupAdult = () => {
       return
     }
 
+    if (!userID.data) {
+      setError("Bruker-ID kunne ikke hentes. Vennligst prøv igjen senere.")
+      return
+    }
+
     try {
-      await registerUser(email, password, name, phoneNumberNumeric, birthdateTimestamp)
+      await registerChild(email, password, name, phoneNumberNumeric, birthdateTimestamp, userID.data)
       setSuccess(true)
 
       setTimeout(() => {
-        router.push("/(auth)/login")
+        router.back()
       }, 1500)
     } catch (error) {
       setError("Registreringen mislyktes. Vennligst prøv igjen.")
@@ -64,18 +61,11 @@ const signupAdult = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 justify-center items-center relative">
-      <Pressable
-        className="absolute top-20 left-4 flex-row items-center gap-2"
-        onPress={() => router.navigate("/(auth)/login")}
-      >
-        <Ionicons name="chevron-back" size={24} color="#3b82f6" />
-        <Text className="text-blue-500">Tilbake</Text>
-      </Pressable>
+    <SafeAreaView className="flex-1 items-center">
       <View className="w-full items-center">
-        <Text className="text-2xl font-bold mb-4">Registrer deg</Text>
+        <Text className="mb-8 text-xl font-bold">Registrer ditt barn</Text>
 
-        <View className="h-5 w-4/5 mb-4">
+        <View className="min-h-[36px] w-4/5 mb-4">
           {error ? (
             <Text className="text-red-500">{error}</Text>
           ) : success ? (
@@ -131,11 +121,11 @@ const signupAdult = () => {
 
         {/* Sign Up Button */}
         <TouchableOpacity className="bg-blue-500 w-4/5 p-4 rounded-lg" onPress={handleSignUp}>
-          <Text className="text-white text-center text-lg font-bold">Registrer deg</Text>
+          <Text className="text-white text-center text-lg font-bold">Registrer ditt barn</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   )
 }
 
-export default signupAdult
+export default signupChild

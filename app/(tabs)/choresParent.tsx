@@ -16,8 +16,11 @@ import Ionicons from "@expo/vector-icons/Ionicons"
 import { Chore } from "@/backend/types/chore"
 import { Timestamp } from "firebase/firestore"
 import DateTimePicker from "@react-native-community/datetimepicker"
+import { useRouter } from "expo-router"
 
 const choresParent = () => {
+  const router = useRouter()
+
   const parentID = useGetUserID()
   const parent = useGetUser(parentID.data || "")
 
@@ -68,26 +71,38 @@ const choresParent = () => {
           <FlatList
             scrollEnabled={true}
             horizontal={true}
-            data={children.map((child) => child.data)}
+            data={[...children.map((child) => child.data), { isSpecialItem: true, name: "dummyText" }]}
             renderItem={({ item, index }) => {
-              const isSelected = selectedChildIndex === index
-              return (
-                <Pressable
-                  className="flex flex-col items-center justify-center gap-4"
-                  onPress={() => setSelectedChildIndex(index)}
-                >
-                  <View
-                    className={`rounded-full h-20 w-20 justify-center items-center overflow-hidden ${isSelected ? "border-4 border-blue-500" : ""}`}
+              if (!item) return null
+              if ("isSpecialItem" in item) {
+                return (
+                  <Pressable
+                    className="flex items-center justify-center mb-8 ml-4 w-16"
+                    onPress={() => router.push("/signupChild")}
                   >
-                    <Image
-                      source={{ uri: item?.profilePicture }}
-                      className="w-full h-full"
-                      style={{ resizeMode: "cover" }}
-                    />
-                  </View>
-                  <Text>{item?.name}</Text>
-                </Pressable>
-              )
+                    <Ionicons name="add" size={50} color="#3b82f6" />
+                  </Pressable>
+                )
+              } else {
+                const isSelected = selectedChildIndex === index
+                return (
+                  <Pressable
+                    className="flex flex-col items-center justify-center gap-4"
+                    onPress={() => setSelectedChildIndex(index)}
+                  >
+                    <View
+                      className={`rounded-full h-20 w-20 justify-center items-center overflow-hidden ${isSelected ? "border-4 border-blue-500" : ""}`}
+                    >
+                      <Image
+                        source={{ uri: item.profilePicture }}
+                        className="w-full h-full"
+                        style={{ resizeMode: "cover" }}
+                      />
+                    </View>
+                    <Text>{item.name}</Text>
+                  </Pressable>
+                )
+              }
             }}
             keyExtractor={(item) => item?.name || ""}
             showsHorizontalScrollIndicator={false}
