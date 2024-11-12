@@ -9,9 +9,6 @@ import Button from "@/components/ui/button"
 import Popover from "@/components/chores/chorePopover"
 import { useGetChores, useGetUserID } from "@/hooks/useGetFirestoreData"
 
-
-const { height } = Dimensions.get("window")
-
 const Chores = () => {
   const [viewChore, toggleView] = React.useState(false)
   const [choreOfInterest, setChoreOfInterest] = React.useState<Chore | null>(null)
@@ -113,7 +110,12 @@ const Chores = () => {
           style={{ paddingTop: 20 }}
           contentContainerStyle={{ paddingBottom: 30 }}
           data={data}
-          renderItem={(chore) => renderChore(chore.item)}
+          renderItem={(chore) => {
+            if(chore.item.chore_status === "approved"){
+              return renderChore(chore.item)
+            }
+            return null
+          }}
           ListHeaderComponent={renderTop}
           scrollEnabled={true}
           onScroll={handleScroll}

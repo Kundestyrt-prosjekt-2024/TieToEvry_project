@@ -1,9 +1,8 @@
 import React, { useCallback, useRef, useEffect } from "react";
 import { Modal, Text, View } from "react-native";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { Chore } from "@/app/types/chores";
+import { Chore } from "../../backend/types/chore"
 import ChoreNavbar from "./chorePopoverNavbar";
-import { ChoreNavbarState } from "@/app/types/chores";
 import Done from "./popOverComponents/done";
 import Requested from "./popOverComponents/requested";
 import Older from "./popOverComponents/older";
@@ -17,7 +16,7 @@ interface Props {
 
 const Popover: React.FC<Props> = ({ chore, onClick, showPopover }) => {
 
-  const [state, setNavbarState] = React.useState<ChoreNavbarState>(ChoreNavbarState.GJENNOMFØRT);
+  const [state, setNavbarState] = React.useState<string>("completed");
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -46,11 +45,11 @@ const Popover: React.FC<Props> = ({ chore, onClick, showPopover }) => {
     >
       <View className="flex flex-col px-6">
         <ChoreNavbar state={state} onClick={(newState) => setNavbarState(newState)} closeOverlay={() => bottomSheetRef.current?.close()}/>
-          {state === ChoreNavbarState.GJENNOMFØRT ? (
+          {state === "completed" ? (
           //Render component for gjennomført
           <Done chores={chore} onClick={onClick}/>
           ):(
-          state === ChoreNavbarState.FORESPURT ? (
+          state === "pending" ? (
           //Render component for forespurt
           <Requested chores={chore} onClick={onClick}/>
           ):(
