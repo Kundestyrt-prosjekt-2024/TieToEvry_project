@@ -5,6 +5,8 @@ import ChoreList from "../chore";
 import React from "react";
 import ChoresDetailedView from "../choresDetailedView";
 import Button from "@/components/ui/button";
+import { useGetSavingGoals, useGetUserID } from "@/hooks/useGetFirestoreData";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   chores: Chore[];
@@ -15,8 +17,13 @@ const { height } = Dimensions.get('window');
 
 
 const Done: React.FC<Props> = ({ chores, onClick }) => {
+  const navigator = useNavigation();
   const [viewChore, toggleView] = React.useState(false);
   const [choreOfInterest, setChoreOfInterest] = React.useState<Chore | null>(null);
+  const { data: userID, isLoading: isUserIDLoading } = useGetUserID();
+  const userIDValue = userID ?? "";
+  const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue);
+
 
   const setViewChore = (chore: Chore) => {
     setChoreOfInterest(chore);
@@ -78,7 +85,7 @@ const Done: React.FC<Props> = ({ chores, onClick }) => {
         <Text className="w-full text-center p-2 font-semibold text-xl text-green-600">{earnedCoin} NOK</Text>
         {/* <View className="flex flex-row w-full"> */}
           <Text className="w-full my-1">Hvis du sparer halvparten kommer du nærmere sparemålet ditt!</Text>
-          <Button classname="py-1" text="Sett av til sparemål" onClick={() => console.log("Hello world from sett av til sparemål")}></Button>
+            <Button classname="py-1" text="Sett av til sparemål" onClick={() => navigator.navigate('savings' as never)}></Button>
         {/* </View> */}
         
       </View>

@@ -78,9 +78,6 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
             </View>
           </View>
         </View>
-        {/* <Pressable onPress={onClick} className="bg-white p-2 rounded-lg items-center">
-          <Text className="text-black">Lukk</Text>
-        </Pressable> */}
       </View>
     );
   }
@@ -127,18 +124,7 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
         </View>
         <View className="flex flex-row justify-between w-full pt-2">
           <Button onClick={onClick} text="Lukk" classname="bg-slate-50 px-3 py-1"></Button>
-          {/* <View className="flex justify-center flex-row space-x-2">
-            <View>
-              <Button onClick={() => handleStatus("complete")} text="Godkjenn" classname=" bg-green-200 px-3 py-1"></Button>
-            </View>
-            <View>
-              <Button onClick={() => handleStatus("rejected")} text="Avslå" classname="px-3 py-1"></Button>
-            </View>
-          </View> */}
         </View>
-        {/* <Pressable onPress={onClick} className="bg-white p-2 rounded-lg items-center">
-        <Text className="text-black">Lukk</Text>
-      </Pressable> */}
       </View>
     );
   };
