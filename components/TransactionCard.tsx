@@ -12,7 +12,7 @@ const TransactionCard = ({
   formatDate: (date: Date) => string
 }) => {
   const isPositive = transaction.amount > 0
-  console.log(showDateDivider)
+
   return (
     <View style={{ alignSelf: "center" }}>
       {showDateDivider && <Text style={styles.dateDivider}>{formatDate(transaction.sentAt)}</Text>}

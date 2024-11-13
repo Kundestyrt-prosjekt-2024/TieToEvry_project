@@ -3,9 +3,10 @@ import { createChore, getAllChores, getChoreIcons, getChoresByStatus, updateChor
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
 import { getUser } from "@/backend/src/UserDAO"
+import { BankAccount } from "@/backend/types/bankAccount"
 import { Chore } from "@/backend/types/chore"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useMutation, useQueries, useQuery } from "@tanstack/react-query"
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 
 // User
 
@@ -44,12 +45,20 @@ export const useGetChildren = (childrenIDs: string[]) => {
 // Bank account
 
 export const useGetBankAccount = (userID: string) => {
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: ["bankAccount", userID],
-    queryFn: () => getBankAccountByUID(userID),
+    queryFn: () =>
+      getBankAccountByUID(userID, (updatedData) => {
+        queryClient.setQueryData(["bankAccount", userID], (oldData: BankAccount & { id: string } | undefined) => {
+          if (!oldData) return updatedData;
+          return { ...oldData, ...updatedData };
+        });
+      }),
     enabled: userID.length !== 0,
-  })
-}
+  });
+};
 
 // Saving goals
 
