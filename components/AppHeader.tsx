@@ -1,8 +1,7 @@
 import React from "react"
 import { View, Text, StyleSheet, Pressable, Image } from "react-native"
-import Awesome5Icon from "react-native-vector-icons/FontAwesome5"
 import { useRouter } from "expo-router"
-import { useGetProfilePictures, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 
 const AppHeader = ({ parent = false }: { parent?: boolean }) => {
   const router = useRouter()
