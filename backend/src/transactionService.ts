@@ -1,5 +1,5 @@
 import { getBankAccountByUID, adjustBalance } from "./bankAccountDAO"
-import { logTransaction } from "./transactionsDAO"
+import { getTransactionHistory, logTransaction } from "./transactionsDAO"
 import { collection, addDoc, query, where, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore"
 import { db } from "../../constants/firebaseConfig"
 
@@ -31,10 +31,38 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
       throw new Error("Amount must be greater than 0")
     }
 
-    if (senderAccount.spending_limit < amount) {
-      // Should send notification to parent here if we want to do so that parents
-      // can approve amount higher than the limit
-      throw new Error("Amount exceeds spending limit")
+    if (senderAccount.spending_time_limit) {
+      // Get the current date for comparison
+      const now = new Date()
+      let fromDate: Date
+
+      // Determine the start date for the spending limit period
+      switch (senderAccount.spending_time_limit) {
+        case "daily":
+          fromDate = new Date(now)
+          fromDate.setHours(0, 0, 0, 0) // Start of the day
+          break
+        case "weekly":
+          fromDate = new Date(now)
+          fromDate.setDate(now.getDate() - now.getDay()) // Start of the current week (Sunday)
+          fromDate.setHours(0, 0, 0, 0)
+          break
+        case "monthly":
+          fromDate = new Date(now.getFullYear(), now.getMonth(), 1) // Start of the month
+          break
+        default:
+          throw new Error("Invalid spending time limit")
+      }
+
+      const transactions = await getTransactionHistory(senderUID, fromDate, now)
+      const totalSpent = transactions
+        .filter((transaction) => transaction.account_id_from === senderUID)
+        .reduce((sum, transaction) => sum + transaction.amount, 0)
+
+      // Check if the cumulative spending limit has been exceeded
+      if (totalSpent + amount > senderAccount.spending_limit) {
+        throw new Error("Cumulative spending exceeds spending limit for the specified period")
+      }
     }
 
     await adjustBalance(senderAccount.id, -amount)

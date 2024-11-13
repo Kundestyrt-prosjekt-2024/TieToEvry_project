@@ -30,12 +30,14 @@ export async function logTransaction(fromAccountId: string, toAccountId: string,
 /**Function is used to get all transactions made from an account.
  *
  * @param accountId A string of the id of the account.
+ * @param fromDate Optional Date object representing the start date of the transaction filter.
+ * @param toDate Optional Date object representing the end date of the transaction filter.
  * @returns an array of transactions made from the account.
  */
-export async function getTransactionHistory(accountId: string) {
+export async function getTransactionHistory(accountId: string, fromDate?: Date, toDate?: Date) {
   const transactionsRef = collection(db, "transactions")
 
-  const q = query(
+  let q = query(
     transactionsRef,
     or(
       where("account_id_from", "==", accountId), // Outgoing transactions
@@ -43,9 +45,17 @@ export async function getTransactionHistory(accountId: string) {
     )
   )
 
+  if (fromDate) {
+    q = query(q, where("date", ">=", fromDate))
+  }
+
+  if (toDate) {
+    q = query(q, where("date", "<=", toDate))
+  }
+
   const querySnapshot = await getDocs(q)
 
-  return querySnapshot.docs.map((doc) => doc.data())
+  return querySnapshot.docs.map((doc) => doc.data()) as Transaction[]
 }
 
 /**Function is used to get all money requests made by a user.
