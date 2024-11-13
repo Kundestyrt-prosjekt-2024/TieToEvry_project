@@ -66,7 +66,7 @@ const Home = () => {
       <AppHeader />
       <View style={styles.container}>
         <Image style={styles.cardImage} source={require("@/assets/images/card.png")} testID="card-image" />
-        <Text style={styles.balanceText}>{new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}</Text>
+        <Text style={styles.balanceText}>{new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)} ,-</Text>
         <HorizontalLine />
         <View style={styles.budgetHeader}>
           <TouchableOpacity style={styles.monthButton} onPress={handleLastMonth} testID="left-arrow">

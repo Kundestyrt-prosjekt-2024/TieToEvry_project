@@ -25,7 +25,10 @@ export async function createBankAccount(userUID: string) {
  * @param userUID A string of the id of the user.
  * @returns the id of the account and the account information
  */
-export async function getBankAccountByUID(userUID: string, updateBankAccount: (updatedData: BankAccount) => void): Promise<BankAccount & { id: string }> {
+export async function getBankAccountByUID(
+  userUID: string,
+  updateBankAccount?: (updatedData: BankAccount) => void
+): Promise<BankAccount & { id: string }> {
   try {
     const bankAccountsRef = collection(db, "bankAccounts")
     const q = query(bankAccountsRef, where("UID", "==", userUID))
@@ -45,12 +48,17 @@ export async function getBankAccountByUID(userUID: string, updateBankAccount: (u
     const bankAccount = { id: docSnapshot.id, ...data };
 
     // Listener
-    const unsubscribe = onSnapshot(doc(db, "bankAccounts", bankAccount.id), (updatedDoc) => {
-      if (updatedDoc.exists()) {
-        const updatedData = updatedDoc.data() as BankAccount;
-        updateBankAccount(updatedData);
-      }
-    });
+    if (updateBankAccount) {
+      const unsubscribe = onSnapshot(
+        doc(db, "bankAccounts", bankAccount.id),
+        (updatedDoc) => {
+          if (updatedDoc.exists()) {
+            const updatedData = updatedDoc.data() as BankAccount;
+            updateBankAccount(updatedData);
+          }
+        }
+      );
+    }
 
     return bankAccount;
   } catch (error) {

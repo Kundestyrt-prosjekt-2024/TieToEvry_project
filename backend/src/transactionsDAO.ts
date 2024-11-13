@@ -76,15 +76,15 @@ export async function fetchMonthStatsFS(accountId: string, month: number) {
   const q1 = query(
     transactionsRef,
     where("account_id_to", "==", accountId),
-    where("transactions_date", ">=", new Date(currYear, month, 1)),
-    where("transactions_date", "<", new Date(currYear, month + 1, 1))
+    where("date", ">=", new Date(currYear, month, 1)),
+    where("date", "<", new Date(currYear, month + 1, 1))
   );
 
   const q2 = query(
     transactionsRef,
     where("account_id_from", "==", accountId),
-    where("transactions_date", ">=", new Date(currYear, month, 1)),
-    where("transactions_date", "<", new Date(currYear, month + 1, 1))
+    where("date", ">=", new Date(currYear, month, 1)),
+    where("date", "<", new Date(currYear, month + 1, 1))
   );
 
   const [toSnapshot, fromSnapshot] = await Promise.all([getDocs(q1), getDocs(q2)]);
