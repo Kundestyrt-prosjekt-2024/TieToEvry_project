@@ -21,17 +21,17 @@ const ChoreNavbar: React.FC<Props> = ({ onClick, state, closeOverlay }) => {
       </View>
       <View className="flex flex-row items-center justify-between w-full py-2 border-b border-teal-300">
         <Pressable
-          className={`px-2 py-1 rounded-xl ${state === "completed" ? "bg-[#52D1DC]" : "bg-[#FFFFFF]"}`}
-          onPress={() => onClick("completed")}
+          className={`px-2 py-1 rounded-xl ${state === "gjennomført" ? "bg-[#52D1DC]" : "bg-[#FFFFFF]"}`}
+          onPress={() => onClick("gjennomført")}
         >
-          <Text className={`text-base ${state === "completed" ? "text-white" : "text-black"}`}>
+          <Text className={`text-base ${state === "gjennomført" ? "text-white" : "text-black"}`}>
             Gjennomført
           </Text>
         </Pressable>
         <Pressable
-          className={`px-2 py-1 rounded-xl ${state === "pending" ? "bg-[#52D1DC]" : "bg-[#FFFFFF]"}`}
-          onPress={() => onClick("pending")}>
-          <Text className={`text-base ${state === "pending" ? "text-white" : "text-black"}`}>
+          className={`px-2 py-1 rounded-xl ${state === "complete" ? "bg-[#52D1DC]" : "bg-[#FFFFFF]"}`}
+          onPress={() => onClick("complete")}>
+          <Text className={`text-base ${state === "complete" ? "text-white" : "text-black"}`}>
             Forespurt
           </Text>
         </Pressable>

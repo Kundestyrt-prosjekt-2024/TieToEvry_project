@@ -2,16 +2,29 @@ import React from "react";
 import { View, Text, Pressable, Image } from "react-native";
 import { Chore } from "../../backend/types/chore"
 import Button from "../ui/button";
-import { useGetUser } from "@/hooks/useGetFirestoreData";
+import { useGetUser, useUpdateChoreStatus } from "@/hooks/useGetFirestoreData";
 
 interface PropsDetailedView {
   chore: Chore;
   onClick: () => void;
+  refetch: () => void;
 }
 
-const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick }) => {
+const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refetch }) => {
+  const {mutate: updateChoreStatus} = useUpdateChoreStatus();
   const {data: parent} = useGetUser(chore.parent_id);
   const sphareCoins = 3;
+
+  async function handleStatus(newStatus: string) {
+    try {
+      await updateChoreStatus({ chore: chore, status: newStatus });
+      refetch();
+      console.log("Chore status updated successfully");
+      onClick();
+    } catch (error) {
+      console.error("Failed to update chore status:", error);
+    }
+  }
 
   return (
     <View className="bg-[#CCF2F5] p-4 rounded-lg space-y-2 items-center justify-between w-full">
@@ -57,10 +70,10 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick }) => 
         <Button onClick={onClick} text="Lukk" classname="bg-slate-50 px-3 py-1"></Button>
         <View className="flex justify-center flex-row space-x-2">
           <View>
-            <Button onClick={() => console.log("Godkjenn")} text="Godkjenn" classname=" bg-green-200 px-3 py-1"></Button>
+            <Button onClick={() => handleStatus("complete")} text="Godkjenn" classname=" bg-green-200 px-3 py-1"></Button>
           </View>
           <View>
-            <Button onClick={() => console.log("Avslå")} text="Avslå" classname="px-3 py-1"></Button>
+            <Button onClick={() => handleStatus("rejected")} text="Avslå" classname="px-3 py-1"></Button>
           </View>
         </View>
       </View>

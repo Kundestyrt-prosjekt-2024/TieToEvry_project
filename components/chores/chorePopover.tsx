@@ -45,11 +45,11 @@ const Popover: React.FC<Props> = ({ chore, onClick, showPopover }) => {
     >
       <View className="flex flex-col px-6">
         <ChoreNavbar state={state} onClick={(newState) => setNavbarState(newState)} closeOverlay={() => bottomSheetRef.current?.close()}/>
-          {state === "completed" ? (
+          {state === "gjennomført" ? (
           //Render component for gjennomført
-          <Done chores={chore} onClick={onClick}/>
+          <Done chores={chore.filter((chore: Chore) => chore.paid === true)} onClick={onClick}/>
           ):(
-          state === "pending" ? (
+          state === "complete" ? (
           //Render component for forespurt
           <Requested chores={chore} onClick={onClick}/>
           ):(

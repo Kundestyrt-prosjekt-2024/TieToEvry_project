@@ -111,7 +111,7 @@ const Chores = () => {
           contentContainerStyle={{ paddingBottom: 30 }}
           data={data}
           renderItem={(chore) => {
-            if(chore.item.chore_status === "approved"){
+            if(chore.item.chore_status === "available"){
               return renderChore(chore.item)
             }
             return null
@@ -134,7 +134,7 @@ const Chores = () => {
         <Modal visible={viewChore} animationType="slide" transparent={true} onRequestClose={toggleModal}>
           <View className="h-full w-full flex justify-center items-center">
             <View className="p-4 w-full">
-              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} />
+              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} refetch={refetch} />
             </View>
           </View>
         </Modal>
