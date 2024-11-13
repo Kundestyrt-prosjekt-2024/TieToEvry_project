@@ -27,6 +27,7 @@ const choresParent = () => {
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("Aktive")
   const [showModal, setShowModal] = useState(false)
+
   const [description, setDescription] = useState("")
   const [icon, setIcon] = useState("")
   const [isRepeatable, setIsRepeatable] = useState(false)
@@ -58,6 +59,12 @@ const choresParent = () => {
       time_limit: Timestamp.fromDate(timeLimit),
     }
     createChore.mutate(chore)
+    setDescription("")
+    setIcon("")
+    setIsRepeatable(false)
+    setRecurrence("daily")
+    setRewardAmount("")
+    setTimeLimit(new Date())
   }
 
   if (children.some((query) => query.isPending) || choreIcons.isPending) {

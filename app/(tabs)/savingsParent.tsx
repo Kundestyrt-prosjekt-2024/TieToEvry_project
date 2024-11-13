@@ -21,6 +21,24 @@ const savingsParent = () => {
 
   const savingGoals = useGetSavingGoals(selectedChildID || "")
 
+  const sortedGoals =
+    savingGoals.data
+      ?.sort((a, b) => {
+        // Calculate progress for both goals
+        const progressA = a.current_amount / a.goal_amount
+        const progressB = b.current_amount / b.goal_amount
+
+        // If progress is >= 1, move to the beginning
+        if (progressA >= 1 && progressB < 1) {
+          return -1 // a comes before b
+        } else if (progressA < 1 && progressB >= 1) {
+          return 1 // b comes before a
+        } else {
+          return 0 // keep original order for other cases
+        }
+      })
+      .reverse() || []
+
   if (children.some((query) => query.isPending) || savingGoals.isPending) {
     return <DataLoading />
   }
@@ -73,7 +91,7 @@ const savingsParent = () => {
         </View>
         <Text className="text-center my-10 text-lg">Her er {children[selectedChildIndex].data?.name}'s sparemål:</Text>
         <View className="flex flex-col items-center">
-          {savingGoals.data?.map((goal, index) => {
+          {sortedGoals.map((goal, index) => {
             const progress = goal.current_amount / goal.goal_amount
 
             if (progress >= 1) {
