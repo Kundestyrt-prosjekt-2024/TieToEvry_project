@@ -5,6 +5,7 @@ import { MoneyRequest } from "@/types"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
+import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
 
 export type User = {
   uid: string
@@ -99,7 +100,8 @@ const dummyData: MoneyRequest[] = [
 
 const PaymentScreen = () => {
   const router = useRouter()
-  const balance = 1425503
+  const { data: userId } = useGetUserID()
+  const account = useGetBankAccount(userId || "")
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
@@ -215,7 +217,7 @@ const PaymentScreen = () => {
           keyExtractor={(req) => req.uid}
           showsHorizontalScrollIndicator={false}
         ></FlatList>
-        <Text style={styles.balance}>{new Intl.NumberFormat("nb-NO").format(balance)}</Text>
+        <Text style={styles.balance}>{new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}</Text>
       </View>
     )
   }

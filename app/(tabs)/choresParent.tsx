@@ -109,7 +109,7 @@ const choresParent = () => {
             ItemSeparatorComponent={() => <View className="w-8" />}
           />
         </View>
-        <Text className="text-center my-10 text-lg">Her er {children[selectedChildIndex].data?.name}'s gjøremål:</Text>
+        <Text className="text-center my-10 text-lg">Her er {children[selectedChildIndex]?.data?.name}'s gjøremål:</Text>
         <View className="flex flex-row gap-2 justify-center">
           {["Aktive", "Forespurt godkjent", "Godkjent"].map((category) => (
             <Pressable

@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 import TransactionCard from "@/components/TransactionCard"
 import { Transaction } from "@/types"
 import { Text, View, StyleSheet, FlatList } from "react-native"
+import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
 
 const dummyTransactions: Transaction[] = [
   {
@@ -72,6 +73,8 @@ const dummyTransactions: Transaction[] = [
 
 const Transactions = () => {
   const [transactions, setTransactions] = React.useState<Transaction[]>([])
+  const { data: userId } = useGetUserID()
+  const account = useGetBankAccount(userId || "")
 
   useEffect(() => {
     fetchTransactions()
@@ -85,7 +88,9 @@ const Transactions = () => {
   function renderListHeader() {
     return (
       <View style={{ alignItems: "center" }}>
-        <Text style={styles.balanceText}>Saldo: 1 425 503,-</Text>
+        <Text style={styles.balanceText}>
+          Saldo: {new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}
+        </Text>
         <View style={styles.horizontalLine} />
       </View>
     )

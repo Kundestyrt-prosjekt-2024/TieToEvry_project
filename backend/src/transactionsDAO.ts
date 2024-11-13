@@ -1,5 +1,5 @@
 import { db } from "../../constants/firebaseConfig"
-import { collection, addDoc, query, where, getDocs, updateDoc, doc, Timestamp, or } from "firebase/firestore"
+import { collection, addDoc, query, where, getDocs, updateDoc, doc, Timestamp, or, and } from "firebase/firestore"
 import { Transaction } from "../types/transaction"
 
 /**Function is used to add a transaction to the database.
@@ -68,3 +68,29 @@ export async function getMoneyRequests(userId: string) {
 
   return combinedResults
 }
+
+export async function fetchMonthStatsFS(accountId: string, month: number) {
+  const transactionsRef = collection(db, "transactions")
+  const currYear = new Date().getFullYear()
+
+  const q1 = query(
+    transactionsRef,
+    where("account_id_to", "==", accountId),
+    where("date", ">=", new Date(currYear, month, 1)),
+    where("date", "<", new Date(currYear, month + 1, 1))
+  );
+
+  const q2 = query(
+    transactionsRef,
+    where("account_id_from", "==", accountId),
+    where("date", ">=", new Date(currYear, month, 1)),
+    where("date", "<", new Date(currYear, month + 1, 1))
+  );
+
+  const [toSnapshot, fromSnapshot] = await Promise.all([getDocs(q1), getDocs(q2)]);
+  const toDocs = toSnapshot.docs.map((doc) => doc.data());
+  const fromDocs = fromSnapshot.docs.map((doc) => doc.data());
+
+  return {"to": toDocs, "from": fromDocs}
+}
+
