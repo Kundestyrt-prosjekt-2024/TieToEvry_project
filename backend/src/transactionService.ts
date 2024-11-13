@@ -31,12 +31,10 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
       throw new Error("Amount must be greater than 0")
     }
 
-    if (senderAccount.spending_limit) {
-      if (senderAccount.spending_limit < amount) {
-        // Should send notification to parent here if we want to do so that parents
-        // can approve amount higher than the limit
-        throw new Error("Amount exceeds spending limit")
-      }
+    if (senderAccount.spending_limit < amount) {
+      // Should send notification to parent here if we want to do so that parents
+      // can approve amount higher than the limit
+      throw new Error("Amount exceeds spending limit")
     }
 
     await adjustBalance(senderAccount.id, -amount)
