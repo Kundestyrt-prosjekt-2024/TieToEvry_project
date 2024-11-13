@@ -42,6 +42,16 @@ export const useGetChildren = (childrenIDs: string[]) => {
   })
 }
 
+export const useGetParents = (parentIDs: string[]) => {
+  return useQueries({
+    queries: parentIDs.map((id) => ({
+      queryKey: ["user", id],
+      queryFn: () => getUser(id),
+      enabled: parentIDs.length !== 0,
+    })),
+  })
+}
+
 // Bank account
 
 export const useGetBankAccount = (userID: string) => {

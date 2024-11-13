@@ -55,3 +55,16 @@ export async function updateProfilePicture(uid: string, url: string): Promise<vo
     throw new Error(error.message)
   }
 }
+
+export async function fetchParents(uid: string): Promise<string[]> {
+  try {
+    const userDoc = await getDoc(doc(db, "users", uid))
+    if (userDoc.exists()) {
+      return userDoc.data()!.parents
+    } else {
+      throw new Error("User not found")
+    }
+  } catch (error: any) {
+    throw new Error(error.message)
+  }
+}
