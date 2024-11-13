@@ -2,9 +2,12 @@ import React from "react"
 import { View, Text, StyleSheet, Pressable, Image } from "react-native"
 import Awesome5Icon from "react-native-vector-icons/FontAwesome5"
 import { useRouter } from "expo-router"
+import { useGetProfilePictures, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 
 const AppHeader = ({ parent = false }: { parent?: boolean }) => {
   const router = useRouter()
+  const userID = useGetUserID()
+  const user = useGetUser(userID.data || "")
 
   function handleProfile(): void {
     router.navigate("/(profile)/profile")
@@ -22,8 +25,11 @@ const AppHeader = ({ parent = false }: { parent?: boolean }) => {
           <Image style={styles.coin} source={require("@/assets/images/coin.png")} />
         </Pressable>
       )}
-      <Pressable onPress={handleProfile}>
-        <Awesome5Icon name="user-circle" size={35} />
+      <Pressable
+        className="w-[35px] h-[35px] rounded-full border border-black justify-center items-center overflow-hidden"
+        onPress={handleProfile}
+      >
+        <Image source={{ uri: user.data?.profilePicture }} className="w-full h-full" style={{ resizeMode: "cover" }} />
       </Pressable>
     </View>
   )
