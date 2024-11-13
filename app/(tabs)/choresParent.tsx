@@ -27,6 +27,7 @@ const choresParent = () => {
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("Aktive")
   const [showModal, setShowModal] = useState(false)
+  const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [icon, setIcon] = useState("")
   const [isRepeatable, setIsRepeatable] = useState(false)
@@ -48,14 +49,16 @@ const choresParent = () => {
     const chore: Chore = {
       child_id: selectedChildID!,
       parent_id: parentID.data!,
+      chore_title: title,
       chore_description: description,
       icon: icon,
-      chore_status: "approved",
+      chore_status: "available",
       created_at: Timestamp.now(),
       is_repeatable: isRepeatable,
       recurrence: recurrence,
       reward_amount: parseInt(rewardAmount),
       time_limit: Timestamp.fromDate(timeLimit),
+      paid: false,
     }
     createChore.mutate(chore)
   }
@@ -129,6 +132,13 @@ const choresParent = () => {
         <Pressable className="flex-1 justify-center items-center bg-opacity-50" onPress={() => setShowModal(false)}>
           <Pressable className="bg-white rounded-lg w-4/5 p-6 shadow-lg" onPress={() => setShowModal(true)}>
             <Text className="text-lg font-bold mb-4">Opprett et gjøremål</Text>
+
+            <TextInput
+              placeholder="Title"
+              value={rewardAmount}
+              onChangeText={setTitle}
+              className="border border-gray-300 rounded p-2 mb-4"
+            />
 
             <TextInput
               placeholder="Chore Description"
