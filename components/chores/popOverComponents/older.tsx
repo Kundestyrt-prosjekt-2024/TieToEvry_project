@@ -64,7 +64,7 @@ const Older: React.FC<Props> = ({ chores, onClick }) => {
       </View>
       <View style={{height: scrollHeight}} className="mb-2 border-b-2 border-teal-300">
         <ScrollView >
-          {chores.map((chore, index) => (
+          {chores.filter((chore) => !(chore.chore_status==="pending" || chore.chore_status==="available")).map((chore, index) => (
             (
               <View key={index}>
                 <ChoreList chore={chore} onClick={() => setViewChore(chore)} />

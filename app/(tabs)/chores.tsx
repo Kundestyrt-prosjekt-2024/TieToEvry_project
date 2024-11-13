@@ -7,7 +7,7 @@ import ChoreList from "@/components/chores/chore"
 import ChoresDetailedView from "@/components/chores/choresDetailedView"
 import Button from "@/components/ui/button"
 import Popover from "@/components/chores/chorePopover"
-import { useGetChores, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { useGetBankAccount, useGetChores, useGetUserID } from "@/hooks/useGetFirestoreData"
 
 const Chores = () => {
   const [viewChore, toggleView] = React.useState(false)
@@ -17,6 +17,7 @@ const Chores = () => {
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
   const {data: userID} = useGetUserID()
+  const {data: balance} = useGetBankAccount(userID ?? "")
   const {data, isLoading, isError, refetch} = useGetChores(userID ?? "");
 
   if (isLoading) {
@@ -35,8 +36,8 @@ const Chores = () => {
 
 
   const cashMullaCoin = {
-    mulla: 14243545,
-    sphareCoin: 3245,
+    mulla: balance?.balance,
+    sphareCoin: balance?.balance,
   }
 
   const setViewChore = (chore: Chore) => {

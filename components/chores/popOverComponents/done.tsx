@@ -1,5 +1,5 @@
 import { Modal, Text, View, Image, Dimensions } from "react-native";
-import { Chore } from "@/app/types/chores";
+import { Chore } from "../../../backend/types/chore";
 import { ScrollView } from "react-native-gesture-handler";
 import ChoreList from "../chore";
 import React from "react";
@@ -11,7 +11,7 @@ interface Props {
   onClick: () => void;
 }
 
-const {width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 
 const Done: React.FC<Props> = ({ chores, onClick }) => {
@@ -27,13 +27,12 @@ const Done: React.FC<Props> = ({ chores, onClick }) => {
   }
 
   const earnedCoin = chores.reduce((acc, chore) => {
-    if (chore.completed) {
-      return acc + chore.rewardNOK;
+    if (chore.chore_status === "complete" && chore.paid) {
+      return acc + chore.reward_amount;
     }
     return acc;
   },0);
 
-  const scrollHeight = height*0.27;
 
   return (
     <View style={{height:height}} className="w-full flex flex-col justify-start py-4 space-y-2">
@@ -52,7 +51,7 @@ const Done: React.FC<Props> = ({ chores, onClick }) => {
       <View className="h-[30%]  mb-2 border-b-2 border-teal-300">
         <ScrollView className="">
           {chores.map((chore, index) => (
-            chore.completed && (
+            chore.chore_status==="complete" && chore.paid && (
               <View key={index}>
                 <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
               </View>
@@ -69,7 +68,7 @@ const Done: React.FC<Props> = ({ chores, onClick }) => {
         >
           <View className="h-full w-full flex justify-center items-center">
             <View className="p-4 w-full">
-              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} />
+              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} refetch={()=>{}}/>
             </View>
           </View>
         </Modal>

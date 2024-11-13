@@ -16,7 +16,7 @@ interface Props {
 
 const Popover: React.FC<Props> = ({ chore, onClick, showPopover }) => {
 
-  const [state, setNavbarState] = React.useState<string>("completed");
+  const [state, setNavbarState] = React.useState<string>("gjennomført");
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
