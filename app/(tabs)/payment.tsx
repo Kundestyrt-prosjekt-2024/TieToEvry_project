@@ -1,11 +1,11 @@
 import AppHeader from "@/components/AppHeader"
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { MoneyRequest } from "@/types"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
 import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { MoneyRequest } from "@/backend/types/transaction"
 
 export type User = {
   uid: string
@@ -31,72 +31,7 @@ const dummyData2: User[] = [
   },
 ]
 
-const dummyData: MoneyRequest[] = [
-  {
-    id: "1",
-    receiver: "1",
-    sender: "2",
-    message: "",
-    amount: 5800000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "2",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "3",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "4",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "5",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "6",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "7",
-    receiver: "1",
-    sender: "2",
-    message: "",
-    amount: 5800000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "8",
-    receiver: "1",
-    sender: "2",
-    message: "",
-    amount: 5800000,
-    requestedAt: new Date(),
-  },
-]
+const dummyData: MoneyRequest[] = []
 
 const PaymentScreen = () => {
   const router = useRouter()

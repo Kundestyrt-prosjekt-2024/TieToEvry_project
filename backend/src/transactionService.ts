@@ -10,7 +10,7 @@ import { db } from "../../constants/firebaseConfig"
  * @param amount A number of the amount of money to be transferred.
  * @param description A string of the description of the transaction.
  */
-export async function transferMoney(senderUID: string, receiverUID: string, amount: number, description: string) {
+export async function transferMoney(senderUID: string, receiverUID: string, amount: number, description: string, type: string) {
   try {
     const senderAccount = await getBankAccountByUID(senderUID)
     const receiverAccount = await getBankAccountByUID(receiverUID)
@@ -73,7 +73,7 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
     await adjustBalance(senderAccount.id, -amount)
     await adjustBalance(receiverAccount.id, amount)
 
-    await logTransaction(senderUID, receiverUID, amount, description)
+    await logTransaction(senderUID, receiverUID, amount, description, type)
   } catch (error) {
     console.log(error)
     throw new Error("Failed to transfer money")
@@ -139,7 +139,7 @@ export async function acceptMoneyRequest(
     await adjustBalance(senderAccount.id, -amount)
     await adjustBalance(receiverAccount.id, amount)
 
-    await logTransaction(senderAccount.id, receiverAccount.id, amount, description)
+    await logTransaction(senderAccount.id, receiverAccount.id, amount, description, "transfer")
   } catch (error) {
     throw new Error("Failed to accept money request")
   }

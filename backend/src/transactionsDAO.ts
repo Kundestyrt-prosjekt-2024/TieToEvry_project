@@ -10,22 +10,34 @@ import { Transaction } from "../types/transaction"
  * @param description A string of the description of the transaction.
  * @param transactionType A string of the type of the transaction. Has to be 'transfer' or 'chore'.
  */
-export async function logTransaction(fromAccountId: string, toAccountId: string, amount: number, description: string) {
+export async function logTransaction(fromAccountId: string, toAccountId: string, amount: number, description: string, type: string) {
   try {
-    const newTransaction: Transaction = {
+    const transactionsRef = collection(db, "transactions")
+    const newTransaction = {
       account_id_from: fromAccountId,
       account_id_to: toAccountId,
       description: description,
       amount: amount,
-      type: "transfer",
+      type: type,
       date: Timestamp.now(),
     }
 
-    await addDoc(collection(db, "transactions"), newTransaction)
+    await addDoc(transactionsRef, newTransaction)
   } catch (error) {
     throw new Error("Failed to log transaction and update activity dates")
   }
 }
+
+// const newTransaction: Transaction = {
+//   account_id_from: fromAccountId,
+//   account_id_to: toAccountId,
+//   description: description,
+//   amount: amount,
+//   type: type,
+//   date: Timestamp.now(),
+// }
+
+// await addDoc(collection(db, "transactions"), newTransaction)
 
 /**Function is used to get all transactions made from an account.
  *
