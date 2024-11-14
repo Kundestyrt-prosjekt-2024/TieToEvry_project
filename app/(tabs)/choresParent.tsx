@@ -135,7 +135,7 @@ const choresParent = () => {
 
             <TextInput
               placeholder="Title"
-              value={rewardAmount}
+              value={title}
               onChangeText={setTitle}
               className="border border-gray-300 rounded p-2 mb-4"
             />
