@@ -6,6 +6,7 @@ const FirestoreTimestampSchema = z.object({
 });
 
 const UserSchema = z.object({
+    uid: z.string(),
     created_at: FirestoreTimestampSchema,
     birthdate: FirestoreTimestampSchema,
     name: z.string(),

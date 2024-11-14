@@ -3,43 +3,33 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated } from "re
 import { SafeAreaView } from "react-native-safe-area-context"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
-import { useRef, useState } from "react"
-import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { useEffect, useRef, useState } from "react"
+import { useGetBankAccount, useGetParents, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { MoneyRequest } from "@/backend/types/transaction"
+import { fetchParents } from "@/backend/src/UserDAO"
+import { User } from "@/backend/types/user"
 
-export type User = {
-  uid: string
-  name: string
-  image: string
-}
-
-const dummyData2: User[] = [
-  {
-    uid: "1",
-    name: "Geir",
-    image: "user",
-  },
-  {
-    uid: "2",
-    name: "Jalla",
-    image: "user",
-  },
-  {
-    uid: "3",
-    name: "Magne",
-    image: "user",
-  },
-]
+const dummyData2: User[] = []
 
 const dummyData: MoneyRequest[] = []
 
 const PaymentScreen = () => {
   const router = useRouter()
   const { data: userId } = useGetUserID()
+  const [parentIDs, setParentIDs] = useState<string[]>([])
+  const parents = useGetParents(parentIDs)
   const account = useGetBankAccount(userId || "")
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    async function fetchParentIDs() {
+      const IDs = await fetchParents(userId || "")
+      setParentIDs(IDs)
+    }
+    fetchParentIDs()
+  }, [userId])
 
   function handleCancel() {
     console.log("Cancel")
@@ -105,7 +95,7 @@ const PaymentScreen = () => {
         }
       >
         <View style={styles.userCircle}>
-          <AwesomeIcon name={user.image} size={30}></AwesomeIcon>
+          <AwesomeIcon name={user.profilePicture} size={30}></AwesomeIcon>
         </View>
         <Text>{user.name}</Text>
       </TouchableOpacity>
@@ -147,9 +137,9 @@ const PaymentScreen = () => {
           scrollEnabled={true}
           horizontal={true}
           contentContainerStyle={styles.userListContent}
-          data={dummyData2}
-          renderItem={(req) => renderUser(req.item)}
-          keyExtractor={(req) => req.uid}
+          data={parents}
+          renderItem={(req) => renderUser(req.item.data as User)}
+          keyExtractor={(req) => req.data?.uid.toString() || ""}
           showsHorizontalScrollIndicator={false}
         ></FlatList>
         <Text style={styles.balance}>{new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}</Text>
