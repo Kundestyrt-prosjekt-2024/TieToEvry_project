@@ -36,11 +36,12 @@ export async function updateChoreStatus(chore: Chore, status: string) {
   try {
     const choreRef = doc(db, "chores", chore.id!)
     await updateDoc(choreRef, {
-      status: status,
+      chore_status: status,
     })
-    if (status === "paid") {
-      await transferMoney(chore.parent_id, chore.child_id, chore.reward_amount, "Chore Completion Reward")
-    }
+
+    // if (status === "paid") {
+    //   await transferMoney(chore.parent_id, chore.child_id, chore.reward_amount, "Chore Completion Reward")
+    // }
   } catch (error) {
     console.error("Error updating status of chore:", error)
     throw new Error("Failed to update suggested chore")

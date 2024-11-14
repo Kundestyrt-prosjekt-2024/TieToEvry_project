@@ -21,16 +21,16 @@ import { SavingGoal } from "@/backend/types/savingGoal"
 
 const Savings = () => {
   // Hooks for UserID and saving goals.
-  const { data: userID, isLoading: isUserIDLoading } = useGetUserID()
-  const userIDValue = userID ?? ""
-  const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue)
+  const { data: userID, isLoading: isUserIDLoading } = useGetUserID();
+  const userIDValue = userID ?? "";
+  const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue);
 
   // States for showing/hiding bottom sheets
-  const [isNewGoalVisible, setIsNewGoalVisible] = useState(false)
-  const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false)
+  const [isNewGoalVisible, setIsNewGoalVisible] = useState(false);
+  const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false);
 
   // Saving goal to see when bottom sheet for adding money is in focus
-  const [savingGoal, setSavingGoal] = useState<SavingGoal | undefined>()
+  const [savingGoal, setSavingGoal] = useState<SavingGoal | undefined>();
 
   // Makes us not see the page before data is present.
   if (isUserIDLoading || isSavingGoalsLoading) {

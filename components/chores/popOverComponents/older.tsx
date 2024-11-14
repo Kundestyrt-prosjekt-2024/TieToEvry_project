@@ -1,5 +1,5 @@
 import { Modal, Text, View, Image, Dimensions } from "react-native";
-import { Chore } from "@/app/types/chores";
+import { Chore } from "../../../backend/types/chore";
 import Button from "@/components/ui/button";
 import { ScrollView } from "react-native-gesture-handler";
 import ChoreList from "../chore";
@@ -27,22 +27,22 @@ const Older: React.FC<Props> = ({ chores, onClick }) => {
   }
 
   const earnedCoin = chores.reduce((acc, chore) => {
-    if (chore.completed) {
-      return acc + chore.rewardNOK;
+    if (chore.chore_status === "complete" && chore.paid) {
+      return acc + chore.reward_amount;
     }
     return acc;
   },0);
 
   const waitingForCoin = chores.reduce((acc, chore) => {
-    if (chore.status === "Forespurt") {
-      return acc + chore.rewardNOK;
+    if (chore.chore_status === "complete" && !chore.paid || chore.chore_status==="pending") {
+      return acc + chore.reward_amount;
     }
     return acc;
   },0);
 
   const missedCoin = chores.reduce((acc, chore) => {
-    if (chore.status === "Gjennomførbar" && !chore.completed) {
-      return acc + chore.rewardNOK;
+    if (chore.chore_status === "rejected") {
+      return acc + chore.reward_amount;
     }
     return acc;
   },0);
@@ -64,8 +64,8 @@ const Older: React.FC<Props> = ({ chores, onClick }) => {
       </View>
       <View style={{height: scrollHeight}} className="mb-2 border-b-2 border-teal-300">
         <ScrollView >
-          {chores.map((chore, index) => (
-            chore.completed && (
+          {chores.filter((chore) => chore.chore_status==="rejected").map((chore, index) => (
+            (
               <View key={index}>
                 <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
               </View>
@@ -82,7 +82,7 @@ const Older: React.FC<Props> = ({ chores, onClick }) => {
         >
           <View className="h-full w-full flex justify-center items-center">
             <View className="p-4 w-full">
-              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} />
+              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} refetch={() => { /* Add your refetch logic here */ }} />
             </View>
           </View>
         </Modal>
