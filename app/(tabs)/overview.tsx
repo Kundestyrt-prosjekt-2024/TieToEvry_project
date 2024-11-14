@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image, Pressable } from "react-native"
+import { View, Text, FlatList, Image, Pressable, Modal, TextInput } from "react-native"
 import AppHeader from "@/components/AppHeader"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useGetBankAccount, useGetChildren, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
@@ -6,6 +6,7 @@ import DataLoading from "@/components/DataLoading"
 import { useState } from "react"
 import { useRouter } from "expo-router"
 import Ionicons from "@expo/vector-icons/Ionicons"
+import { setSpendingLimit } from "@/backend/src/bankAccountDAO"
 
 const Overview = () => {
   const router = useRouter()
@@ -15,10 +16,30 @@ const Overview = () => {
   const children = useGetChildren(parent.data?.children || [])
 
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
+  const [showModal, setShowModal] = useState(false)
+  const [spendingLimitInput, setSpendingLimitInput] = useState("")
+  const [timeLimit, setTimeLimit] = useState("")
 
   const selectedChildID = parent.data?.children?.[selectedChildIndex]
 
   const childBankAccount = useGetBankAccount(selectedChildID || "")
+
+  const spendingLimit =
+    childBankAccount.data &&
+    childBankAccount.data.spending_limit &&
+    childBankAccount.data.spending_limit !== Number.MAX_SAFE_INTEGER
+      ? childBankAccount.data.spending_limit.toString()
+      : "0"
+
+  const handleChangeSpendingLimit = async () => {
+    const translate = { daglig: "daily", ukentlig: "weekly", månedlig: "monthly" }
+    const translatedTimeLimit = translate[timeLimit.toLowerCase() as keyof typeof translate]
+    await setSpendingLimit(selectedChildID || "", parseInt(spendingLimitInput), translatedTimeLimit)
+    childBankAccount.refetch()
+    setShowModal(false)
+    setSpendingLimitInput("")
+    setTimeLimit("")
+  }
 
   if (children.some((query) => query.isPending)) {
     return <DataLoading />
@@ -75,6 +96,48 @@ const Overview = () => {
           <Text className="text-lg">Se transaksjoner</Text>
         </Pressable>
       </View>
+      <View className="flex flex-row mt-20 pl-8 items-center">
+        {spendingLimit === "0" || spendingLimit === Number.MAX_SAFE_INTEGER.toString() ? (
+          <>
+            <Text>{children[selectedChildIndex].data?.name.split(" ")[0]} har ingen beløpsgrense</Text>
+            <Pressable className="py-3 px-5 bg-green-300 rounded-lg mr-auto ml-6" onPress={() => setShowModal(true)}>
+              <Text>Konfigurer</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Text>
+              {children[selectedChildIndex].data?.name.split(" ")[0]}'s beløpsgrense: {spendingLimit},-
+            </Text>
+            <Pressable className="py-3 px-5 bg-green-300 rounded-lg mr-auto ml-6" onPress={() => setShowModal(true)}>
+              <Text>Endre</Text>
+            </Pressable>
+          </>
+        )}
+      </View>
+      <Modal transparent={true} visible={showModal} onRequestClose={() => setShowModal(false)}>
+        <Pressable className="flex-1 justify-center items-center bg-opacity-50" onPress={() => setShowModal(false)}>
+          <Pressable className="bg-white rounded-lg w-4/5 p-6 shadow-lg" onPress={() => setShowModal(true)}>
+            <Text className="text-lg font-bold mb-4">Sett beløpsgrense</Text>
+            <TextInput
+              className="border p-3 mb-4 rounded-md"
+              placeholder="Beløpsgrense (f.eks. 1000)"
+              keyboardType="numeric"
+              value={spendingLimitInput}
+              onChangeText={setSpendingLimitInput}
+            />
+            <TextInput
+              className="border p-3 mb-4 rounded-md"
+              placeholder="Tidsbegrensning (daglig, ukentlig, månedlig)"
+              value={timeLimit}
+              onChangeText={setTimeLimit}
+            />
+            <Pressable className="p-3 bg-blue-500 rounded-lg mt-4" onPress={handleChangeSpendingLimit}>
+              <Text className="text-white text-center">Lagre</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   )
 }

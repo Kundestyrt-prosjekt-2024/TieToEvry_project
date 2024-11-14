@@ -61,6 +61,12 @@ const choresParent = () => {
       paid: false,
     }
     createChore.mutate(chore)
+    setDescription("")
+    setIcon("")
+    setIsRepeatable(false)
+    setRecurrence("daily")
+    setRewardAmount("")
+    setTimeLimit(new Date())
   }
 
   if (children.some((query) => query.isPending) || choreIcons.isPending) {
