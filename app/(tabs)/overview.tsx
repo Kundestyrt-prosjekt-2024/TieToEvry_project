@@ -92,14 +92,17 @@ const Overview = () => {
       </View>
       <View className="flex flex-col items-center justify-center mt-10">
         <Text className="font-semibold text-2xl">Saldo: {childBankAccount.data?.balance},-</Text>
-        <Pressable className="py-3 px-10 bg-blue-300 rounded-md mt-6" onPress={() => router.push("/Transactions")}>
+        <Pressable
+          className="py-3 px-10 bg-blue-300 rounded-md mt-6"
+          onPress={() => router.push(`/Transactions?userID=${selectedChildID}`)}
+        >
           <Text className="text-lg">Se transaksjoner</Text>
         </Pressable>
       </View>
       <View className="flex flex-row mt-20 pl-8 items-center">
         {spendingLimit === "0" || spendingLimit === Number.MAX_SAFE_INTEGER.toString() ? (
           <>
-            <Text>{children[selectedChildIndex].data?.name.split(" ")[0]} har ingen beløpsgrense</Text>
+            <Text>{children[selectedChildIndex]?.data?.name.split(" ")[0]} har ingen beløpsgrense</Text>
             <Pressable className="py-3 px-5 bg-green-300 rounded-lg mr-auto ml-6" onPress={() => setShowModal(true)}>
               <Text>Konfigurer</Text>
             </Pressable>

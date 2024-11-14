@@ -1,89 +1,19 @@
 import React, { useEffect } from "react"
 import TransactionCard from "@/components/TransactionCard"
-import { Transaction } from "@/types"
-import { Text, View, StyleSheet, FlatList } from "react-native"
-import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
-
-const dummyTransactions: Transaction[] = [
-  {
-    id: "1",
-    receiver: "1",
-    sender: "2",
-    message: "Hus",
-    amount: -5800000,
-    sentAt: new Date("2024-10-12T15:45:00"),
-  },
-  {
-    id: "2",
-    receiver: "1",
-    sender: "2",
-    message: "Jalla",
-    amount: 5800000,
-    sentAt: new Date("2024-10-12T15:46:00"),
-  },
-  {
-    id: "3",
-    receiver: "1",
-    sender: "2",
-    message: "Hus",
-    amount: -5800000,
-    sentAt: new Date("2024-10-14T15:46:00"),
-  },
-  {
-    id: "4",
-    receiver: "1",
-    sender: "2",
-    message: "Jalla",
-    amount: 5800000,
-    sentAt: new Date("2024-11-01T15:46:00"),
-  },
-  {
-    id: "5",
-    receiver: "1",
-    sender: "2",
-    message: "Hus",
-    amount: -5800000,
-    sentAt: new Date("2024-11-01T15:46:00"),
-  },
-  {
-    id: "6",
-    receiver: "1",
-    sender: "2",
-    message: "Jalla",
-    amount: 5800000,
-    sentAt: new Date("2024-11-01T15:46:00"),
-  },
-  {
-    id: "7",
-    receiver: "1",
-    sender: "2",
-    message: "Hus",
-    amount: -5800000,
-    sentAt: new Date(),
-  },
-  {
-    id: "8",
-    receiver: "1",
-    sender: "2",
-    message: "Jalla",
-    amount: 5800000,
-    sentAt: new Date(),
-  },
-]
+import { Text, View, StyleSheet, FlatList, Pressable } from "react-native"
+import { useGetBankAccount, useGetTransactionHistory, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { transferMoney } from "@/backend/src/transactionService"
+import { useLocalSearchParams } from "expo-router"
+import { Transaction } from "@/backend/types/transaction"
+import { Timestamp } from "firebase/firestore"
 
 const Transactions = () => {
+  const searchParams = useLocalSearchParams()
+  const userID = searchParams.userID as string
   const [transactions, setTransactions] = React.useState<Transaction[]>([])
-  const { data: userId } = useGetUserID()
-  const account = useGetBankAccount(userId || "")
+  const account = useGetBankAccount(userID)
 
-  useEffect(() => {
-    fetchTransactions()
-  }, [])
-
-  function fetchTransactions(): void {
-    const sortedTransactions = dummyTransactions.sort((a, b) => b.sentAt.getTime() - a.sentAt.getTime())
-    setTransactions(sortedTransactions)
-  }
+  const transactionHistory = useGetTransactionHistory(userID ?? "")
 
   function renderListHeader() {
     return (
@@ -92,6 +22,9 @@ const Transactions = () => {
           Saldo: {new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}
         </Text>
         <View style={styles.horizontalLine} />
+        {transactionHistory.isSuccess && transactionHistory.data.length === 0 && (
+          <Text className="mt-20">Her var det tomt.</Text>
+        )}
       </View>
     )
   }
@@ -105,22 +38,26 @@ const Transactions = () => {
   }
 
   function renderItem({ item, index }: { item: Transaction; index: number }) {
-    const previousItem = transactions[index - 1]
-    const showDateDivider = !previousItem || formatDate(item.sentAt) !== formatDate(previousItem.sentAt)
+    const previousItem = transactionHistory.data?.[index - 1]
+    const showDateDivider =
+      !previousItem ||
+      formatDate(new Date(item.date.seconds * 1000)) !== formatDate(new Date(previousItem.date.seconds * 1000))
 
-    return <TransactionCard transaction={item} showDateDivider={showDateDivider} formatDate={formatDate} />
+    return (
+      <TransactionCard transaction={item} showDateDivider={showDateDivider} formatDate={formatDate} userID={userID} />
+    )
   }
 
   return (
     <View style={styles.container}>
       <FlatList
         style={styles.transactionList}
-        data={dummyTransactions}
+        data={transactionHistory.data}
         renderItem={({ item, index }) => renderItem({ item, index })}
         ListHeaderComponent={renderListHeader}
         contentContainerStyle={{ alignItems: "center", paddingBottom: 25 }}
-        keyExtractor={(item) => item.id.toString()}
-      ></FlatList>
+        keyExtractor={(item) => item.date.seconds.toString()}
+      />
     </View>
   )
 }

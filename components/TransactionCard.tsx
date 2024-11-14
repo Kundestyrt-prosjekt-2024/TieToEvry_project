@@ -1,4 +1,4 @@
-import { MoneyRequest, Transaction } from "@/types"
+import { Transaction } from "@/backend/types/transaction"
 import { Text, View, StyleSheet } from "react-native"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 
@@ -6,16 +6,20 @@ const TransactionCard = ({
   transaction,
   showDateDivider,
   formatDate,
+  userID,
 }: {
   transaction: Transaction
   showDateDivider: boolean
   formatDate: (date: Date) => string
+  userID: string
 }) => {
-  const isPositive = transaction.amount > 0
+  const isPositive = transaction.account_id_to === userID
 
   return (
     <View style={{ alignSelf: "center" }}>
-      {showDateDivider && <Text style={styles.dateDivider}>{formatDate(transaction.sentAt)}</Text>}
+      {showDateDivider && (
+        <Text style={styles.dateDivider}>{formatDate(new Date(transaction.date.seconds * 1000))}</Text>
+      )}
       <View style={styles.transaction}>
         <View style={styles.leftTransaction}>
           <View style={styles.iconContainer}>
@@ -26,10 +30,10 @@ const TransactionCard = ({
               <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={20} />
             )}
           </View>
-          <Text style={styles.transactionText}>{transaction.message}</Text>
+          <Text style={styles.transactionText}>{transaction.description}</Text>
         </View>
         <Text style={{ ...styles.transactionText, color: isPositive ? "green" : "red" }}>
-          {new Intl.NumberFormat("nb-NO").format(transaction.amount)}
+          {new Intl.NumberFormat("nb-NO").format(transaction.amount)},-
         </Text>
       </View>
     </View>

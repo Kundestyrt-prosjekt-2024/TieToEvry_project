@@ -61,7 +61,12 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
 
       // Check if the cumulative spending limit has been exceeded
       if (totalSpent + amount > senderAccount.spending_limit) {
-        throw new Error("Cumulative spending exceeds spending limit for the specified period")
+        throw new Error(
+          "Cumulative spending exceeds spending limit for the specified period with limit " +
+            senderAccount.spending_limit +
+            " and time " +
+            senderAccount.spending_time_limit
+        )
       }
     }
 
@@ -70,6 +75,7 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
 
     await logTransaction(senderUID, receiverUID, amount, description)
   } catch (error) {
+    console.log(error)
     throw new Error("Failed to transfer money")
   }
 }
