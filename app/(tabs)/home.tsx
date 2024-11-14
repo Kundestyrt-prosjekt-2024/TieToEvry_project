@@ -41,7 +41,7 @@ const Home = () => {
   }
 
   function handleTransactions(): void {
-    router.push("/Transactions")
+    router.push(`/Transactions?userID=${userId}`)
   }
 
   async function fetchMonthStats() {

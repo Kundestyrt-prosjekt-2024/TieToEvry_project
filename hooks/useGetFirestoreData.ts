@@ -2,6 +2,7 @@ import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
 import { createChore, getAllChores, getChoreIcons, getChoresByStatus, updateChoreStatus } from "@/backend/src/choreDAO"
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
+import { getTransactionHistory } from "@/backend/src/transactionsDAO"
 import { getUser } from "@/backend/src/UserDAO"
 import { BankAccount } from "@/backend/types/bankAccount"
 import { Chore } from "@/backend/types/chore"
@@ -55,20 +56,20 @@ export const useGetParents = (parentIDs: string[]) => {
 // Bank account
 
 export const useGetBankAccount = (userID: string) => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useQuery({
     queryKey: ["bankAccount", userID],
     queryFn: () =>
       getBankAccountByUID(userID, (updatedData) => {
-        queryClient.setQueryData(["bankAccount", userID], (oldData: BankAccount & { id: string } | undefined) => {
-          if (!oldData) return updatedData;
-          return { ...oldData, ...updatedData };
-        });
+        queryClient.setQueryData(["bankAccount", userID], (oldData: (BankAccount & { id: string }) | undefined) => {
+          if (!oldData) return updatedData
+          return { ...oldData, ...updatedData }
+        })
       }),
     enabled: userID.length !== 0,
-  });
-};
+  })
+}
 
 // Saving goals
 
@@ -115,4 +116,34 @@ export const useGetChores = (child_id: string) => {
     queryFn: () => getAllChores(child_id),
     enabled: child_id.length !== 0,
   })
+}
+
+// Transactions
+
+export const useGetTransactionHistory = (accountID: string, fromDate?: Date, toDate?: Date) => {
+  if (!fromDate && !toDate) {
+    return useQuery({
+      queryKey: ["transactionHistory", accountID],
+      queryFn: () => getTransactionHistory(accountID),
+      enabled: accountID.length !== 0,
+    })
+  } else if (!toDate) {
+    return useQuery({
+      queryKey: ["transactionHistory", accountID],
+      queryFn: () => getTransactionHistory(accountID, fromDate),
+      enabled: accountID.length !== 0,
+    })
+  } else if (!fromDate) {
+    return useQuery({
+      queryKey: ["transactionHistory", accountID],
+      queryFn: () => getTransactionHistory(accountID, undefined, toDate),
+      enabled: accountID.length !== 0,
+    })
+  } else {
+    return useQuery({
+      queryKey: ["transactionHistory", accountID],
+      queryFn: () => getTransactionHistory(accountID, fromDate, toDate),
+      enabled: accountID.length !== 0,
+    })
+  }
 }

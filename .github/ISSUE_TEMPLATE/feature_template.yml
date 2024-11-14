@@ -1,6 +1,6 @@
 name: New Feature
 description: Document a new feature or improvement to be implemented.
-title: "R<req num> [FEAT] Briefly describe the new feature"
+title: "FR<req num> - Briefly describe the new feature"
 labels: ["enhancement"]
 
 body:
