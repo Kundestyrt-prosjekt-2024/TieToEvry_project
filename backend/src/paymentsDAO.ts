@@ -1,6 +1,6 @@
 import { db } from "@/constants/firebaseConfig"
-import { setDoc, doc, collection, getDoc, query, where, getDocs } from "firebase/firestore"
-import { MoneyRequest } from "../types/transaction";
+import { setDoc, doc, collection, getDoc, query, where, getDocs, deleteDoc } from "firebase/firestore"
+import { MoneyRequest, Transaction } from "../types/transaction";
 import { logTransaction } from "./transactionsDAO";
 import { transferMoney } from "./transactionService";
 import { getBankAccountByUID } from "./bankAccountDAO";
@@ -13,10 +13,10 @@ export async function requestMoneyFS(receiver: string, sender: string, amount: n
             sender,
             amount,
             message,
-            requestedAt: new Date(),
+            date: new Date(),
             status: "pending"
         }
-        
+
         await setDoc(doc(transactionRef), request);
     } catch (error: any) {
         throw new Error(error.message)
@@ -48,7 +48,7 @@ export async function rejectMoneyRequestFS(requestId: string) {
 export async function cancelMoneyRequestFS(requestId: string) {
     try {
         const requestDocRef = doc(db, "moneyRequests", requestId);
-        await setDoc(requestDocRef, { status: "cancelled" });
+        await deleteDoc(requestDocRef);
     } catch (error: any) {
         throw new Error(error.message)
     }
@@ -59,6 +59,66 @@ export async function sendMoneyFS(sender: string, receiver: string, amount: numb
         transferMoney(sender, receiver, amount, "Payment: " + message, "payment")
     } catch (error: any) {
         throw new Error(error.message)
+    }
+}
+
+
+export async function fetchPaymentTransactions(currentUserId: string, historyUserId: string): Promise<Transaction[]> {
+    try {
+        const payments: any[] = [];
+        const currentAccount = await getBankAccountByUID(currentUserId);
+        const historyAccount = await getBankAccountByUID(historyUserId);
+
+        const transactionRef = collection(db, "transactions");
+        const senderQuery = query(
+            transactionRef,
+            where("account_id_from", "==", currentAccount.id),
+            where("account_id_to", "==", historyAccount.id),
+            where("type", "==", "payment")
+        );
+        const receiverQuery = query(
+            transactionRef,
+            where("account_id_to", "==", currentAccount.id),
+            where("account_id_from", "==", historyAccount.id),
+            where("type", "==", "payment")
+        );
+
+        const [senderSnapshot, receiverSnapshot] = await Promise.all([getDocs(senderQuery), getDocs(receiverQuery)]);
+
+        senderSnapshot.forEach((doc) => payments.push(doc.data()));
+        receiverSnapshot.forEach((doc) => payments.push(doc.data()));
+
+        return payments;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+
+export async function fetchMoneyRequests(currentUserId: string, historyUserId: string): Promise<MoneyRequest[]> {
+    try {
+        const requests: any[] = [];
+        const moneyRequestsRef = collection(db, "moneyRequests");
+
+        const requesterQuery = query(
+            moneyRequestsRef,
+            where("sender", "==", currentUserId),
+            where("receiver", "==", historyUserId)
+        );
+        const requestedQuery = query(
+            moneyRequestsRef,
+            where("receiver", "==", currentUserId),
+            where("sender", "==", historyUserId)
+        );
+
+        const [requesterSnapshot, requestedSnapshot] = await Promise.all([getDocs(requesterQuery), getDocs(requestedQuery)]);
+
+        requesterSnapshot.forEach((doc) => requests.push(doc.data()));
+        requestedSnapshot.forEach((doc) => requests.push(doc.data()));
+
+        return requests;
+    } catch (error: any) {
+        throw new Error(error.message);
     }
 }
 

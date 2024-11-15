@@ -21,8 +21,8 @@ const MoneyRequestSchema = z.object({
   sender: z.string(),
   message: z.string(),
   amount: z.number(),
-  requestedAt: FirestoreTimestampSchema,
-  status: z.enum(["pending", "accepted", "rejected", "cancelled"]),
+  date: FirestoreTimestampSchema,
+  status: z.enum(["pending", "accepted", "rejected"]),
 })
 
 export type MoneyRequest = z.infer<typeof MoneyRequestSchema>;

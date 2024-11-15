@@ -75,16 +75,7 @@ const PaymentScreen = () => {
     return (
       <TouchableOpacity
         style={styles.userContainer}
-        onPress={() =>
-          router.push({
-            pathname: "../PaymentHistory",
-            params: {
-              name: user.name,
-              currentUserId: userId,
-              userId: user.uid,
-            },
-          })
-        }
+        onPress={() => router.push(`/PaymentHistory?name=${user.name}&currentUserId=${userId}&userId=${user.uid}`)}
       >
         <View style={styles.userCircle}>
           <Image source={{ uri: user.profilePicture }} className="w-full h-full" style={{ resizeMode: "cover" }} />

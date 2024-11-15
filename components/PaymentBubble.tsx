@@ -1,10 +1,9 @@
 import React, { useRef } from "react"
 import { View, Text, Animated, StyleSheet } from "react-native"
 import { PanGestureHandler } from "react-native-gesture-handler"
-import { Transaction } from "@/types"
 
 type PaymentBubbleProps = {
-  payment: Transaction
+  payment: any
   userId: string
   name: string
   showDateDivider: boolean
@@ -23,7 +22,9 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
   formatTime,
 }) => {
   const panX = useRef(new Animated.Value(0)).current
-  const isSentByUser = payment.sender === userId
+  const isSentByUser = payment.fromUser
+  const isPayment = payment.status === "payment" || payment.status === "accepted"
+  const isPending = payment.status === "pending"
 
   const handleGesture = Animated.event([{ nativeEvent: { translationX: panX } }], {
     useNativeDriver: false,
@@ -67,11 +68,34 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
           ]}
         >
           <Text style={isSentByUser ? styles.timeRight : styles.timeLeft}>{formatTime(payment.sentAt)}</Text>
-          <View style={[styles.messageBubble, isSentByUser ? styles.send : styles.receive]}>
-            <Text style={styles.statusText}>{isSentByUser ? `Du sendte ${name}` : `${name} sendte deg`}</Text>
-            <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
-            {payment.message && <Text style={styles.statusText}>{payment.message}</Text>}
-          </View>
+          {isPayment && (
+            <View style={[styles.messageBubble, isSentByUser ? styles.send : styles.receive]}>
+              {payment.status === "accepted" ? (
+                <Text style={styles.statusText}>{isSentByUser ? `${name} godtok` : `Du godtok`} betalingen på</Text>
+              ) : (
+                <Text style={styles.statusText}>{isSentByUser ? `Du sendte ${name}` : `${name} sendte deg`}</Text>
+              )}
+              <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
+              {payment.message && <Text style={styles.statusText}>{payment.message}</Text>}
+            </View>
+          )}
+          {!isPayment && (
+            <View
+              style={[
+                styles.messageBubble,
+                isSentByUser ? { borderBottomRightRadius: 2 } : { borderBottomLeftRadius: 2 },
+                isPending ? { backgroundColor: "#a6f1f7" } : { backgroundColor: "#e0dede" },
+              ]}
+            >
+              {isPending ? (
+                <Text style={styles.statusText}>{isSentByUser ? `Du ber ${name} om` : `${name} ber deg om`}</Text>
+              ) : (
+                <Text style={styles.statusText}>{isSentByUser ? `${name} avslo` : `Du avslo`} betalingen på</Text>
+              )}
+              <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
+              {payment.message && <Text style={styles.statusText}>{payment.message}</Text>}
+            </View>
+          )}
         </Animated.View>
       </PanGestureHandler>
     </View>
