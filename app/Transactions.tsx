@@ -10,7 +10,7 @@ const Transactions = () => {
   const userID = searchParams.userID as string
   const account = useGetBankAccount(userID)
 
-  const transactionHistory = useGetTransactionHistory(userID ?? "")
+  const transactionHistory = useGetTransactionHistory(account.data?.id ?? "")
 
   function renderListHeader() {
     return (
