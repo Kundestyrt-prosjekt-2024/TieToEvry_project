@@ -16,7 +16,8 @@ const registerUser = async (
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    const newUser: User = {
+    const newUser = {
+      uid: user.uid,
       created_at: Timestamp.now(),
       birthdate: birthdate,
       name: name,
@@ -25,7 +26,7 @@ const registerUser = async (
       profilePicture: "https://firebasestorage.googleapis.com/v0/b/mobile-banking-app-dacb3.appspot.com/o/Profile%20Pictures%2FDefault_pfp.png?alt=media&token=3c5ea107-33ee-4b7b-8df6-4ab8b3522aaa"
     };
 
-    const userId = await addUser(user.uid, newUser);
+    const userId = await addUser(newUser);
     await createBankAccount(user.uid)
     return userId;
 
@@ -46,7 +47,8 @@ const registerChild = async (
     const childCredential = await createUserWithEmailAndPassword(auth, email, password);
     const child = childCredential.user;
 
-    const newUser: User = {
+    const newUser = {
+      uid: child.uid,
       created_at: Timestamp.now(),
       birthdate: birthdate,
       name: name,
@@ -56,7 +58,9 @@ const registerChild = async (
       profilePicture: "https://firebasestorage.googleapis.com/v0/b/mobile-banking-app-dacb3.appspot.com/o/Profile%20Pictures%2FDefault_pfp.png?alt=media&token=3c5ea107-33ee-4b7b-8df6-4ab8b3522aaa"
     };
 
-    const userId = await addChildToParent(parentUid, child.uid, newUser);
+    addUser(newUser);
+
+    const userId = await addChildToParent(parentUid, child.uid);
     await createBankAccount(child.uid)
     return userId;
 

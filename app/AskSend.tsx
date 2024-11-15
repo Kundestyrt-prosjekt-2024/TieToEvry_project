@@ -1,44 +1,26 @@
+import { sendMoneyFS } from "@/backend/src/paymentsDAO"
+import { User } from "@/backend/types/user"
+import { useGetParents } from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams } from "expo-router"
 import { useState } from "react"
-import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, FlatList } from "react-native"
+import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, FlatList, Image } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
-import AwesomeIcon from "react-native-vector-icons/FontAwesome"
-
-export type User = {
-  uid: string
-  name: string
-  image: string
-}
-
-const dummyData2: User[] = [
-  {
-    uid: "1",
-    name: "Geir",
-    image: "user",
-  },
-  {
-    uid: "2",
-    name: "Jalla",
-    image: "user",
-  },
-  {
-    uid: "3",
-    name: "Magne",
-    image: "user",
-  },
-]
 
 const AskSend = () => {
   const params = useLocalSearchParams()
   const ask = params.ask as string
+  const currentId = params.currentId as string
+  const parentIds = Array.isArray(params.parentIds) ? params.parentIds : params.parentIds ? [params.parentIds] : []
+  const parents = useGetParents(parentIds)
   const isAsk = ask === "true"
-  const [selectedReceiver, setSelectedReveiver] = useState<string>(dummyData2[0].uid)
+  console.log(parents[0].data)
+  const [selectedReceiver, setSelectedReveiver] = useState<string>(parents[0].data?.uid || "")
 
   function handleAskSend() {
     if (isAsk) {
       console.log("Ask pressed")
     } else {
-      console.log("Send pressed")
+      sendMoneyFS(currentId, selectedReceiver, 1000, "Test")
     }
   }
 
@@ -51,7 +33,7 @@ const AskSend = () => {
         activeOpacity={1}
       >
         <View style={styles.userCircle}>
-          <AwesomeIcon name={user.image} size={30}></AwesomeIcon>
+          <Image source={{ uri: user.profilePicture }} className="w-full h-full" style={{ resizeMode: "cover" }} />
         </View>
         <Text>{user.name}</Text>
       </TouchableOpacity>
@@ -70,9 +52,9 @@ const AskSend = () => {
           scrollEnabled={true}
           horizontal={true}
           contentContainerStyle={styles.userListContent}
-          data={dummyData2}
-          renderItem={(req) => renderUser(req.item)}
-          keyExtractor={(req) => req.uid}
+          data={parents}
+          renderItem={(req) => renderUser(req.item.data as User)}
+          keyExtractor={(req) => req.data?.uid || ""}
           showsHorizontalScrollIndicator={false}
           keyboardShouldPersistTaps="always"
         ></FlatList>

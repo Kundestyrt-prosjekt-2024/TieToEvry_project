@@ -1,5 +1,5 @@
 import AppHeader from "@/components/AppHeader"
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated } from "react-native"
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated, Image } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
@@ -40,12 +40,17 @@ const PaymentScreen = () => {
   }
 
   function handleSend() {
-    router.push({
-      pathname: "../AskSend",
-      params: {
-        ask: "false",
-      },
-    })
+    router.push(`/AskSend?ask=${"false"}&currentId=${userId}&parentIds=${parentIDs}`)
+    // router.push(`../AskSend?ask=${"false"}&currentId=${userId}`)
+    // &currentId=${userId}&parentIds=${parentIDs}
+    // router.push({
+    //   pathname: "../AskSend",
+    //   params: {
+    //     ask: "false",
+    //     currentId: userId,
+    //     parentIds: parentIDs,
+    //   },
+    // })
   }
 
   function handleAsk() {
@@ -53,6 +58,8 @@ const PaymentScreen = () => {
       pathname: "../AskSend",
       params: {
         ask: "true",
+        currentId: userId,
+        parentIds: parentIDs,
       },
     })
   }
@@ -81,6 +88,7 @@ const PaymentScreen = () => {
   }
 
   function renderUser(user: User) {
+    if (!user) return null
     return (
       <TouchableOpacity
         style={styles.userContainer}
@@ -89,13 +97,14 @@ const PaymentScreen = () => {
             pathname: "../PaymentHistory",
             params: {
               name: user.name,
+              currentUserId: userId,
               userId: user.uid,
             },
           })
         }
       >
         <View style={styles.userCircle}>
-          <AwesomeIcon name={user.profilePicture} size={30}></AwesomeIcon>
+          <Image source={{ uri: user.profilePicture }} className="w-full h-full" style={{ resizeMode: "cover" }} />
         </View>
         <Text>{user.name}</Text>
       </TouchableOpacity>
@@ -139,7 +148,7 @@ const PaymentScreen = () => {
           contentContainerStyle={styles.userListContent}
           data={parents}
           renderItem={(req) => renderUser(req.item.data as User)}
-          keyExtractor={(req) => req.data?.uid.toString() || ""}
+          keyExtractor={(req) => req.data?.uid || ""}
           showsHorizontalScrollIndicator={false}
         ></FlatList>
         <Text style={styles.balance}>{new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}</Text>

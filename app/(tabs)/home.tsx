@@ -46,8 +46,8 @@ const Home = () => {
 
   async function fetchMonthStats() {
     const { to, from } = await fetchMonthStatsFS(account.data?.id || "", selectedMonth)
-    const moneyIn = await to.reduce((acc, transaction) => acc + transaction.transaction_amount, 0)
-    const moneyOut = await from.reduce((acc, transaction) => acc + transaction.transaction_amount, 0)
+    const moneyIn = await to.reduce((acc, transaction) => acc + transaction.amount, 0)
+    const moneyOut = await from.reduce((acc, transaction) => acc + transaction.amount, 0)
     const total = moneyIn - moneyOut
     setMonthStats([moneyIn, moneyOut, total])
   }

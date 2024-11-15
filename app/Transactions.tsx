@@ -1,16 +1,13 @@
-import React, { useEffect } from "react"
+import React from "react"
 import TransactionCard from "@/components/TransactionCard"
-import { Text, View, StyleSheet, FlatList, Pressable } from "react-native"
-import { useGetBankAccount, useGetTransactionHistory, useGetUserID } from "@/hooks/useGetFirestoreData"
-import { transferMoney } from "@/backend/src/transactionService"
+import { Text, View, StyleSheet, FlatList } from "react-native"
+import { useGetBankAccount, useGetTransactionHistory } from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams } from "expo-router"
 import { Transaction } from "@/backend/types/transaction"
-import { Timestamp } from "firebase/firestore"
 
 const Transactions = () => {
   const searchParams = useLocalSearchParams()
   const userID = searchParams.userID as string
-  const [transactions, setTransactions] = React.useState<Transaction[]>([])
   const account = useGetBankAccount(userID)
 
   const transactionHistory = useGetTransactionHistory(userID ?? "")

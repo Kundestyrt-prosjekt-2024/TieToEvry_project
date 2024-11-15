@@ -73,7 +73,7 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
     await adjustBalance(senderAccount.id, -amount)
     await adjustBalance(receiverAccount.id, amount)
 
-    await logTransaction(senderUID, receiverUID, amount, description, type)
+    await logTransaction(senderAccount.id, receiverAccount.id, amount, description, type)
   } catch (error) {
     console.log(error)
     throw new Error("Failed to transfer money")
