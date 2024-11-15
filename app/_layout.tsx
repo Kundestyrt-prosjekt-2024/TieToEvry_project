@@ -50,6 +50,10 @@ export default function RootLayout() {
             options={{ headerBackTitle: "Tilbake", headerTitle: "Mine foreldre" }}
           />
           <Stack.Screen
+            name="(profile)/myChildren"
+            options={{ headerBackTitle: "Tilbake", headerTitle: "Mine barn" }}
+          />
+          <Stack.Screen
             name="Coins"
             options={{
               headerBackTitle: "Tilbake",

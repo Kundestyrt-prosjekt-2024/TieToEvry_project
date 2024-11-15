@@ -61,6 +61,29 @@ const Profile = () => {
     return <DataError />
   }
 
+  const childrenPage = () => {
+    return(
+      <TouchableOpacity
+      className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
+      onPress={() => router.navigate("/myParents")}
+      activeOpacity={0.8}
+    >
+      <Text className="text-xl">Mine foreldre</Text>
+    </TouchableOpacity>
+    )
+  }
+
+  const parentPage = () => {
+    return (
+      <TouchableOpacity
+      className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
+      onPress={() => router.navigate("/myChildren")}
+      activeOpacity={0.8}
+    >
+      <Text className="text-xl">Mine barn</Text>
+    </TouchableOpacity>
+    )
+  }
   return (
     <View className="h-full bg-white">
       <ScrollView>
@@ -93,13 +116,7 @@ const Profile = () => {
             >
               <Text className="text-xl">Innstillinger</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-              onPress={() => router.navigate("/myParents")}
-              activeOpacity={0.8}
-            >
-              <Text className="text-xl">Mine foreldre</Text>
-            </TouchableOpacity>
+            {user.data?.parents ? childrenPage() : parentPage()}
             <TouchableOpacity className="py-3 px-14 w-64 items-center" onPress={handleLogout} activeOpacity={0.8}>
               <Text className="text-xl text-red-600">Logg ut</Text>
             </TouchableOpacity>
@@ -126,9 +143,12 @@ const Profile = () => {
                 data={profilePictures.data}
                 numColumns={4}
                 renderItem={({ item }) => (
-                  <TouchableOpacity className="w-12 h-12 mx-4 my-2" onPress={() => handleProfilePictureUpdate(item)}>
-                    <Image source={{ uri: item }} className="h-full w-full" />
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                    className={`w-12 h-12 rounded-xl mx-4 my-2 ${item === user.data?.profilePicture ? 'border-4 border-blue-500' : ''}`}
+                    onPress={() => handleProfilePictureUpdate(item)}
+                    >
+                    <Image source={{ uri: item }} className="h-full w-full rounded-xl" />
+                    </TouchableOpacity>
                 )}
                 keyExtractor={(_item, index) => index.toString()}
                 scrollEnabled={false}
