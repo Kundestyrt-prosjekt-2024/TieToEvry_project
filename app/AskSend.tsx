@@ -1,4 +1,4 @@
-import { sendMoneyFS } from "@/backend/src/paymentsDAO"
+import { requestMoneyFS, sendMoneyFS } from "@/backend/src/paymentsDAO"
 import { User } from "@/backend/types/user"
 import { useGetParents } from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams } from "expo-router"
@@ -13,14 +13,15 @@ const AskSend = () => {
   const parentIds = Array.isArray(params.parentIds) ? params.parentIds : params.parentIds ? [params.parentIds] : []
   const parents = useGetParents(parentIds)
   const isAsk = ask === "true"
-  console.log(parents[0].data)
   const [selectedReceiver, setSelectedReveiver] = useState<string>(parents[0].data?.uid || "")
+  const [amount, setAmount] = useState<number>(0)
+  const [message, setMessage] = useState<string>("")
 
   function handleAskSend() {
     if (isAsk) {
-      console.log("Ask pressed")
+      requestMoneyFS(selectedReceiver, currentId, amount, message)
     } else {
-      sendMoneyFS(currentId, selectedReceiver, 1000, "Test")
+      sendMoneyFS(currentId, selectedReceiver, amount, message)
     }
   }
 
@@ -63,6 +64,8 @@ const AskSend = () => {
         <View style={styles.upperContainer}>
           <TextInput
             style={styles.amountInput}
+            value={amount.toString()}
+            onChangeText={(text) => setAmount(parseInt(text) || 0)}
             placeholder="0"
             placeholderTextColor={"#000"}
             keyboardType="numeric"
@@ -71,7 +74,12 @@ const AskSend = () => {
           <Text style={{ fontSize: 50, fontWeight: "bold" }}> kr</Text>
         </View>
         <View style={styles.bottomContainer}>
-          <TextInput style={styles.textInput} placeholder="Skriv en beskjed..." />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Skriv en beskjed..."
+            value={message}
+            onChangeText={setMessage}
+          />
           <TouchableOpacity style={styles.askButton} onPress={handleAskSend}>
             <Text style={styles.askText}>{isAsk ? "Be Om" : "Send"}</Text>
           </TouchableOpacity>

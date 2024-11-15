@@ -41,27 +41,10 @@ const PaymentScreen = () => {
 
   function handleSend() {
     router.push(`/AskSend?ask=${"false"}&currentId=${userId}&parentIds=${parentIDs}`)
-    // router.push(`../AskSend?ask=${"false"}&currentId=${userId}`)
-    // &currentId=${userId}&parentIds=${parentIDs}
-    // router.push({
-    //   pathname: "../AskSend",
-    //   params: {
-    //     ask: "false",
-    //     currentId: userId,
-    //     parentIds: parentIDs,
-    //   },
-    // })
   }
 
   function handleAsk() {
-    router.push({
-      pathname: "../AskSend",
-      params: {
-        ask: "true",
-        currentId: userId,
-        parentIds: parentIDs,
-      },
-    })
+    router.push(`/AskSend?ask=${"true"}&currentId=${userId}&parentIds=${parentIDs}`)
   }
 
   function handleScroll(event: any) {
