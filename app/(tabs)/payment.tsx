@@ -6,10 +6,9 @@ import { useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import { useGetBankAccount, useGetParents, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { MoneyRequest } from "@/backend/types/transaction"
-import { fetchParents } from "@/backend/src/UserDAO"
+import { fetchParents, getUser } from "@/backend/src/UserDAO"
 import { User } from "@/backend/types/user"
-
-const dummyData2: User[] = []
+import { acceptMoneyRequestFS, cancelMoneyRequestFS, fetchUserMoneyRequests } from "@/backend/src/paymentsDAO"
 
 const dummyData: MoneyRequest[] = []
 
@@ -19,24 +18,51 @@ const PaymentScreen = () => {
   const [parentIDs, setParentIDs] = useState<string[]>([])
   const parents = useGetParents(parentIDs)
   const account = useGetBankAccount(userId || "")
+  const [userRequests, setUserRequests] = useState<MoneyRequest[]>([])
+  const [otherUserId, setOtherUserId] = useState("")
+  const [otherUser, setOtherUser] = useState<User | null>(null)
+  const [requestUpdate, setRequestUpdate] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    async function fetchOtherUser() {
+      const fetchedUser = await getUser(otherUserId)
+      setOtherUser(fetchedUser as User)
+    }
+    fetchOtherUser()
+  }, [otherUserId])
 
   useEffect(() => {
     async function fetchParentIDs() {
       const IDs = await fetchParents(userId || "")
       setParentIDs(IDs)
     }
+    async function fetchRequests() {
+      const requests = await fetchUserMoneyRequests(userId || "")
+      setUserRequests(requests)
+    }
     fetchParentIDs()
+    fetchRequests()
   }, [userId])
 
-  function handleCancel() {
-    console.log("Cancel")
+  useEffect(() => {
+    async function fetchRequests() {
+      const requests = await fetchUserMoneyRequests(userId || "")
+      setUserRequests(requests)
+    }
+    fetchRequests()
+  }, [userId, requestUpdate])
+
+  function handleCancel(requestId: string) {
+    setRequestUpdate(!requestUpdate)
+    cancelMoneyRequestFS(requestId)
   }
 
-  function handleAccept() {
-    console.log("Accept")
+  function handleAccept(requestId: string) {
+    setRequestUpdate(!requestUpdate)
+    acceptMoneyRequestFS(requestId)
   }
 
   function handleSend() {
@@ -85,15 +111,18 @@ const PaymentScreen = () => {
     )
   }
 
-  function renderPayment(request: MoneyRequest) {
+  function renderRequest(request: MoneyRequest) {
+    const otherId = request.sender === userId ? request.receiver : request.sender
+    setOtherUserId(otherId)
+
     if (request.amount <= 0) return null
-    if (request.sender === "1") {
+    if (request.sender === userId) {
       return (
         <View style={styles.request}>
           <Text style={styles.requestText}>
-            Du ber {request.receiver} om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
+            Du ber {otherUser?.name} om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
           </Text>
-          <TouchableOpacity onPress={handleCancel}>
+          <TouchableOpacity onPress={() => handleCancel(request.id)}>
             <Text style={{ ...styles.requestText, color: "red" }}>Avbryt</Text>
           </TouchableOpacity>
         </View>
@@ -102,9 +131,9 @@ const PaymentScreen = () => {
       return (
         <View style={styles.request}>
           <Text style={styles.requestText}>
-            {request.sender} ber deg om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
+            {otherUser?.name} ber deg om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
           </Text>
-          <TouchableOpacity onPress={handleAccept}>
+          <TouchableOpacity onPress={() => handleAccept(request.id)}>
             <Text style={{ ...styles.requestText, color: "green" }}>Godta</Text>
           </TouchableOpacity>
         </View>
@@ -137,8 +166,8 @@ const PaymentScreen = () => {
         <FlatList
           style={styles.requestList}
           contentContainerStyle={{ paddingBottom: 40 }}
-          data={dummyData}
-          renderItem={(req) => renderPayment(req.item)}
+          data={userRequests}
+          renderItem={(req) => renderRequest(req.item)}
           ListHeaderComponent={renderListHeader}
           scrollEnabled={true}
           onScroll={handleScroll}

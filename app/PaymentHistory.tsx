@@ -2,9 +2,7 @@ import React, { useEffect } from "react"
 import { useLocalSearchParams } from "expo-router"
 import { View, FlatList, StyleSheet } from "react-native"
 import PaymentBubble from "@/components/PaymentBubble"
-import { Transaction, MoneyRequest } from "@/backend/types/transaction"
-import { fetchMoneyRequests, fetchPaymentHistory, fetchPaymentTransactions } from "@/backend/src/paymentsDAO"
-import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
+import { fetchMoneyRequests, fetchPaymentTransactions } from "@/backend/src/paymentsDAO"
 import { useGetBankAccount } from "@/hooks/useGetFirestoreData"
 
 const PaymentHistory = () => {

@@ -122,39 +122,27 @@ export async function fetchMoneyRequests(currentUserId: string, historyUserId: s
     }
 }
 
-export async function fetchPaymentHistory(currentUserId: string, historyUserId: string) : Promise<any[]> {
+export async function fetchUserMoneyRequests(userId: string): Promise<MoneyRequest[]> {
     try {
-        const payments: any[] = []
-        const currentAccount = await getBankAccountByUID(currentUserId)
-        const historyAccount = await getBankAccountByUID(historyUserId)
-
-        const transactionRef = collection(db, "transactions");
-        const senderQuery = query(transactionRef, where("sender", "==", currentAccount), where("receiver", "==", historyAccount), where("type", "==", "payment"));
-        const receiverQuery = query(transactionRef, where("receiver", "==", currentAccount), where("sender", "==", historyAccount), where("type", "==", "payment"));
-
-        const [senderSnapshot, receiverSnapshot] = await Promise.all([getDocs(senderQuery), getDocs(receiverQuery)]);
-        senderSnapshot.forEach((doc) => {
-            payments.push(doc.data());
-        });
-        receiverSnapshot.forEach((doc) => {
-            payments.push(doc.data());
-        });
-
+        const requests: MoneyRequest[] = [];
         const moneyRequestsRef = collection(db, "moneyRequests");
-        const requesterQuery = query(moneyRequestsRef, where("sender", "==", currentUserId), where("receiver", "==", historyUserId));
-        const requestedQuery = query(moneyRequestsRef, where("receiver", "==", currentUserId), where("sender", "==", historyUserId));
+
+        const requesterQuery = query(
+            moneyRequestsRef,
+            where("sender", "==", userId)
+        );
+        const requestedQuery = query(
+            moneyRequestsRef,
+            where("receiver", "==", userId)
+        );
 
         const [requesterSnapshot, requestedSnapshot] = await Promise.all([getDocs(requesterQuery), getDocs(requestedQuery)]);
-        requesterSnapshot.forEach((doc) => {
-            payments.push(doc.data());
-        });
-        requestedSnapshot.forEach((doc) => {
-            payments.push(doc.data());
-        });
 
-        return payments;
-    }
-    catch (error: any) {
-        throw new Error(error.message)
+        requesterSnapshot.forEach((doc) => requests.push({id: doc.id, ...doc.data()} as MoneyRequest));
+        requestedSnapshot.forEach((doc) => requests.push({id: doc.id, ...doc.data()} as MoneyRequest));
+
+        return requests;
+    } catch (error: any) {
+        throw new Error(error.message);
     }
 }
