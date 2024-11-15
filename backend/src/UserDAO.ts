@@ -5,12 +5,16 @@ import { User } from "../types/user"
 
 export async function addUser(user: User): Promise<string | undefined> {
   try {
-    const docRef = doc(db, "users", user.uid)
-    if (user.profilePicture == "" || user.profilePicture == undefined) {
-      user.profilePicture = "https://firebasestorage.googleapis.com/v0/b/mobile-banking-app-dacb3.appspot.com/o/Profile%20Pictures%2FDefault_pfp.png?alt=media&token=3c5ea107-33ee-4b7b-8df6-4ab8b3522aaa"
-    }
-    await setDoc(docRef, user)
-    return user.uid
+    const { uid, profilePicture, ...userData } = user;
+    const docRef = doc(db, "users", uid)
+
+    const profilePicUrl =
+      profilePicture && profilePicture !== ""
+        ? profilePicture
+        : "https://firebasestorage.googleapis.com/v0/b/mobile-banking-app-dacb3.appspot.com/o/Profile%20Pictures%2FDefault_pfp.png?alt=media&token=3c5ea107-33ee-4b7b-8df6-4ab8b3522aaa";
+
+    await setDoc(docRef, { ...userData, profilePicture: profilePicUrl });
+    return uid
   } catch (error: any) {
     throw new Error(error.message)
   }
@@ -18,9 +22,6 @@ export async function addUser(user: User): Promise<string | undefined> {
 
 export async function addChildToParent(parentUid: string, childUid: string): Promise<string | undefined> {
   try {
-    const childDocRef = doc(db, "users", childUid)
-    // await setDoc(childDocRef, data, { merge: true })
-
     const parentDocRef = doc(db, "users", parentUid)
     await updateDoc(parentDocRef, {
       children: arrayUnion(childUid),
