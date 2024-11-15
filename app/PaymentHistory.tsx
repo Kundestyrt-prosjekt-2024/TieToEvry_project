@@ -3,11 +3,14 @@ import { useLocalSearchParams } from "expo-router"
 import { View, FlatList, StyleSheet } from "react-native"
 import PaymentBubble from "@/components/PaymentBubble"
 import { Transaction } from "@/backend/types/transaction"
+import { useGetUserID } from "@/hooks/useGetFirestoreData"
+import { fetchPaymentHistory } from "@/backend/src/paymentsDAO"
 
 const dummyData: Transaction[] = []
 
 const PaymentHistory = () => {
   const params = useLocalSearchParams()
+  const { data: currentUserId } = useGetUserID()
   const userId = params.userId as string
   const name = params.name as string
   const [payments, setPayments] = React.useState<Transaction[]>([])
@@ -16,8 +19,9 @@ const PaymentHistory = () => {
     fetchTransactions(userId)
   }, [userId])
 
-  function fetchTransactions(userId: string): void {
-    const sortedPayments = dummyData.sort((a, b) => a.date.seconds - b.date.seconds)
+  async function fetchTransactions(userId: string) {
+    const payments = await fetchPaymentHistory(currentUserId || "", userId)
+    const sortedPayments = payments.sort((a, b) => a.date.seconds - b.date.seconds)
     setPayments(sortedPayments)
   }
 
