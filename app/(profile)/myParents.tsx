@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react"
 import { ScrollView } from "react-native-gesture-handler"
 import { fetchParents } from "@/backend/src/UserDAO"
 import { useGetParents, useGetUserID } from "@/hooks/useGetFirestoreData"
-import { FirestoreTimestamp, User } from "@/backend/types/user"
+import { User } from "@/backend/types/user"
+import { FirestoreTimestamp } from "@/backend/types/firebase"
 
 const MyParents = () => {
   const userId = useGetUserID()

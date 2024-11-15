@@ -65,7 +65,7 @@ export async function sendMoneyFS(sender: string, receiver: string, amount: numb
 
 export async function fetchPaymentTransactions(currentUserId: string, historyUserId: string): Promise<Transaction[]> {
     try {
-        const payments: any[] = [];
+        const payments: Transaction[] = [];
         const currentAccount = await getBankAccountByUID(currentUserId);
         const historyAccount = await getBankAccountByUID(historyUserId);
 
@@ -85,8 +85,8 @@ export async function fetchPaymentTransactions(currentUserId: string, historyUse
 
         const [senderSnapshot, receiverSnapshot] = await Promise.all([getDocs(senderQuery), getDocs(receiverQuery)]);
 
-        senderSnapshot.forEach((doc) => payments.push(doc.data()));
-        receiverSnapshot.forEach((doc) => payments.push(doc.data()));
+        senderSnapshot.forEach((doc) => payments.push({id: doc.id, ...doc.data()} as Transaction));
+        receiverSnapshot.forEach((doc) => payments.push({id: doc.id, ...doc.data()} as Transaction));
 
         return payments;
     } catch (error: any) {
@@ -97,7 +97,7 @@ export async function fetchPaymentTransactions(currentUserId: string, historyUse
 
 export async function fetchMoneyRequests(currentUserId: string, historyUserId: string): Promise<MoneyRequest[]> {
     try {
-        const requests: any[] = [];
+        const requests: MoneyRequest[] = [];
         const moneyRequestsRef = collection(db, "moneyRequests");
 
         const requesterQuery = query(
@@ -113,8 +113,8 @@ export async function fetchMoneyRequests(currentUserId: string, historyUserId: s
 
         const [requesterSnapshot, requestedSnapshot] = await Promise.all([getDocs(requesterQuery), getDocs(requestedQuery)]);
 
-        requesterSnapshot.forEach((doc) => requests.push(doc.data()));
-        requestedSnapshot.forEach((doc) => requests.push(doc.data()));
+        requesterSnapshot.forEach((doc) => requests.push({id: doc.id, ...doc.data()} as MoneyRequest));
+        requestedSnapshot.forEach((doc) => requests.push({id: doc.id, ...doc.data()} as MoneyRequest));
 
         return requests;
     } catch (error: any) {

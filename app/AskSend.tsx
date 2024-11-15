@@ -1,12 +1,13 @@
 import { requestMoneyFS, sendMoneyFS } from "@/backend/src/paymentsDAO"
 import { User } from "@/backend/types/user"
 import { useGetParents } from "@/hooks/useGetFirestoreData"
-import { useLocalSearchParams } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, FlatList, Image } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 
 const AskSend = () => {
+  const router = useRouter()
   const params = useLocalSearchParams()
   const ask = params.ask as string
   const currentId = params.currentId as string
@@ -18,11 +19,15 @@ const AskSend = () => {
   const [message, setMessage] = useState<string>("")
 
   function handleAskSend() {
+    if (amount <= 0) {
+      return
+    }
     if (isAsk) {
       requestMoneyFS(selectedReceiver, currentId, amount, message)
     } else {
       sendMoneyFS(currentId, selectedReceiver, amount, message)
     }
+    router.push("/payment")
   }
 
   function renderUser(user: User) {

@@ -1,9 +1,5 @@
 import { z } from "zod";
-
-const FirestoreTimestampSchema = z.object({
-  seconds: z.number(),
-  nanoseconds: z.number(),
-});
+import { FirestoreTimestampSchema } from "./firebase";
 
 const TransactionSchema = z.object({
   id: z.string(),

@@ -2,8 +2,15 @@ import React, { useEffect } from "react"
 import { useLocalSearchParams } from "expo-router"
 import { View, FlatList, StyleSheet } from "react-native"
 import PaymentBubble from "@/components/PaymentBubble"
-import { fetchMoneyRequests, fetchPaymentTransactions } from "@/backend/src/paymentsDAO"
+import {
+  acceptMoneyRequestFS,
+  cancelMoneyRequestFS,
+  fetchMoneyRequests,
+  fetchPaymentTransactions,
+  rejectMoneyRequestFS,
+} from "@/backend/src/paymentsDAO"
 import { useGetBankAccount } from "@/hooks/useGetFirestoreData"
+import { FirestoreTimestamp } from "@/backend/types/firebase"
 
 const PaymentHistory = () => {
   const params = useLocalSearchParams()
@@ -12,12 +19,13 @@ const PaymentHistory = () => {
   const name = params.name as string
   const userAccount = useGetBankAccount(currentUserId)
   const [payments, setPayments] = React.useState<any[]>([])
+  const [paymentUpdate, setPaymentUpdate] = React.useState(false)
 
   useEffect(() => {
-    fetchTransactions(userId)
-  }, [userId])
+    fetchPayments(userId)
+  }, [userId, paymentUpdate])
 
-  async function fetchTransactions(userId: string) {
+  async function fetchPayments(userId: string) {
     const payments = await fetchPaymentTransactions(currentUserId, userId)
     const requests = await fetchMoneyRequests(userId, currentUserId)
 
@@ -44,7 +52,9 @@ const PaymentHistory = () => {
     setPayments(allPaymentsSorted)
   }
 
-  function formatDate(date: Date) {
+  function formatDate(timestamp: FirestoreTimestamp) {
+    const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000)
+
     return new Intl.DateTimeFormat("nb-NO", {
       day: "2-digit",
       month: "long",
@@ -52,26 +62,37 @@ const PaymentHistory = () => {
     }).format(date)
   }
 
-  function formatTime(date: Date) {
+  function formatTime(timestamp: FirestoreTimestamp) {
+    const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000)
+
     return new Intl.DateTimeFormat("nb-NO", {
       hour: "2-digit",
       minute: "2-digit",
     }).format(date)
   }
+  function onButtonPress(id: string, action: string) {
+    if (action === "accept") {
+      acceptMoneyRequestFS(id)
+    } else if (action === "reject") {
+      rejectMoneyRequestFS(id)
+    } else if (action === "cancel") {
+      cancelMoneyRequestFS(id)
+    }
+    setPaymentUpdate(!paymentUpdate)
+  }
 
   function renderItem({ item, index }: { item: any; index: number }) {
     const previousItem = payments[index - 1]
-    const showDateDivider =
-      !previousItem || formatDate(new Date(item.date.seconds)) !== formatDate(new Date(previousItem.date.seconds))
+    const showDateDivider = !previousItem || formatDate(item.date) !== formatDate(previousItem.date)
 
     return (
       <PaymentBubble
         payment={item}
-        userId={userId}
         name={name}
         showDateDivider={showDateDivider}
         formatDate={formatDate}
         formatTime={formatTime}
+        onButtonPress={onButtonPress}
       />
     )
   }
@@ -95,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   listContent: {
-    paddingBottom: 20,
+    paddingBottom: 30,
   },
 })
 

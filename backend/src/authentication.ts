@@ -1,6 +1,6 @@
 import { auth } from '../../constants/firebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
-import { FirestoreTimestamp, User } from '../types/user';
+import { FirestoreTimestamp } from '../types/firebase';
 import { Timestamp } from 'firebase/firestore';
 import { addChildToParent, addUser, getUser } from './UserDAO';
 import { createBankAccount } from './bankAccountDAO';

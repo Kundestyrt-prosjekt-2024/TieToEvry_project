@@ -5,7 +5,7 @@ import { loginUser } from "@/backend/src/authentication"
 import { useRouter } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { getUser } from "@/backend/src/UserDAO"
-import { FirestoreTimestamp } from "@/backend/types/user"
+import { FirestoreTimestamp } from "@/backend/types/firebase"
 
 export default function Login() {
   const router = useRouter()

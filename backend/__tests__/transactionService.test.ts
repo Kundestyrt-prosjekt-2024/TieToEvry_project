@@ -10,7 +10,7 @@ async function testSendMoney() {
     
     try {
       // Call sendMoney with plain document IDs, without "bankAccounts/" prefix
-      await transferMoney("2dNP8AM5pZaYkAA72u4LVFa7zAh1", "HUs3KuWkGBadprCwyJ80JVAuNnD3", 100, "Test transfer");
+      await transferMoney("2dNP8AM5pZaYkAA72u4LVFa7zAh1", "HUs3KuWkGBadprCwyJ80JVAuNnD3", 100, "Test transfer", "transfer");
       console.log("Send money test completed successfully.");
     } catch (error) {
       console.error("Error during test:", error);

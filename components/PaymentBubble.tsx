@@ -1,25 +1,26 @@
+import { FirestoreTimestamp } from "@/backend/types/firebase"
 import React, { useRef } from "react"
-import { View, Text, Animated, StyleSheet } from "react-native"
+import { View, Text, Animated, StyleSheet, TouchableOpacity } from "react-native"
 import { PanGestureHandler } from "react-native-gesture-handler"
 
 type PaymentBubbleProps = {
   payment: any
-  userId: string
   name: string
   showDateDivider: boolean
-  formatDate: (date: Date) => string
-  formatTime: (date: Date) => string
+  formatDate: (timestamp: FirestoreTimestamp) => string
+  formatTime: (timestamp: FirestoreTimestamp) => string
+  onButtonPress: (id: string, action: string) => void
 }
 
 const MAX_SWIPE_DISTANCE = 50
 
 const PaymentBubble: React.FC<PaymentBubbleProps> = ({
   payment,
-  userId,
   name,
   showDateDivider,
   formatDate,
   formatTime,
+  onButtonPress,
 }) => {
   const panX = useRef(new Animated.Value(0)).current
   const isSentByUser = payment.fromUser
@@ -56,7 +57,7 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
 
   return (
     <View>
-      {showDateDivider && <Text style={styles.dateDivider}>{formatDate(payment.sentAt)}</Text>}
+      {showDateDivider && <Text style={styles.dateDivider}>{formatDate(payment.date)}</Text>}
       <PanGestureHandler onGestureEvent={handleGesture} onHandlerStateChange={handleGestureEnd}>
         <Animated.View
           style={[
@@ -67,7 +68,7 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
             },
           ]}
         >
-          <Text style={isSentByUser ? styles.timeRight : styles.timeLeft}>{formatTime(payment.sentAt)}</Text>
+          <Text style={isSentByUser ? styles.timeRight : styles.timeLeft}>{formatTime(payment.date)}</Text>
           {isPayment && (
             <View style={[styles.messageBubble, isSentByUser ? styles.send : styles.receive]}>
               {payment.status === "accepted" ? (
@@ -94,6 +95,29 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
               )}
               <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
               {payment.message && <Text style={styles.statusText}>{payment.message}</Text>}
+              {isSentByUser ? (
+                <TouchableOpacity
+                  style={{ ...styles.requestButton, backgroundColor: "#f55f5f" }}
+                  onPress={() => onButtonPress(payment.id, "cancel")}
+                >
+                  <Text style={styles.buttonText}>Avbryt</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={{ flexDirection: "row", gap: 30 }}>
+                  <TouchableOpacity
+                    style={{ ...styles.requestButton, backgroundColor: "#71f55f" }}
+                    onPress={() => onButtonPress(payment.id, "accept")}
+                  >
+                    <Text style={styles.buttonText}>Godta</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ ...styles.requestButton, backgroundColor: "#f55f5f" }}
+                    onPress={() => onButtonPress(payment.id, "reject")}
+                  >
+                    <Text style={styles.buttonText}>Avslå</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           )}
         </Animated.View>
@@ -147,6 +171,15 @@ const styles = StyleSheet.create({
     left: -55,
     bottom: 0,
     color: "#999",
+  },
+  requestButton: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    fontSize: 20,
   },
 })
 
