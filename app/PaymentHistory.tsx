@@ -19,11 +19,10 @@ const PaymentHistory = () => {
   const name = params.name as string
   const userAccount = useGetBankAccount(currentUserId)
   const [payments, setPayments] = React.useState<any[]>([])
-  const [paymentUpdate, setPaymentUpdate] = React.useState(false)
 
   useEffect(() => {
     fetchPayments(userId)
-  }, [userId, paymentUpdate])
+  }, [userId])
 
   async function fetchPayments(userId: string) {
     const payments = await fetchPaymentTransactions(currentUserId, userId)
@@ -70,6 +69,11 @@ const PaymentHistory = () => {
       minute: "2-digit",
     }).format(date)
   }
+
+  function removePayment(id: string) {
+    setPayments(payments.filter((payment) => payment.id !== id))
+  }
+
   function onButtonPress(id: string, action: string) {
     if (action === "accept") {
       acceptMoneyRequestFS(id)
@@ -78,7 +82,7 @@ const PaymentHistory = () => {
     } else if (action === "cancel") {
       cancelMoneyRequestFS(id)
     }
-    setPaymentUpdate(!paymentUpdate)
+    setPayments(payments.filter((payment) => payment.id !== id))
   }
 
   function renderItem({ item, index }: { item: any; index: number }) {

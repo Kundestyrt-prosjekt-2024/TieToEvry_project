@@ -2,15 +2,13 @@ import AppHeader from "@/components/AppHeader"
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated, Image } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
-import { useRouter } from "expo-router"
-import { useEffect, useRef, useState } from "react"
+import { useFocusEffect, useRouter } from "expo-router"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useGetBankAccount, useGetParents, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { MoneyRequest } from "@/backend/types/transaction"
 import { fetchParents, getUser } from "@/backend/src/UserDAO"
 import { User } from "@/backend/types/user"
 import { acceptMoneyRequestFS, cancelMoneyRequestFS, fetchUserMoneyRequests } from "@/backend/src/paymentsDAO"
-
-const dummyData: MoneyRequest[] = []
 
 const PaymentScreen = () => {
   const router = useRouter()
@@ -47,13 +45,15 @@ const PaymentScreen = () => {
     fetchRequests()
   }, [userId])
 
-  useEffect(() => {
-    async function fetchRequests() {
-      const requests = await fetchUserMoneyRequests(userId || "")
-      setUserRequests(requests)
-    }
-    fetchRequests()
-  }, [userId, requestUpdate])
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchRequests() {
+        const requests = await fetchUserMoneyRequests(userId || "")
+        setUserRequests(requests)
+      }
+      fetchRequests()
+    }, [userId, requestUpdate])
+  )
 
   function handleCancel(requestId: string) {
     setRequestUpdate(!requestUpdate)
