@@ -36,7 +36,7 @@ export async function getUser(uid: string): Promise<User | undefined> {
   try {
     const userDoc = await getDoc(doc(db, "users", uid))
     if (userDoc.exists()) {
-      return userDoc.data() as User
+      return {uid: uid, ...userDoc.data()} as User
     } else { 
       throw new Error("User not found")
     }
