@@ -28,7 +28,7 @@ const PaymentScreen = () => {
   const parentsQuery = useGetParents(user.data?.parents || [])
   const childrenQuery = useGetChildren(user.data?.children || [])
   const siblingsQuery = useGetChildren(
-    parentsQuery[0].data?.children?.filter((childID) => childID !== userID.data) || []
+    parentsQuery[0]?.data?.children?.filter((childID) => childID !== userID.data) || []
   )
 
   const parents = parentsQuery.map((query) => query.data)

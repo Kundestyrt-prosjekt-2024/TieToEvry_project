@@ -17,6 +17,7 @@ import { Chore } from "@/backend/types/chore"
 import { Timestamp } from "firebase/firestore"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { useRouter } from "expo-router"
+import AntDesign from "@expo/vector-icons/AntDesign"
 
 const choresParent = () => {
   const router = useRouter()
@@ -86,10 +87,10 @@ const choresParent = () => {
               if ("isSpecialItem" in item) {
                 return (
                   <Pressable
-                    className="flex items-center justify-center mb-8 ml-4 w-16"
+                    className="items-center justify-center mb-8 ml-4 w-16"
                     onPress={() => router.push("/signupChild")}
                   >
-                    <Ionicons name="add" size={50} color="#3b82f6" />
+                    <AntDesign name="pluscircle" size={40} color="#CCF2F5" />
                   </Pressable>
                 )
               } else {

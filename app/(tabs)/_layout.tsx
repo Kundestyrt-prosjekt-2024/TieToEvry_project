@@ -107,7 +107,6 @@ const TabsLayout = () => {
       />
       <Tabs.Screen
         name="payment"
-        redirect={hideParentTabs}
         options={{
           headerShown: false,
           // tabBarShowLabel: false,
