@@ -1,58 +1,30 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { useLocalSearchParams } from "expo-router"
 import { View, FlatList, StyleSheet } from "react-native"
-import { Transaction } from "@/types"
+import { Transaction } from "@/backend/types/transaction"
 import PaymentBubble from "@/components/PaymentBubble"
-
-const dummyData: Transaction[] = [
-  {
-    id: "1",
-    receiver: "1",
-    sender: "2",
-    message: "",
-    amount: 5800000,
-    sentAt: new Date("2024-10-01T10:30:00"),
-  },
-  {
-    id: "2",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    sentAt: new Date("2024-10-02T09:30:00"),
-  },
-  {
-    id: "3",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    sentAt: new Date("2024-10-02T12:45:00"),
-  },
-  {
-    id: "4",
-    receiver: "1",
-    sender: "3",
-    message: "Jalla",
-    amount: 4500000,
-    sentAt: new Date("2024-10-12T15:45:00"),
-  },
-]
+import {
+  useGetBankAccount,
+  useGetTransactionHistoryBetweenAccounts,
+  useGetUser,
+  useGetUserID,
+} from "@/hooks/useGetFirestoreData"
 
 const PaymentHistory = () => {
   const params = useLocalSearchParams()
-  const userId = params.userId as string
-  const name = params.name as string
-  const [payments, setPayments] = React.useState<Transaction[]>([])
+  const otherUserID = params.otherUserID as string
 
-  useEffect(() => {
-    fetchTransactions(userId)
-  }, [userId])
+  const userID = useGetUserID()
+  const user = useGetUser(userID.data || "")
+  const otherUser = useGetUser(otherUserID)
 
-  function fetchTransactions(userId: string): void {
-    const sortedPayments = dummyData.sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime())
-    setPayments(sortedPayments)
-  }
+  const userBankAccount = useGetBankAccount(userID.data || "")
+  const otherUserBankAccount = useGetBankAccount(otherUserID)
+
+  const transactionHistory = useGetTransactionHistoryBetweenAccounts(
+    userBankAccount.data?.id || "",
+    otherUserBankAccount.data?.id || ""
+  )
 
   function formatDate(date: Date) {
     return new Intl.DateTimeFormat("nb-NO", {
@@ -70,14 +42,16 @@ const PaymentHistory = () => {
   }
 
   function renderItem({ item, index }: { item: Transaction; index: number }) {
-    const previousItem = payments[index - 1]
-    const showDateDivider = !previousItem || formatDate(item.sentAt) !== formatDate(previousItem.sentAt)
+    const previousItem = transactionHistory.data?.[index - 1]
+    const showDateDivider =
+      !previousItem ||
+      formatDate(new Date(item.date.seconds * 1000)) !== formatDate(new Date(previousItem.date.seconds * 1000))
 
     return (
       <PaymentBubble
         payment={item}
-        userId={userId}
-        name={name}
+        accountID={userBankAccount.data?.id || ""}
+        name={otherUser.data?.name || ""}
         showDateDivider={showDateDivider}
         formatDate={formatDate}
         formatTime={formatTime}
@@ -89,9 +63,9 @@ const PaymentHistory = () => {
     <View style={styles.container}>
       <FlatList
         contentContainerStyle={styles.listContent}
-        data={payments}
+        data={transactionHistory.data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.date.seconds.toString()}
         showsVerticalScrollIndicator={false}
       />
     </View>

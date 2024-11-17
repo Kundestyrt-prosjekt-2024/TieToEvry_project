@@ -1,9 +1,9 @@
-import { z } from "zod";
+import { z } from "zod"
 
 const FirestoreTimestampSchema = z.object({
   seconds: z.number(),
   nanoseconds: z.number(),
-});
+})
 
 const TransactionSchema = z.object({
   account_id_from: z.string(),
@@ -11,7 +11,7 @@ const TransactionSchema = z.object({
   amount: z.number(),
   description: z.string(),
   type: z.string(),
-  date: FirestoreTimestampSchema
+  date: FirestoreTimestampSchema,
 })
 
-export type Transaction = z.infer<typeof TransactionSchema>;
+export type Transaction = z.infer<typeof TransactionSchema>

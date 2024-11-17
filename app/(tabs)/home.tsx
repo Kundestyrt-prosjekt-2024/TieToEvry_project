@@ -46,8 +46,8 @@ const Home = () => {
 
   async function fetchMonthStats() {
     const { to, from } = await fetchMonthStatsFS(account.data?.id || "", selectedMonth)
-    const moneyIn = await to.reduce((acc, transaction) => acc + transaction.transaction_amount, 0)
-    const moneyOut = await from.reduce((acc, transaction) => acc + transaction.transaction_amount, 0)
+    const moneyIn = await to.reduce((acc, transaction) => acc + transaction.amount, 0)
+    const moneyOut = await from.reduce((acc, transaction) => acc + transaction.amount, 0)
     const total = moneyIn - moneyOut
     setMonthStats([moneyIn, moneyOut, total])
   }
@@ -92,7 +92,7 @@ const Home = () => {
           </View>
           <View style={{ ...styles.budgetPost, backgroundColor: "#CBF1F4" }}>
             <Text style={styles.budgetPostText}>Total</Text>
-            <Text style={{ ...styles.budgetPostText, color: "green" }}>
+            <Text style={{ ...styles.budgetPostText, color: monthStats[2] >= 0 ? "green" : "red" }}>
               {loadingStats ? "..." : new Intl.NumberFormat("nb-NO").format(monthStats[2]) + " kr"}
             </Text>
           </View>

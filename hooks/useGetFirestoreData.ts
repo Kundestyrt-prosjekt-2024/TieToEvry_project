@@ -1,8 +1,9 @@
 import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
 import { createChore, getAllChores, getChoreIcons, getChoresByStatus, updateChoreStatus } from "@/backend/src/choreDAO"
+import { getMoneyRequests } from "@/backend/src/moneyRequestsDAO"
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
-import { getTransactionHistory } from "@/backend/src/transactionsDAO"
+import { getTransactionHistory, getTransactionHistoryBetweenAccounts } from "@/backend/src/transactionsDAO"
 import { getUser } from "@/backend/src/UserDAO"
 import { BankAccount } from "@/backend/types/bankAccount"
 import { Chore } from "@/backend/types/chore"
@@ -69,6 +70,26 @@ export const useGetBankAccount = (userID: string) => {
       }),
     enabled: userID.length !== 0,
   })
+}
+
+export const useGetBankAccounts = (userIDs: string[]) => {
+  const queryClient = useQueryClient()
+
+  const queries = useQueries({
+    queries: userIDs.map((userID) => ({
+      queryKey: ["bankAccount", userID],
+      queryFn: () =>
+        getBankAccountByUID(userID, (updatedData) => {
+          queryClient.setQueryData(["bankAccount", userID], (oldData: (BankAccount & { id: string }) | undefined) => {
+            if (!oldData) return updatedData
+            return { ...oldData, ...updatedData }
+          })
+        }),
+      enabled: userIDs.length !== 0,
+    })),
+  })
+
+  return queries // Returns an array of query results
 }
 
 // Saving goals
@@ -146,4 +167,27 @@ export const useGetTransactionHistory = (accountID: string, fromDate?: Date, toD
       enabled: accountID.length !== 0,
     })
   }
+}
+
+export const useGetTransactionHistoryBetweenAccounts = (accountID1: string, accountID2: string) => {
+  return useQuery({
+    queryKey: ["transactionHistory", accountID1, accountID2],
+    queryFn: () => getTransactionHistoryBetweenAccounts(accountID1, accountID2),
+    enabled: accountID1.length !== 0 && accountID2.length !== 0,
+  })
+}
+
+// Money requests
+
+export const useGetMoneyRequests = (userID: string) => {
+  const queryClient = useQueryClient()
+
+  return useQuery({
+    queryKey: ["moneyRequests", userID],
+    queryFn: () =>
+      getMoneyRequests(userID, (updatedRequests) => {
+        queryClient.setQueryData(["moneyRequests", userID], updatedRequests)
+      }),
+    enabled: userID.length !== 0,
+  })
 }

@@ -1,136 +1,48 @@
 import AppHeader from "@/components/AppHeader"
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Pressable, Image, ScrollView } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { MoneyRequest } from "@/types"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
-import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
-
-export type User = {
-  uid: string
-  name: string
-  image: string
-}
-
-const dummyData2: User[] = [
-  {
-    uid: "1",
-    name: "Geir",
-    image: "user",
-  },
-  {
-    uid: "2",
-    name: "Jalla",
-    image: "user",
-  },
-  {
-    uid: "3",
-    name: "Magne",
-    image: "user",
-  },
-]
-
-const dummyData: MoneyRequest[] = [
-  {
-    id: "1",
-    receiver: "1",
-    sender: "2",
-    message: "",
-    amount: 5800000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "2",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "3",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "4",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "5",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "6",
-    receiver: "2",
-    sender: "1",
-    message: "Jalla",
-    amount: 4500000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "7",
-    receiver: "1",
-    sender: "2",
-    message: "",
-    amount: 5800000,
-    requestedAt: new Date(),
-  },
-  {
-    id: "8",
-    receiver: "1",
-    sender: "2",
-    message: "",
-    amount: 5800000,
-    requestedAt: new Date(),
-  },
-]
+import {
+  useGetBankAccount,
+  useGetBankAccounts,
+  useGetChildren,
+  useGetMoneyRequests,
+  useGetParents,
+  useGetUser,
+  useGetUserID,
+} from "@/hooks/useGetFirestoreData"
+import DataLoading from "@/components/DataLoading"
+import { acceptMoneyRequest, deleteMoneyRequest, rejectMoneyRequest } from "@/backend/src/moneyRequestsDAO"
 
 const PaymentScreen = () => {
   const router = useRouter()
-  const { data: userId } = useGetUserID()
-  const account = useGetBankAccount(userId || "")
+
+  const userID = useGetUserID()
+  const user = useGetUser(userID.data || "")
+
+  const bankAccount = useGetBankAccount(userID.data || "")
+  const moneyRequests = useGetMoneyRequests(bankAccount.data?.id || "")
+
+  const parentsQuery = useGetParents(user.data?.parents || [])
+  const childrenQuery = useGetChildren(user.data?.children || [])
+  const siblingsQuery = useGetChildren(
+    parentsQuery[0]?.data?.children?.filter((childID) => childID !== userID.data) || []
+  )
+
+  const parents = parentsQuery.map((query) => query.data)
+  const children = childrenQuery.map((query) => query.data)
+  const siblings = siblingsQuery.map((query) => query.data)
+
+  const users = [...parents, ...children, ...siblings]
+
+  const bankAccountsQuery = useGetBankAccounts(users.map((user) => user?.id ?? ""))
+  const bankAccounts = bankAccountsQuery.map((query) => query.data)
+
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
-
-  function handleCancel() {
-    console.log("Cancel")
-  }
-
-  function handleAccept() {
-    console.log("Accept")
-  }
-
-  function handleSend() {
-    router.push({
-      pathname: "../AskSend",
-      params: {
-        ask: "false",
-      },
-    })
-  }
-
-  function handleAsk() {
-    router.push({
-      pathname: "../AskSend",
-      params: {
-        ask: "true",
-      },
-    })
-  }
 
   function handleScroll(event: any) {
     const currentY = event.nativeEvent.contentOffset.y
@@ -155,169 +67,111 @@ const PaymentScreen = () => {
     setLastScrollY(currentY)
   }
 
-  function renderUser(user: User) {
-    return (
-      <TouchableOpacity
-        style={styles.userContainer}
-        onPress={() =>
-          router.push({
-            pathname: "../PaymentHistory",
-            params: {
-              name: user.name,
-              userId: user.uid,
-            },
-          })
-        }
-      >
-        <View style={styles.userCircle}>
-          <AwesomeIcon name={user.image} size={30}></AwesomeIcon>
-        </View>
-        <Text>{user.name}</Text>
-      </TouchableOpacity>
-    )
-  }
-
-  function renderPayment(request: MoneyRequest) {
-    if (request.amount <= 0) return null
-    if (request.sender === "1") {
-      return (
-        <View style={styles.request}>
-          <Text style={styles.requestText}>
-            Du ber {request.receiver} om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
-          </Text>
-          <TouchableOpacity onPress={handleCancel}>
-            <Text style={{ ...styles.requestText, color: "red" }}>Avbryt</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    } else {
-      return (
-        <View style={styles.request}>
-          <Text style={styles.requestText}>
-            {request.sender} ber deg om {new Intl.NumberFormat("nb-NO").format(request.amount)} kr
-          </Text>
-          <TouchableOpacity onPress={handleAccept}>
-            <Text style={{ ...styles.requestText, color: "green" }}>Godta</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-  }
-
-  function renderListHeader() {
-    return (
-      <View>
-        <FlatList
-          style={styles.userList}
-          scrollEnabled={true}
-          horizontal={true}
-          contentContainerStyle={styles.userListContent}
-          data={dummyData2}
-          renderItem={(req) => renderUser(req.item)}
-          keyExtractor={(req) => req.uid}
-          showsHorizontalScrollIndicator={false}
-        ></FlatList>
-        <Text style={styles.balance}>{new Intl.NumberFormat("nb-NO").format(account.data?.balance || 0)}</Text>
-      </View>
-    )
+  if (
+    userID.isPending ||
+    user.isPending ||
+    bankAccount.isPending ||
+    parentsQuery.some((query) => query.isPending) ||
+    childrenQuery.some((query) => query.isPending) ||
+    siblingsQuery.some((query) => query.isPending)
+  ) {
+    return <DataLoading />
   }
 
   return (
     <SafeAreaView className="h-full bg-white" edges={["top"]}>
       <AppHeader />
-      <View style={styles.container}>
-        <FlatList
-          style={styles.requestList}
-          contentContainerStyle={{ paddingBottom: 40 }}
-          data={dummyData}
-          renderItem={(req) => renderPayment(req.item)}
-          ListHeaderComponent={renderListHeader}
-          scrollEnabled={true}
-          onScroll={handleScroll}
-          keyExtractor={(req) => req.id}
-          showsVerticalScrollIndicator={false}
-        ></FlatList>
-        <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>
-          <TouchableOpacity style={styles.bottomButton} onPress={handleAsk} activeOpacity={0.5}>
-            <View style={styles.iconContainer}>
-              <AwesomeIcon name="money" size={30} />
-              <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
-            </View>
-            <Text style={styles.buttonText}>Be om</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomButton} onPress={handleSend} activeOpacity={0.5}>
-            <View style={styles.iconContainer}>
-              <AwesomeIcon name="money" size={30} />
-              <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
-            </View>
-            <Text style={styles.buttonText}>Send</Text>
-          </TouchableOpacity>
-          <View style={styles.buttonBackgroundLeft} />
-          <View style={styles.buttonBackgroundRight} />
-        </Animated.View>
-      </View>
+      <ScrollView onScroll={handleScroll}>
+        <View className="flex flex-row justify-center mt-6">
+          {users.map((user) => (
+            <Pressable
+              key={user?.name}
+              className="flex-col items-center mx-3"
+              onPress={() => router.push(`/PaymentHistory?otherUserID=${user?.id}`)}
+            >
+              <View className="rounded-full h-12 w-12 items-center overflow-hidden">
+                <Image
+                  source={{ uri: user?.profilePicture }}
+                  className="w-full h-full"
+                  style={{ resizeMode: "cover" }}
+                />
+              </View>
+              <Text className="mt-2 text-sm">{user?.name}</Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text className="text-center text-cyan-400 text-3xl mt-5">{bankAccount.data?.balance} kr</Text>
+        <View className="flex flex-col items-center gap-4 mt-2">
+          {moneyRequests.data
+            ?.filter((moneyReq) => moneyReq.status === "pending")
+            .map((moneyReq) => (
+              <View key={moneyReq.id} className="rounded-[32px] bg-blue-100 p-6 flex flex-row justify-between w-[90%]">
+                {moneyReq.sender === bankAccount.data?.id ? (
+                  <>
+                    <Text className="text-lg">
+                      Du ber{" "}
+                      {
+                        users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.receiver)]?.name.split(
+                          " "
+                        )[0]
+                      }{" "}
+                      om {moneyReq.amount} kr
+                    </Text>
+                    <Pressable onPress={() => deleteMoneyRequest(moneyReq.id!)}>
+                      <Text className="text-red-500 text-lg">Avbryt</Text>
+                    </Pressable>
+                  </>
+                ) : (
+                  <>
+                    <Text className="text-lg">
+                      {users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.sender)]?.name.split(" ")[0]}{" "}
+                      ber deg om {moneyReq.amount} kr
+                    </Text>
+                    <View className="flex flex-row gap-2">
+                      <Pressable onPress={() => acceptMoneyRequest(moneyReq.id!)}>
+                        <Text className="text-green-700 text-lg">Godta</Text>
+                      </Pressable>
+                      <Pressable onPress={() => rejectMoneyRequest(moneyReq.id!)}>
+                        <Text className="text-red-500 text-lg">Avslå</Text>
+                      </Pressable>
+                    </View>
+                  </>
+                )}
+              </View>
+            ))}
+        </View>
+      </ScrollView>
+      <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>
+        <TouchableOpacity
+          style={styles.bottomButton}
+          onPress={() => router.push(`/AskSend?ask=true`)}
+          activeOpacity={0.5}
+        >
+          <View style={styles.iconContainer}>
+            <AwesomeIcon name="money" size={30} />
+            <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
+          </View>
+          <Text style={styles.buttonText}>Be om</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bottomButton}
+          onPress={() => router.push(`/AskSend?ask=false`)}
+          activeOpacity={0.5}
+        >
+          <View style={styles.iconContainer}>
+            <AwesomeIcon name="money" size={30} />
+            <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
+          </View>
+          <Text style={styles.buttonText}>Send</Text>
+        </TouchableOpacity>
+        <View style={styles.buttonBackgroundLeft} />
+        <View style={styles.buttonBackgroundRight} />
+      </Animated.View>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  userList: {
-    width: "100%",
-    height: 70,
-    flexGrow: 1,
-    alignContent: "center",
-  },
-  userContainer: {
-    height: 70,
-    width: 70,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  userCircle: {
-    width: 50,
-    height: 50,
-    borderColor: "#000",
-    borderWidth: 1,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  userListContent: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  balance: {
-    fontSize: 50,
-    marginTop: 10,
-    color: "#52D1DC",
-    textAlign: "center",
-  },
-  requestList: {
-    width: "100%",
-    flexGrow: 1,
-    alignContent: "center",
-    paddingTop: 20,
-  },
-  request: {
-    padding: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 20,
-    marginVertical: 10,
-    borderRadius: 30,
-    height: 70,
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
-    backgroundColor: "#52D1DC30",
-  },
-  requestText: {
-    fontSize: 20,
-  },
   bottomContainer: {
     position: "absolute",
     width: "100%",

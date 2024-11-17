@@ -6,14 +6,14 @@ const TransactionCard = ({
   transaction,
   showDateDivider,
   formatDate,
-  userID,
+  accountID,
 }: {
   transaction: Transaction
   showDateDivider: boolean
   formatDate: (date: Date) => string
-  userID: string
+  accountID: string
 }) => {
-  const isPositive = transaction.account_id_to === userID
+  const isPositive = transaction.account_id_to === accountID
 
   return (
     <View style={{ alignSelf: "center" }}>
