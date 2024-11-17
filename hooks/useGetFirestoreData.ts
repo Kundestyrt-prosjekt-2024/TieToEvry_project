@@ -1,5 +1,6 @@
 import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
 import { createChore, getAllChores, getChoreIcons, getChoresByStatus, updateChoreStatus } from "@/backend/src/choreDAO"
+import { getMoneyRequests } from "@/backend/src/moneyRequestsDAO"
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
 import { getTransactionHistory } from "@/backend/src/transactionsDAO"
@@ -146,4 +147,12 @@ export const useGetTransactionHistory = (accountID: string, fromDate?: Date, toD
       enabled: accountID.length !== 0,
     })
   }
+}
+
+export const useGetMoneyRequests = (userID: string) => {
+  return useQuery({
+    queryKey: ["moneyRequests", userID],
+    queryFn: () => getMoneyRequests(userID),
+    enabled: userID.length !== 0,
+  })
 }

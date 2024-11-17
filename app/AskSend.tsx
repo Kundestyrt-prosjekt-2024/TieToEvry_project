@@ -1,81 +1,85 @@
-import { useLocalSearchParams } from "expo-router"
+import { sendMoneyRequest } from "@/backend/src/moneyRequestsDAO"
+import { transferMoney } from "@/backend/src/transactionsDAO"
+import DataLoading from "@/components/DataLoading"
+import { useGetChildren, useGetParents, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
-import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, FlatList } from "react-native"
+import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
-import AwesomeIcon from "react-native-vector-icons/FontAwesome"
-
-export type User = {
-  uid: string
-  name: string
-  image: string
-}
-
-const dummyData2: User[] = [
-  {
-    uid: "1",
-    name: "Geir",
-    image: "user",
-  },
-  {
-    uid: "2",
-    name: "Jalla",
-    image: "user",
-  },
-  {
-    uid: "3",
-    name: "Magne",
-    image: "user",
-  },
-]
 
 const AskSend = () => {
+  const router = useRouter()
+
   const params = useLocalSearchParams()
   const ask = params.ask as string
   const isAsk = ask === "true"
-  const [selectedReceiver, setSelectedReveiver] = useState<string>(dummyData2[0].uid)
+
+  const userID = useGetUserID()
+  const user = useGetUser(userID.data || "")
+
+  const parentsQuery = useGetParents(user.data?.parents || [])
+  const childrenQuery = useGetChildren(user.data?.children || [])
+  const siblingsQuery = useGetChildren(
+    parentsQuery[0].data?.children?.filter((childID) => childID !== userID.data) || []
+  )
+
+  const parents = parentsQuery.map((query) => query.data)
+  const children = childrenQuery.map((query) => query.data)
+  const siblings = siblingsQuery.map((query) => query.data)
+
+  const users = [...parents, ...children, ...siblings]
+
+  const [selectedReceiver, setSelectedReceiver] = useState(0)
+  const [amount, setAmount] = useState("")
+  const [message, setMessage] = useState("")
 
   function handleAskSend() {
     if (isAsk) {
-      console.log("Ask pressed")
+      sendMoneyRequest(userID.data ?? "", users[selectedReceiver]?.id ?? "", message, parseInt(amount))
+      router.back()
     } else {
-      console.log("Send pressed")
+      try {
+        transferMoney(userID.data ?? "", users[selectedReceiver]?.id ?? "", parseInt(amount), message)
+        router.back()
+      } catch {
+        console.log("Inne nok på konto / Gått over spending limit") // TODO: Gjør noe her
+      }
     }
   }
 
-  function renderUser(user: User) {
-    const isSelected = selectedReceiver === user.uid
-    return (
-      <TouchableOpacity
-        style={[styles.userContainer, { backgroundColor: isSelected ? "#52D1DC50" : "transparent" }]}
-        onPress={() => setSelectedReveiver(user.uid)}
-        activeOpacity={1}
-      >
-        <View style={styles.userCircle}>
-          <AwesomeIcon name={user.image} size={30}></AwesomeIcon>
-        </View>
-        <Text>{user.name}</Text>
-      </TouchableOpacity>
-    )
+  const handleAmountChange = (text: string) => {
+    // Remove any non-numeric characters
+    const numericValue = text.replace(/[^0-9]/g, "")
+    setAmount(numericValue)
+  }
+
+  if (
+    userID.isPending ||
+    user.isPending ||
+    parentsQuery.some((query) => query.isPending) ||
+    childrenQuery.some((query) => query.isPending) ||
+    siblingsQuery.some((query) => query.isPending)
+  ) {
+    return <DataLoading />
   }
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 items-center p-5 bg-white"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={90}
     >
-      <View style={{ height: 100 }}>
-        <FlatList
-          style={styles.userList}
-          scrollEnabled={true}
-          horizontal={true}
-          contentContainerStyle={styles.userListContent}
-          data={dummyData2}
-          renderItem={(req) => renderUser(req.item)}
-          keyExtractor={(req) => req.uid}
-          showsHorizontalScrollIndicator={false}
-          keyboardShouldPersistTaps="always"
-        ></FlatList>
+      <View className="flex flex-row justify-center mt-6">
+        {users.map((user, index) => (
+          <Pressable key={user?.name} className="flex-col items-center mx-3" onPress={() => setSelectedReceiver(index)}>
+            <View
+              className={`rounded-full h-12 w-12 items-center overflow-hidden ${selectedReceiver === index ? "border-2 border-blue-500" : ""}`}
+            >
+              <Image source={{ uri: user?.profilePicture }} className="w-full h-full" style={{ resizeMode: "cover" }} />
+            </View>
+            <Text className={`mt-2 ${selectedReceiver === index ? "font-bold" : ""} text-sm`}>{user?.name}</Text>
+          </Pressable>
+        ))}
       </View>
       <View style={styles.mainContainer}>
         <View style={styles.upperContainer}>
@@ -84,12 +88,18 @@ const AskSend = () => {
             placeholder="0"
             placeholderTextColor={"#000"}
             keyboardType="numeric"
+            value={amount}
+            onChangeText={handleAmountChange}
             autoFocus
           />
           <Text style={{ fontSize: 50, fontWeight: "bold" }}> kr</Text>
         </View>
         <View style={styles.bottomContainer}>
-          <TextInput style={styles.textInput} placeholder="Skriv en beskjed..." />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Skriv en beskjed..."
+            onChangeText={(text) => setMessage(text)}
+          />
           <TouchableOpacity style={styles.askButton} onPress={handleAskSend}>
             <Text style={styles.askText}>{isAsk ? "Be Om" : "Send"}</Text>
           </TouchableOpacity>
@@ -100,12 +110,6 @@ const AskSend = () => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-  },
   mainContainer: {
     flex: 1,
     justifyContent: "space-between",

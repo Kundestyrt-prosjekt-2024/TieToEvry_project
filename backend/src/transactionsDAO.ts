@@ -1,20 +1,81 @@
 import { db } from "../../constants/firebaseConfig"
 import { collection, addDoc, query, where, getDocs, updateDoc, doc, Timestamp, or, and } from "firebase/firestore"
 import { Transaction } from "../types/transaction"
+import { adjustBalance, getBankAccountByUID } from "./bankAccountDAO"
 
-/**Function is used to add a transaction to the database.
+/**Function is used to transfer money from one account to another.
  *
- * @param fromAccountId A string of the id of the sender.
- * @param toAccountId A string of the id of the receiver.
+ * @param senderUID A string of the id of the sender.
+ * @param receiverUID A string of the id of the receiver.
  * @param amount A number of the amount of money to be transferred.
  * @param description A string of the description of the transaction.
- * @param transactionType A string of the type of the transaction. Has to be 'transfer' or 'chore'.
  */
-export async function logTransaction(fromAccountId: string, toAccountId: string, amount: number, description: string) {
+export async function transferMoney(senderUID: string, receiverUID: string, amount: number, description: string) {
   try {
+    const senderAccount = await getBankAccountByUID(senderUID)
+    const receiverAccount = await getBankAccountByUID(receiverUID)
+
+    if (senderAccount.balance < amount) {
+      throw new Error("Insufficient funds")
+    }
+
+    if (senderAccount.UID === receiverAccount.UID) {
+      throw new Error("Cannot transfer money to the same account")
+    }
+
+    if (senderAccount.currency !== receiverAccount.currency) {
+      throw new Error("Cannot transfer money between accounts with different currencies")
+    }
+
+    if (amount <= 0) {
+      throw new Error("Amount must be greater than 0")
+    }
+
+    if (senderAccount.spending_time_limit) {
+      // Get the current date for comparison
+      const now = new Date()
+      let fromDate: Date
+
+      // Determine the start date for the spending limit period
+      switch (senderAccount.spending_time_limit) {
+        case "daily":
+          fromDate = new Date(now)
+          fromDate.setHours(0, 0, 0, 0) // Start of the day
+          break
+        case "weekly":
+          fromDate = new Date(now)
+          fromDate.setDate(now.getDate() - now.getDay()) // Start of the current week (Sunday)
+          fromDate.setHours(0, 0, 0, 0)
+          break
+        case "monthly":
+          fromDate = new Date(now.getFullYear(), now.getMonth(), 1) // Start of the month
+          break
+        default:
+          throw new Error("Invalid spending time limit")
+      }
+
+      const transactions = await getTransactionHistory(senderUID, fromDate, now)
+      const totalSpent = transactions
+        .filter((transaction) => transaction.account_id_from === senderUID)
+        .reduce((sum, transaction) => sum + transaction.amount, 0)
+
+      // Check if the cumulative spending limit has been exceeded
+      if (totalSpent + amount > senderAccount.spending_limit) {
+        throw new Error(
+          "Cumulative spending exceeds spending limit for the specified period with limit " +
+            senderAccount.spending_limit +
+            " and time " +
+            senderAccount.spending_time_limit
+        )
+      }
+    }
+
+    await adjustBalance(senderAccount.id, -amount)
+    await adjustBalance(receiverAccount.id, amount)
+
     const newTransaction: Transaction = {
-      account_id_from: fromAccountId,
-      account_id_to: toAccountId,
+      account_id_from: senderAccount.id,
+      account_id_to: receiverAccount.id,
       description: description,
       amount: amount,
       type: "transfer",
@@ -23,7 +84,8 @@ export async function logTransaction(fromAccountId: string, toAccountId: string,
 
     await addDoc(collection(db, "transactions"), newTransaction)
   } catch (error) {
-    throw new Error("Failed to log transaction and update activity dates")
+    console.log(error)
+    throw new Error("Failed to transfer money")
   }
 }
 
@@ -58,27 +120,6 @@ export async function getTransactionHistory(accountId: string, fromDate?: Date, 
   return querySnapshot.docs.map((doc) => doc.data()) as Transaction[]
 }
 
-/**Function is used to get all money requests made by a user.
- *
- * @param userId A string of the id of the user.
- * @returns an array of money requests made by the user.
- */
-export async function getMoneyRequests(userId: string) {
-  const moneyRequestsRef = collection(db, "moneyRequests")
-
-  const requesterQuery = query(moneyRequestsRef, where("requesterId", "==", userId))
-  const requesterSnapshot = await getDocs(requesterQuery)
-  const requesterResults = requesterSnapshot.docs.map((doc) => doc.data())
-
-  const senderQuery = query(moneyRequestsRef, where("senderId", "==", userId))
-  const senderSnapshot = await getDocs(senderQuery)
-  const senderResults = senderSnapshot.docs.map((doc) => doc.data())
-
-  const combinedResults = [...requesterResults, ...senderResults]
-
-  return combinedResults
-}
-
 export async function fetchMonthStatsFS(accountId: string, month: number) {
   const transactionsRef = collection(db, "transactions")
   const currYear = new Date().getFullYear()
@@ -88,19 +129,18 @@ export async function fetchMonthStatsFS(accountId: string, month: number) {
     where("account_id_to", "==", accountId),
     where("date", ">=", new Date(currYear, month, 1)),
     where("date", "<", new Date(currYear, month + 1, 1))
-  );
+  )
 
   const q2 = query(
     transactionsRef,
     where("account_id_from", "==", accountId),
     where("date", ">=", new Date(currYear, month, 1)),
     where("date", "<", new Date(currYear, month + 1, 1))
-  );
+  )
 
-  const [toSnapshot, fromSnapshot] = await Promise.all([getDocs(q1), getDocs(q2)]);
-  const toDocs = toSnapshot.docs.map((doc) => doc.data());
-  const fromDocs = fromSnapshot.docs.map((doc) => doc.data());
+  const [toSnapshot, fromSnapshot] = await Promise.all([getDocs(q1), getDocs(q2)])
+  const toDocs = toSnapshot.docs.map((doc) => doc.data())
+  const fromDocs = fromSnapshot.docs.map((doc) => doc.data())
 
-  return {"to": toDocs, "from": fromDocs}
+  return { to: toDocs, from: fromDocs }
 }
-
