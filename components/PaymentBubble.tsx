@@ -24,7 +24,6 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
 }) => {
   const panX = useRef(new Animated.Value(0)).current
   const isSentByUser = payment.account_id_from === accountID
-  console.log(accountID)
 
   const handleGesture = Animated.event([{ nativeEvent: { translationX: panX } }], {
     useNativeDriver: false,
