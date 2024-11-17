@@ -1,7 +1,13 @@
 import { sendMoneyRequest } from "@/backend/src/moneyRequestsDAO"
 import { transferMoney } from "@/backend/src/transactionsDAO"
 import DataLoading from "@/components/DataLoading"
-import { useGetChildren, useGetParents, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import {
+  useGetChildren,
+  useGetMoneyRequests,
+  useGetParents,
+  useGetUser,
+  useGetUserID,
+} from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image } from "react-native"

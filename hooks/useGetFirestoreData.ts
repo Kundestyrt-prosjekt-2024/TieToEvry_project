@@ -72,6 +72,26 @@ export const useGetBankAccount = (userID: string) => {
   })
 }
 
+export const useGetBankAccounts = (userIDs: string[]) => {
+  const queryClient = useQueryClient()
+
+  const queries = useQueries({
+    queries: userIDs.map((userID) => ({
+      queryKey: ["bankAccount", userID],
+      queryFn: () =>
+        getBankAccountByUID(userID, (updatedData) => {
+          queryClient.setQueryData(["bankAccount", userID], (oldData: (BankAccount & { id: string }) | undefined) => {
+            if (!oldData) return updatedData
+            return { ...oldData, ...updatedData }
+          })
+        }),
+      enabled: userIDs.length !== 0,
+    })),
+  })
+
+  return queries // Returns an array of query results
+}
+
 // Saving goals
 
 export const useGetSavingGoals = (userId: string) => {
@@ -149,10 +169,17 @@ export const useGetTransactionHistory = (accountID: string, fromDate?: Date, toD
   }
 }
 
+// Money requests
+
 export const useGetMoneyRequests = (userID: string) => {
+  const queryClient = useQueryClient()
+
   return useQuery({
     queryKey: ["moneyRequests", userID],
-    queryFn: () => getMoneyRequests(userID),
+    queryFn: () =>
+      getMoneyRequests(userID, (updatedRequests) => {
+        queryClient.setQueryData(["moneyRequests", userID], updatedRequests)
+      }),
     enabled: userID.length !== 0,
   })
 }

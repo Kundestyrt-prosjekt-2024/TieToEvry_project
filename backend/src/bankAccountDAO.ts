@@ -1,5 +1,16 @@
 import { db } from "../../constants/firebaseConfig"
-import { collection, query, where, getDoc, getDocs, doc, updateDoc, Timestamp, addDoc, onSnapshot } from "firebase/firestore"
+import {
+  collection,
+  query,
+  where,
+  getDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  Timestamp,
+  addDoc,
+  onSnapshot,
+} from "firebase/firestore"
 import { BankAccount } from "../types/bankAccount"
 import { useGetBankAccount } from "@/hooks/useGetFirestoreData"
 
@@ -18,6 +29,19 @@ export async function createBankAccount(userUID: string) {
     await addDoc(collection(db, "bankAccounts"), bankAccount)
   } catch {
     throw new Error("Failed to create bank account")
+  }
+}
+
+export async function getBankAccount(id: string) {
+  try {
+    const accountDoc = await getDoc(doc(db, "bankAccounts", id))
+    if (accountDoc.exists()) {
+      return accountDoc.data() as BankAccount
+    } else {
+      throw new Error("Bank account not found")
+    }
+  } catch (error: any) {
+    throw new Error(error.message)
   }
 }
 
@@ -46,22 +70,19 @@ export async function getBankAccountByUID(
       throw new Error("Invalid or missing 'balance' field in bank account document")
     }
 
-    const bankAccount = { id: docSnapshot.id, ...data };
+    const bankAccount = { id: docSnapshot.id, ...data }
 
     // Listener
     if (updateBankAccount) {
-      const unsubscribe = onSnapshot(
-        doc(db, "bankAccounts", bankAccount.id),
-        (updatedDoc) => {
-          if (updatedDoc.exists()) {
-            const updatedData = updatedDoc.data() as BankAccount;
-            updateBankAccount(updatedData);
-          }
+      const unsubscribe = onSnapshot(doc(db, "bankAccounts", bankAccount.id), (updatedDoc) => {
+        if (updatedDoc.exists()) {
+          const updatedData = updatedDoc.data() as BankAccount
+          updateBankAccount(updatedData)
         }
-      );
+      })
     }
 
-    return bankAccount;
+    return bankAccount
   } catch (error) {
     throw new Error("Failed to get bank account by UID")
   }

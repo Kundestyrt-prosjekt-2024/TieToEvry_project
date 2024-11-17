@@ -6,6 +6,7 @@ import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
 import {
   useGetBankAccount,
+  useGetBankAccounts,
   useGetChildren,
   useGetMoneyRequests,
   useGetParents,
@@ -13,6 +14,7 @@ import {
   useGetUserID,
 } from "@/hooks/useGetFirestoreData"
 import DataLoading from "@/components/DataLoading"
+import { acceptMoneyRequest, deleteMoneyRequest, rejectMoneyRequest } from "@/backend/src/moneyRequestsDAO"
 
 const PaymentScreen = () => {
   const router = useRouter()
@@ -20,8 +22,8 @@ const PaymentScreen = () => {
   const userID = useGetUserID()
   const user = useGetUser(userID.data || "")
 
-  const account = useGetBankAccount(userID.data || "")
-  const moneyRequests = useGetMoneyRequests(account.data?.id || "")
+  const bankAccount = useGetBankAccount(userID.data || "")
+  const moneyRequests = useGetMoneyRequests(bankAccount.data?.id || "")
 
   const parentsQuery = useGetParents(user.data?.parents || [])
   const childrenQuery = useGetChildren(user.data?.children || [])
@@ -32,6 +34,11 @@ const PaymentScreen = () => {
   const parents = parentsQuery.map((query) => query.data)
   const children = childrenQuery.map((query) => query.data)
   const siblings = siblingsQuery.map((query) => query.data)
+
+  const users = [...parents, ...children, ...siblings]
+
+  const bankAccountsQuery = useGetBankAccounts(users.map((user) => user?.id ?? ""))
+  const bankAccounts = bankAccountsQuery.map((query) => query.data)
 
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
@@ -63,7 +70,7 @@ const PaymentScreen = () => {
   if (
     userID.isPending ||
     user.isPending ||
-    account.isPending ||
+    bankAccount.isPending ||
     parentsQuery.some((query) => query.isPending) ||
     childrenQuery.some((query) => query.isPending) ||
     siblingsQuery.some((query) => query.isPending)
@@ -76,7 +83,7 @@ const PaymentScreen = () => {
       <AppHeader />
       <ScrollView onScroll={handleScroll}>
         <View className="flex flex-row justify-center mt-6">
-          {[...parents, ...children, ...siblings].map((user, index) => (
+          {users.map((user) => (
             <Pressable key={user?.name} className="flex-col items-center mx-3" onPress={() => console.log("navigate!")}>
               <View className="rounded-full h-12 w-12 items-center overflow-hidden">
                 <Image
@@ -89,7 +96,46 @@ const PaymentScreen = () => {
             </Pressable>
           ))}
         </View>
-        <Text className="text-center text-blue-500 text-2xl mt-5">Saldo: {account.data?.balance},-</Text>
+        <Text className="text-center text-cyan-400 text-3xl mt-5">{bankAccount.data?.balance} kr</Text>
+        <View className="flex flex-col items-center gap-4 mt-2">
+          {moneyRequests.data
+            ?.filter((moneyReq) => moneyReq.status === "pending")
+            .map((moneyReq) => (
+              <View key={moneyReq.id} className="rounded-[32px] bg-blue-100 p-6 flex flex-row justify-between w-[90%]">
+                {moneyReq.sender === bankAccount.data?.id ? (
+                  <>
+                    <Text className="text-lg">
+                      Du ber{" "}
+                      {
+                        users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.receiver)]?.name.split(
+                          " "
+                        )[0]
+                      }{" "}
+                      om {moneyReq.amount} kr
+                    </Text>
+                    <Pressable onPress={() => deleteMoneyRequest(moneyReq.id!)}>
+                      <Text className="text-red-500 text-lg">Avbryt</Text>
+                    </Pressable>
+                  </>
+                ) : (
+                  <>
+                    <Text className="text-lg">
+                      {users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.sender)]?.name.split(" ")[0]}{" "}
+                      ber deg om {moneyReq.amount} kr
+                    </Text>
+                    <View className="flex flex-row gap-2">
+                      <Pressable onPress={() => acceptMoneyRequest(moneyReq.id!)}>
+                        <Text className="text-green-700 text-lg">Godta</Text>
+                      </Pressable>
+                      <Pressable onPress={() => rejectMoneyRequest(moneyReq.id!)}>
+                        <Text className="text-red-500 text-lg">Avslå</Text>
+                      </Pressable>
+                    </View>
+                  </>
+                )}
+              </View>
+            ))}
+        </View>
       </ScrollView>
       <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>
         <TouchableOpacity
