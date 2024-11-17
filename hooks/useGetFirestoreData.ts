@@ -3,7 +3,7 @@ import { createChore, getAllChores, getChoreIcons, getChoresByStatus, updateChor
 import { getMoneyRequests } from "@/backend/src/moneyRequestsDAO"
 import { getProfilePictures } from "@/backend/src/ProfileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
-import { getTransactionHistory } from "@/backend/src/transactionsDAO"
+import { getTransactionHistory, getTransactionHistoryBetweenAccounts } from "@/backend/src/transactionsDAO"
 import { getUser } from "@/backend/src/UserDAO"
 import { BankAccount } from "@/backend/types/bankAccount"
 import { Chore } from "@/backend/types/chore"
@@ -167,6 +167,14 @@ export const useGetTransactionHistory = (accountID: string, fromDate?: Date, toD
       enabled: accountID.length !== 0,
     })
   }
+}
+
+export const useGetTransactionHistoryBetweenAccounts = (accountID1: string, accountID2: string) => {
+  return useQuery({
+    queryKey: ["transactionHistory", accountID1, accountID2],
+    queryFn: () => getTransactionHistoryBetweenAccounts(accountID1, accountID2),
+    enabled: accountID1.length !== 0 && accountID2.length !== 0,
+  })
 }
 
 // Money requests

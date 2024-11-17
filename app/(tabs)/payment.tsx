@@ -84,7 +84,11 @@ const PaymentScreen = () => {
       <ScrollView onScroll={handleScroll}>
         <View className="flex flex-row justify-center mt-6">
           {users.map((user) => (
-            <Pressable key={user?.name} className="flex-col items-center mx-3" onPress={() => console.log("navigate!")}>
+            <Pressable
+              key={user?.name}
+              className="flex-col items-center mx-3"
+              onPress={() => router.push(`/PaymentHistory?otherUserID=${user?.id}`)}
+            >
               <View className="rounded-full h-12 w-12 items-center overflow-hidden">
                 <Image
                   source={{ uri: user?.profilePicture }}

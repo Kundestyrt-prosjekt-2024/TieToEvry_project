@@ -120,6 +120,25 @@ export async function getTransactionHistory(accountId: string, fromDate?: Date, 
   return querySnapshot.docs.map((doc) => doc.data()) as Transaction[]
 }
 
+export async function getTransactionHistoryBetweenAccounts(accountId1: string, accountId2: string) {
+  const transactionsRef = collection(db, "transactions")
+
+  // Query for transactions between the two accounts
+  const q = query(
+    transactionsRef,
+    or(
+      // Transactions where accountId1 sent to accountId2
+      and(where("account_id_from", "==", accountId1), where("account_id_to", "==", accountId2)),
+      // Transactions where accountId2 sent to accountId1
+      and(where("account_id_from", "==", accountId2), where("account_id_to", "==", accountId1))
+    )
+  )
+
+  const querySnapshot = await getDocs(q)
+
+  return querySnapshot.docs.map((doc) => doc.data()) as Transaction[]
+}
+
 export async function fetchMonthStatsFS(accountId: string, month: number) {
   const transactionsRef = collection(db, "transactions")
   const currYear = new Date().getFullYear()

@@ -1,11 +1,11 @@
 import React, { useRef } from "react"
 import { View, Text, Animated, StyleSheet } from "react-native"
 import { PanGestureHandler } from "react-native-gesture-handler"
-import { Transaction } from "@/types"
+import { Transaction } from "@/backend/types/transaction"
 
 type PaymentBubbleProps = {
   payment: Transaction
-  userId: string
+  accountID: string
   name: string
   showDateDivider: boolean
   formatDate: (date: Date) => string
@@ -16,14 +16,15 @@ const MAX_SWIPE_DISTANCE = 50
 
 const PaymentBubble: React.FC<PaymentBubbleProps> = ({
   payment,
-  userId,
+  accountID,
   name,
   showDateDivider,
   formatDate,
   formatTime,
 }) => {
   const panX = useRef(new Animated.Value(0)).current
-  const isSentByUser = payment.sender === userId
+  const isSentByUser = payment.account_id_from === accountID
+  console.log(accountID)
 
   const handleGesture = Animated.event([{ nativeEvent: { translationX: panX } }], {
     useNativeDriver: false,
@@ -55,7 +56,7 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
 
   return (
     <View>
-      {showDateDivider && <Text style={styles.dateDivider}>{formatDate(payment.sentAt)}</Text>}
+      {showDateDivider && <Text style={styles.dateDivider}>{formatDate(new Date(payment.date.seconds * 1000))}</Text>}
       <PanGestureHandler onGestureEvent={handleGesture} onHandlerStateChange={handleGestureEnd}>
         <Animated.View
           style={[
@@ -66,11 +67,13 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
             },
           ]}
         >
-          <Text style={isSentByUser ? styles.timeRight : styles.timeLeft}>{formatTime(payment.sentAt)}</Text>
+          <Text style={isSentByUser ? styles.timeRight : styles.timeLeft}>
+            {formatTime(new Date(payment.date.seconds * 1000))}
+          </Text>
           <View style={[styles.messageBubble, isSentByUser ? styles.send : styles.receive]}>
             <Text style={styles.statusText}>{isSentByUser ? `Du sendte ${name}` : `${name} sendte deg`}</Text>
             <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
-            {payment.message && <Text style={styles.statusText}>{payment.message}</Text>}
+            {payment.description && <Text style={styles.statusText}>{payment.description}</Text>}
           </View>
         </Animated.View>
       </PanGestureHandler>
