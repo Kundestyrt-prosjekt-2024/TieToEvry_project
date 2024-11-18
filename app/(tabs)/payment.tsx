@@ -36,6 +36,7 @@ const PaymentScreen = () => {
   const siblings = siblingsQuery.map((query) => query.data)
 
   const users = [...parents, ...children, ...siblings]
+  const isParent = parents.length == 0
 
   const bankAccountsQuery = useGetBankAccounts(users.map((user) => user?.id ?? ""))
   const bankAccounts = bankAccountsQuery.map((query) => query.data)
