@@ -69,3 +69,32 @@ export async function fetchParents(uid: string): Promise<string[]> {
     throw new Error(error.message)
   }
 }
+
+/**
+ * Function is used to adjust sphareCoins of a user by a specified amount.
+ *
+ * @param accountId A string of the id of the user.
+ * @param amount A number representing the amount to adjust sphareCoins by (can be positive or negative).
+ */
+export async function adjustSphareCoins(uid: string, amount: number) {
+  const userDocRef = doc(db, "users", uid)
+  try {
+    // Retrieve current sphareCoins
+    const userSnapshot = await getDoc(userDocRef)
+    if (!userSnapshot.exists()) {
+      throw new Error("User not found")
+    }
+    // Get current sphareCoins
+    const currentSphareCoins = userSnapshot.data().sphareCoins || 0
+    // Calculate new sphareCoins
+    const newSphareCoins = currentSphareCoins + amount
+    // Ensure new sphareCoins is not negative
+    if (newSphareCoins < 0) {
+      throw new Error("Insufficient funds for this operation")
+    }
+    // Update the document with new sphareCoins
+    await updateDoc(userDocRef, { sphareCoins: newSphareCoins })
+  } catch (e) {
+    throw new Error("Failed to adjust sphareCoins: " + e)
+  }
+}

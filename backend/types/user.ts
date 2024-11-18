@@ -13,6 +13,7 @@ const UserSchema = z.object({
   children: z.array(z.string()).optional(),
   parents: z.array(z.string()).optional(),
   profilePicture: z.string(),
+  sphareCoins: z.number(),
   id: z.string().optional(),
 })
 
