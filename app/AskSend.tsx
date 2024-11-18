@@ -10,15 +10,25 @@ import {
 } from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
-import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image } from "react-native"
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Image,
+  Keyboard,
+} from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 
 const AskSend = () => {
   const router = useRouter()
 
   const params = useLocalSearchParams()
-  const ask = params.ask as string
-  const isAsk = ask === "true"
+  const page = params.page as string
+  const isAsk = page === "ask"
 
   const userID = useGetUserID()
   const user = useGetUser(userID.data || "")
@@ -38,6 +48,10 @@ const AskSend = () => {
   const [selectedReceiver, setSelectedReceiver] = useState(0)
   const [amount, setAmount] = useState("")
   const [message, setMessage] = useState("")
+
+  const [showPicker, setShowPicker] = useState(false)
+  const [dayValue, setDayValue] = useState("Velg dag")
+  const [repeatValue, setRepeatValue] = useState("Velg gjentakelse")
 
   function handleAskSend() {
     if (isAsk) {
@@ -67,6 +81,41 @@ const AskSend = () => {
     siblingsQuery.some((query) => query.isPending)
   ) {
     return <DataLoading />
+  }
+
+  function renderAllowanceInput() {
+    return (
+      <View>
+        <TouchableOpacity
+          style={styles.allowanceInput}
+          onPress={() => {
+            Keyboard.dismiss()
+            setShowPicker((prev) => !prev)
+          }}
+        >
+          <Text>Ukedag: {dayValue}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.allowanceInput}
+          onPress={() => {
+            Keyboard.dismiss()
+            setShowPicker((prev) => !prev)
+          }}
+        >
+          <Text>Gjenta: {repeatValue}</Text>
+        </TouchableOpacity>
+        {showPicker && (
+          <Picker
+            style={{ backgroundColor: "white", width: 300, height: 215 }}
+            selectedValue={dayValue}
+            pickerData={["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]}
+            onValueChange={(value: string) => {
+              setDayValue(value)
+            }}
+          />
+        )}
+      </View>
+    )
   }
 
   return (
