@@ -1,7 +1,9 @@
-import React, { useCallback, useRef } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, Pressable } from "react-native"
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import FeatherIcon from "react-native-vector-icons/Feather"
+import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { adjustSphareCoins } from "@/backend/src/UserDAO"
 
 const coinItems: { id: string; name: string; amount: number }[] = [
   { id: "1", name: "Flaske", amount: 249 },
@@ -13,6 +15,11 @@ const coinItems: { id: string; name: string; amount: number }[] = [
 const Coins = () => {
   const bottomSheetRef = useRef<BottomSheet>(null)
   const [expandedItem, setExpandedItem] = React.useState<{ id: string; name: string; amount: number } | null>(null)
+
+  const userID = useGetUserID()
+  const user = useGetUser(userID.data || "")
+
+  const [errorMessage, setErrorMessage] = useState("")
 
   function renderList(coinItem: { id: string; name: string; amount: number }) {
     return (
@@ -38,7 +45,7 @@ const Coins = () => {
 
   const coinBalance = (
     <View style={styles.coins}>
-      <Text style={styles.text1}>2387</Text>
+      <Text style={styles.text1}>{user.data?.sphareCoins || 0}</Text>
       <Image style={styles.coin1} source={require("@/assets/images/coin.png")} />
     </View>
   )
@@ -66,7 +73,13 @@ const Coins = () => {
         <View style={styles.sheetContainer}>
           <View style={styles.sheetHeader}>
             <Text style={styles.text1}>{expandedItem?.name}</Text>
-            <Pressable style={styles.x} onPress={() => bottomSheetRef.current?.close()}>
+            <Pressable
+              style={styles.x}
+              onPress={() => {
+                bottomSheetRef.current?.close()
+                setErrorMessage("")
+              }}
+            >
               <FeatherIcon name="x" size={50} />
             </Pressable>
           </View>
@@ -75,9 +88,21 @@ const Coins = () => {
             <Text style={styles.text3}>Pris: {expandedItem?.amount}</Text>
             <Image style={styles.coin3} source={require("@/assets/images/coin.png")} />
           </View>
-          <TouchableOpacity style={styles.buyButton}>
+          <TouchableOpacity
+            style={styles.buyButton}
+            onPress={async () => {
+              try {
+                await adjustSphareCoins(userID.data!, -expandedItem?.amount!)
+                bottomSheetRef.current?.close()
+                user.refetch()
+              } catch (error) {
+                setErrorMessage("Du har ikke nok gullrøtter til dette kjøpet")
+              }
+            }}
+          >
             <Text style={styles.text3}>Kjøp</Text>
           </TouchableOpacity>
+          {errorMessage.length !== 0 && <Text className="text-red-500 text-xl">{errorMessage}</Text>}
         </View>
       </BottomSheet>
     </View>

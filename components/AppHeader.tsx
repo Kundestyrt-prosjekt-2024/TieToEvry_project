@@ -20,7 +20,7 @@ const AppHeader = ({ parent = false }: { parent?: boolean }) => {
     <View style={[styles.header, parent ? { justifyContent: "flex-end" } : { justifyContent: "space-between" }]}>
       {!parent && (
         <Pressable style={styles.coinButton} onPress={handleCoin}>
-          <Text style={styles.headerText}>2387</Text>
+          <Text style={styles.headerText}>{user.data?.sphareCoins || 0}</Text>
           <Image style={styles.coin} source={require("@/assets/images/coin.png")} />
         </Pressable>
       )}
