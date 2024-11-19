@@ -190,7 +190,7 @@ const choresParent = () => {
         </View>
       </ScrollView>
       <Pressable className="absolute bottom-5 right-5 bg-blue-500 rounded-full p-4" onPress={() => setShowModal(true)}>
-        <Ionicons name="add" size={24} color="white" />
+        <Ionicons name="add" size={40} color="white" />
       </Pressable>
       {choreOfInterest && (
         <Modal visible={viewChore} animationType="slide" transparent={true} onRequestClose={toggleModal}>
