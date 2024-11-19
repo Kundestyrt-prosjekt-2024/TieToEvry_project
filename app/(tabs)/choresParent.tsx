@@ -126,12 +126,9 @@ const choresParent = () => {
                   } else {
                     const isSelected = selectedChildIndex === index
                     return (
-                      <Pressable
-                        className="flex flex-col items-center justify-center gap-4"
-                        onPress={() => setSelectedChildIndex(index)}
-                      >
+                      <Pressable className="flex-col items-center mx-3" onPress={() => setSelectedChildIndex(index)}>
                         <View
-                          className={`rounded-full h-20 w-20 justify-center items-center overflow-hidden ${isSelected ? "border-4 border-blue-500" : ""}`}
+                          className={`rounded-full h-20 w-20 items-center overflow-hidden ${isSelected ? "border-4 border-blue-500" : ""}`}
                         >
                           <Image
                             source={{ uri: item.profilePicture }}
@@ -139,7 +136,7 @@ const choresParent = () => {
                             style={{ resizeMode: "cover" }}
                           />
                         </View>
-                        <Text>{item.name}</Text>
+                        <Text className="mt-2 font-medium text-sm">{item.name}</Text>
                       </Pressable>
                     )
                   }
