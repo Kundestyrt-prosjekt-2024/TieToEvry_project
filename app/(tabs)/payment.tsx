@@ -37,6 +37,9 @@ const PaymentScreen = () => {
 
   const users = [...parents, ...children, ...siblings]
 
+  const isParent = parents.length == 0
+  const buttons = isParent ? ["ask", "allowance", "send"] : ["ask", "send"]
+
   const bankAccountsQuery = useGetBankAccounts(users.map((user) => user?.id ?? ""))
   const bankAccounts = bankAccountsQuery.map((query) => query.data)
 
@@ -142,30 +145,32 @@ const PaymentScreen = () => {
         </View>
       </ScrollView>
       <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>
-        <TouchableOpacity
-          style={styles.bottomButton}
-          onPress={() => router.push(`/AskSend?ask=true`)}
-          activeOpacity={0.5}
-        >
-          <View style={styles.iconContainer}>
-            <AwesomeIcon name="money" size={30} />
-            <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={25} />
+        {buttons.map((action, index) => (
+          <View key={action} style={styles.buttonContainer}>
+            <View style={styles.buttonBackground} />
+            <TouchableOpacity
+              style={styles.bottomButton}
+              onPress={() => router.push(`/AskSend?page=${action}`)}
+              activeOpacity={0.5}
+            >
+              {action === "ask" || action === "send" ? (
+                <View style={styles.iconContainer}>
+                  <AwesomeIcon name="money" size={30} />
+                  <AwesomeIcon
+                    style={action === "ask" ? styles.arrowDown : styles.arrowUp}
+                    name={action === "ask" ? "arrow-down" : "arrow-up"}
+                    size={25}
+                  />
+                </View>
+              ) : (
+                <AwesomeIcon name="calendar" size={30} />
+              )}
+              <Text style={styles.buttonText}>
+                {action === "ask" ? "Be om" : action === "allowance" ? "Ukepenger" : "Send"}
+              </Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.buttonText}>Be om</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.bottomButton}
-          onPress={() => router.push(`/AskSend?ask=false`)}
-          activeOpacity={0.5}
-        >
-          <View style={styles.iconContainer}>
-            <AwesomeIcon name="money" size={30} />
-            <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={25} />
-          </View>
-          <Text style={styles.buttonText}>Send</Text>
-        </TouchableOpacity>
-        <View style={styles.buttonBackgroundLeft} />
-        <View style={styles.buttonBackgroundRight} />
+        ))}
       </Animated.View>
     </SafeAreaView>
   )
@@ -180,41 +185,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
   },
-  combinedButtonContainer: {
-    flexDirection: "row",
-    borderRadius: 50,
-    width: 160,
-    height: 100,
-  },
-  leftButton: {
-    flex: 1,
-    backgroundColor: "#52D1DC",
-    borderTopLeftRadius: 50,
-    borderBottomLeftRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingLeft: 8,
-    paddingTop: 20,
-  },
-  rightButton: {
-    flex: 1,
-    backgroundColor: "#52D1DC",
-    borderTopRightRadius: 50,
-    borderBottomRightRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingRight: 8,
-    paddingTop: 20,
-  },
   buttonBackground: {
     position: "absolute",
-    zIndex: -1,
-    backgroundColor: "#fff",
-    width: 160,
     height: 100,
+    width: 100,
     borderRadius: 50,
+    backgroundColor: "#fff",
+    zIndex: -1,
   },
   iconContainer: {
     position: "relative",
@@ -246,33 +223,14 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     padding: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 40,
-    marginTop: 20,
     borderRadius: 50,
     backgroundColor: "#52D1DC",
     justifyContent: "center",
     alignItems: "center",
   },
-  buttonBackgroundLeft: {
-    position: "absolute",
-    height: 100,
-    width: 100,
-    borderRadius: 50,
-    left: 40,
-    top: 20,
-    zIndex: -1,
-    backgroundColor: "#fff",
-  },
-  buttonBackgroundRight: {
-    position: "absolute",
-    height: 100,
-    width: 100,
-    borderRadius: 50,
-    right: 40,
-    top: 20,
-    zIndex: -1,
-    backgroundColor: "#fff",
+  buttonContainer: {
+    position: "relative",
+    marginHorizontal: 10,
   },
 })
 

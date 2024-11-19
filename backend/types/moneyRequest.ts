@@ -15,4 +15,14 @@ const MoneyRequestSchema = z.object({
   status: z.enum(["pending", "accepted", "rejected"]),
 })
 
+const AllowanceSchema = z.object({
+  childId: z.string().optional(),
+  recurrence: z.number(),
+  day: z.number(),
+  amount: z.number(),
+  message: z.string(),
+  date: FirestoreTimestampSchema,
+})
+
 export type MoneyRequest = z.infer<typeof MoneyRequestSchema>
+export type Allowance = z.infer<typeof AllowanceSchema>

@@ -33,11 +33,13 @@ export default function RootLayout() {
           <Stack.Screen
             name="AskSend"
             options={({ route }) => {
-              const { ask } = route.params as { ask: string }
-              const isAsk = ask === "true"
+              const { page } = route.params as { page: string }
+              const isAsk = page === "ask"
+              const isSend = page === "send"
+              const title = isAsk ? "Be om penger" : isSend ? "Send penger" : "Ukepenger"
               return {
                 headerBackTitle: "Tilbake",
-                title: isAsk ? "Be Om" : "Send" + " penger",
+                title: title,
               }
             }}
           />
