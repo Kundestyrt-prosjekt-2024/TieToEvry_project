@@ -40,10 +40,6 @@ const savingsParent = () => {
       })
       .reverse() || []
 
-  if (children.some((query) => query.isPending) || savingGoals.isPending) {
-    return <DataLoading />
-  }
-
   return (
     <SafeAreaView className="bg-white h-full">
       <AppHeader parent />
@@ -90,7 +86,9 @@ const savingsParent = () => {
             ItemSeparatorComponent={() => <View className="w-8" />}
           />
         </View>
-        <Text className="text-center my-10 text-lg">Her er {children[selectedChildIndex].data?.name}'s sparemål:</Text>
+        <Text className="text-center my-10 text-lg">
+          Her er {children[selectedChildIndex].data?.name.split(" ")[0]} sine sparemål:
+        </Text>
         <View className="flex flex-col items-center">
           {sortedGoals.map((goal, index) => {
             const progress = goal.current_amount / goal.goal_amount

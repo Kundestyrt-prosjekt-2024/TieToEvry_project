@@ -101,9 +101,6 @@ const choresParent = () => {
     }
   }
 
-  if (children.some((query) => query.isPending) || choreIcons.isPending) {
-    return <DataLoading />
-  }
   return (
     <SafeAreaView className="bg-white h-full">
       <AppHeader parent />
