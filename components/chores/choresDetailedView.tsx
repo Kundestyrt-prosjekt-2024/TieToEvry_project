@@ -82,6 +82,8 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
     );
   }
   const unavailableChore = () => {
+    const colour = chore.chore_status === "complete" ? "text-grenn-600" : chore.chore_status === "rejected" ? "text-red-600" : "text-yellow-600";
+
     return (
       <View className="bg-[#CCF2F5] p-4 rounded-lg space-y-2 items-center justify-between w-full">
         <View className="w-full flex flex-row justify-between border-b border-teal-300 py-2">
@@ -92,14 +94,14 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
           <View className="flex flex-col items-center">
             <Text className="w-full text-sm color-slate-400">Belønning:</Text>
             <View className="flex flex-row space-x-2 py-1">
-              <Text className="text-lg font-semibold text-green-600">{chore.reward_amount},-</Text>
+                <Text className={`text-lg font-semibold ${colour}`}>{chore.reward_amount},-</Text>
               <View className="flex flex-row">
                 <Image
                   className="w-7 h-7 rounded-md"
                   source={require("@/assets/images/coin.png")}
                   resizeMode="contain"
                 />
-                <Text className="text-lg">{sphareCoins}</Text>
+                <Text className="text-lg">x{sphareCoins}</Text>
               </View>
             </View>
           </View>

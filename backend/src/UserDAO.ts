@@ -1,5 +1,5 @@
 import { db } from "@/constants/firebaseConfig"
-import { setDoc, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore"
+import { setDoc, doc, getDoc, updateDoc, arrayUnion, deleteField, deleteDoc } from "firebase/firestore"
 import { User } from "../types/user"
 
 export async function addUser(uid: string, data: User): Promise<string | undefined> {
@@ -96,5 +96,21 @@ export async function adjustSphareCoins(uid: string, amount: number) {
     await updateDoc(userDocRef, { sphareCoins: newSphareCoins })
   } catch (e) {
     throw new Error("Failed to adjust sphareCoins: " + e)
+  }
+}
+
+export async function deleteUser(data: User): Promise<boolean> {
+  try {
+    if (!data.id) {
+      throw new Error("User ID is undefined")
+    }
+    const docRef = doc(db, "users", data.id)
+
+    await deleteDoc(docRef);
+    console.log("User successfully deleted!");
+
+    return true
+  } catch (error: any) {
+    throw new Error(error.message)
   }
 }
