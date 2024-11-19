@@ -150,7 +150,9 @@ const choresParent = () => {
             ItemSeparatorComponent={() => <View className="w-8" />}
           />
         </View>
-        <Text className="text-center my-10 text-lg">Her er {children[selectedChildIndex]?.data?.name}'s gjøremål:</Text>
+        <Text className="text-center my-10 text-lg">
+          Her er {children[selectedChildIndex]?.data?.name.split(" ")[0]} sine gjøremål:
+        </Text>
         <View className="flex flex-row gap-2 justify-center">
           {["Aktive", "Forslag", "Forespurt godkjent", "Godkjent"].map((category, index) => (
             <Pressable
@@ -162,7 +164,28 @@ const choresParent = () => {
             </Pressable>
           ))}
         </View>
-        <View>
+        <View className="mt-4 px-8">
+          {selectedCategoryIndex === 0 && (
+            <Text className="text-center text-md mb-4">
+              Dette er aktive gjøremål som {children[selectedChildIndex]?.data?.name.split(" ")[0]} ikke har fullført.
+            </Text>
+          )}
+          {selectedCategoryIndex === 1 && (
+            <Text className="text-center text-md mb-4">
+              Dette er gjøremål som {children[selectedChildIndex]?.data?.name.split(" ")[0]} har foreslått.
+            </Text>
+          )}
+          {selectedCategoryIndex === 2 && (
+            <Text className="text-center text-md mb-4">
+              Dette er gjøremål som {children[selectedChildIndex]?.data?.name.split(" ")[0]} ønsker godkjent.
+            </Text>
+          )}
+          {selectedCategoryIndex === 3 && (
+            <Text className="text-center text-md mb-4">
+              Dette er gjøremål som {children[selectedChildIndex]?.data?.name.split(" ")[0]} har fullført og fått betalt
+              for.
+            </Text>
+          )}
           {childChores.data
             ?.filter((chore) => chore.chore_status === selectedCategory)
             .filter((chore) => (selectedCategoryIndex === 3 ? chore.paid : !chore.paid))
@@ -192,14 +215,14 @@ const choresParent = () => {
             <Text className="text-lg font-bold mb-4">Opprett et gjøremål</Text>
 
             <TextInput
-              placeholder="Title"
+              placeholder="Tittel"
               value={title}
               onChangeText={setTitle}
               className="border border-gray-300 rounded p-2 mb-4"
             />
 
             <TextInput
-              placeholder="Chore Description"
+              placeholder="Beskrivelse"
               value={description}
               onChangeText={setDescription}
               className="border border-gray-300 rounded p-2 mb-4"
@@ -223,22 +246,39 @@ const choresParent = () => {
               />
             </View>
 
-            <View className="flex flex-row justify-between items-center mb-4">
-              <Text>Is Repeatable?</Text>
+            <View className="flex flex-row justify-between items-center mb-2">
+              <Text>Repeterende?</Text>
               <Switch value={isRepeatable} onValueChange={(value) => setIsRepeatable(value)} />
             </View>
 
             {isRepeatable && (
-              <TextInput
-                placeholder="Recurrence (e.g., Daily, Weekly)"
-                value={recurrence}
-                onChangeText={(text) => setRecurrence(text as "daily" | "weekly" | "monthly")}
-                className="border border-gray-300 rounded p-2 mb-4"
-              />
+              <View className="mb-4">
+                <Text className="mb-2">Hvor ofte?</Text>
+                <View className="flex flex-row gap-2">
+                  <Pressable
+                    className={`${recurrence === "daily" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                    onPress={() => setRecurrence("daily")}
+                  >
+                    <Text>Daglig</Text>
+                  </Pressable>
+                  <Pressable
+                    className={`${recurrence === "weekly" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                    onPress={() => setRecurrence("weekly")}
+                  >
+                    <Text>Ukentlig</Text>
+                  </Pressable>
+                  <Pressable
+                    className={`${recurrence === "monthly" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                    onPress={() => setRecurrence("monthly")}
+                  >
+                    <Text>Månedlig</Text>
+                  </Pressable>
+                </View>
+              </View>
             )}
 
             <TextInput
-              placeholder="Reward Amount"
+              placeholder="Belønning"
               value={rewardAmount}
               onChangeText={setRewardAmount}
               keyboardType="numeric"
@@ -246,7 +286,7 @@ const choresParent = () => {
             />
 
             <View className="flex items-start flex-col">
-              <Text className="mb-2">Time Limit</Text>
+              <Text className="mb-2">Tidsfrist</Text>
               <DateTimePicker
                 value={timeLimit}
                 mode="datetime"
@@ -261,11 +301,11 @@ const choresParent = () => {
 
             <View className="flex flex-row justify-end gap-4 mt-4">
               <Pressable className="bg-gray-300 rounded-md px-4 py-2" onPress={() => setShowModal(false)}>
-                <Text>Cancel</Text>
+                <Text>Avbryt</Text>
               </Pressable>
 
               <Pressable className="bg-blue-500 rounded-md px-4 py-2" onPress={handleCreateChore}>
-                <Text className="text-white">Create</Text>
+                <Text className="text-white">Opprett</Text>
               </Pressable>
             </View>
           </Pressable>

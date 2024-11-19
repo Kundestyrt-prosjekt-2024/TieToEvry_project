@@ -19,6 +19,9 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
 
   async function handleStatus(newStatus: string) {
     try {
+      if (chore.chore_status === "complete") {
+        chore.paid = true
+      }
       await updateChoreStatus({ chore: chore, status: newStatus })
       refetch()
       console.log("Chore status updated successfully")
@@ -76,7 +79,13 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
           <View className="flex justify-center flex-row space-x-2">
             <View>
               <Button
-                onClick={() => (parentSide ? handleStatus("available") : handleStatus("complete"))}
+                onClick={() =>
+                  parentSide
+                    ? chore.chore_status === "complete"
+                      ? handleStatus("complete")
+                      : handleStatus("available")
+                    : handleStatus("complete")
+                }
                 text="Godkjenn"
                 classname=" bg-green-200 px-3 py-1"
               ></Button>
@@ -140,8 +149,8 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
   }
 
   return (chore.chore_status === "available" && !parentSide) ||
-    chore.chore_status === "pending" ||
-    (chore.chore_status === "complete" && !chore.paid)
+    (chore.chore_status === "pending" && parentSide) ||
+    (chore.chore_status === "complete" && !chore.paid && parentSide)
     ? avilableChore()
     : unavailableChore()
 }

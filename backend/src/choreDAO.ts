@@ -1,8 +1,9 @@
 import { getDownloadURL, listAll, ref } from "firebase/storage"
 import { db, storage } from "../../constants/firebaseConfig"
-import { transferMoney } from "./transactionService"
 import { collection, query, where, getDocs, doc, addDoc, updateDoc, Timestamp } from "firebase/firestore"
 import { Chore } from "../types/chore"
+import { transferMoney } from "./transactionsDAO"
+import { adjustSphareCoins } from "./UserDAO"
 
 export async function createChore(chore: Chore) {
   try {
@@ -37,11 +38,13 @@ export async function updateChoreStatus(chore: Chore, status: string) {
     const choreRef = doc(db, "chores", chore.id!)
     await updateDoc(choreRef, {
       chore_status: status,
+      paid: chore.paid,
     })
 
-    // if (status === "paid") {
-    //   await transferMoney(chore.parent_id, chore.child_id, chore.reward_amount, "Chore Completion Reward")
-    // }
+    if (chore.paid) {
+      await transferMoney(chore.parent_id, chore.child_id, chore.reward_amount, chore.chore_title)
+      await adjustSphareCoins(chore.child_id, 3)
+    }
   } catch (error) {
     console.error("Error updating status of chore:", error)
     throw new Error("Failed to update suggested chore")

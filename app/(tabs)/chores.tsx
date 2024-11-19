@@ -1,6 +1,18 @@
 import AppHeader from "@/components/AppHeader"
-import { View, Text, StyleSheet, Pressable, Image, Modal, Dimensions, FlatList, Animated, TextInput, Switch } from "react-native"
-import DateTimePicker from '@react-native-community/datetimepicker'
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+  Modal,
+  Dimensions,
+  FlatList,
+  Animated,
+  TextInput,
+  Switch,
+} from "react-native"
+import DateTimePicker from "@react-native-community/datetimepicker"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Chore } from "../../backend/types/chore"
 import React, { useMemo, useRef, useState } from "react"
@@ -8,7 +20,14 @@ import ChoreList from "@/components/chores/chore"
 import ChoresDetailedView from "@/components/chores/choresDetailedView"
 import Button from "@/components/ui/button"
 import Popover from "@/components/chores/chorePopover"
-import { useCreateChore, useGetBankAccount, useGetChoreIcons, useGetChores, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import {
+  useCreateChore,
+  useGetBankAccount,
+  useGetChoreIcons,
+  useGetChores,
+  useGetUser,
+  useGetUserID,
+} from "@/hooks/useGetFirestoreData"
 import { Timestamp } from "firebase/firestore"
 
 const Chores = () => {
@@ -18,10 +37,10 @@ const Chores = () => {
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
-  const {data: userID} = useGetUserID()
-  const {data: user} = useGetUser(userID ?? "")
-  const {data: balance} = useGetBankAccount(userID ?? "")
-  const {data, isLoading, isError, refetch} = useGetChores(userID ?? "");
+  const { data: userID } = useGetUserID()
+  const { data: user } = useGetUser(userID ?? "")
+  const { data: balance } = useGetBankAccount(userID ?? "")
+  const { data, isLoading, isError, refetch } = useGetChores(userID ?? "")
 
   const [showModal, setShowModal] = useState(false)
   const [title, setTitle] = useState("")
@@ -69,7 +88,6 @@ const Chores = () => {
       </View>
     )
   }
-
 
   const cashMullaCoin = {
     mulla: balance?.balance,
@@ -148,7 +166,7 @@ const Chores = () => {
           contentContainerStyle={{ paddingBottom: 30 }}
           data={data}
           renderItem={(chore) => {
-            if(chore.item.chore_status === "available"){
+            if (chore.item.chore_status === "available") {
               return renderChore(chore.item)
             }
             return null
@@ -215,6 +233,37 @@ const Chores = () => {
                 scrollEnabled={false}
               />
             </View>
+
+            <View className="flex flex-row justify-between items-center mb-2">
+              <Text>Repeterende?</Text>
+              <Switch value={isRepeatable} onValueChange={(value) => setIsRepeatable(value)} />
+            </View>
+
+            {isRepeatable && (
+              <View className="mb-4">
+                <Text className="mb-2">Hvor ofte?</Text>
+                <View className="flex flex-row gap-2">
+                  <Pressable
+                    className={`${recurrence === "daily" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                    onPress={() => setRecurrence("daily")}
+                  >
+                    <Text>Daglig</Text>
+                  </Pressable>
+                  <Pressable
+                    className={`${recurrence === "weekly" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                    onPress={() => setRecurrence("weekly")}
+                  >
+                    <Text>Ukentlig</Text>
+                  </Pressable>
+                  <Pressable
+                    className={`${recurrence === "monthly" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                    onPress={() => setRecurrence("monthly")}
+                  >
+                    <Text>Månedlig</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
 
             <TextInput
               placeholder="Belønning"
