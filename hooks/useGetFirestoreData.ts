@@ -44,20 +44,36 @@ export const useGetProfilePictures = () => {
 }
 
 export const useGetChildren = (childrenIDs: string[]) => {
+  const queryClient = useQueryClient()
+
   return useQueries({
     queries: childrenIDs.map((id) => ({
       queryKey: ["user", id],
-      queryFn: () => getUser(id),
+      queryFn: () =>
+        getUser(id, (updatedData) => {
+          queryClient.setQueryData(["user", id], (oldData: User | undefined) => {
+            if (!oldData) return updatedData
+            return { ...oldData, ...updatedData }
+          })
+        }),
       enabled: childrenIDs.length !== 0,
     })),
   })
 }
 
 export const useGetParents = (parentIDs: string[]) => {
+  const queryClient = useQueryClient()
+
   return useQueries({
     queries: parentIDs.map((id) => ({
       queryKey: ["user", id],
-      queryFn: () => getUser(id),
+      queryFn: () =>
+        getUser(id, (updatedData) => {
+          queryClient.setQueryData(["user", id], (oldData: User | undefined) => {
+            if (!oldData) return updatedData
+            return { ...oldData, ...updatedData }
+          })
+        }),
       enabled: parentIDs.length !== 0,
     })),
   })

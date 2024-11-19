@@ -32,17 +32,17 @@ export async function addChildToParent(parentUid: string, childUid: string, data
   }
 }
 
-export async function getUser(uid: string, updateBankAccount?: (updatedData: User) => void): Promise<User | undefined> {
+export async function getUser(uid: string, updateUserAccount?: (updatedData: User) => void): Promise<User | undefined> {
   try {
     const userDoc = await getDoc(doc(db, "users", uid))
     if (userDoc.exists()) {
       const userData = userDoc.data() as User
       const user = { ...userData, id: uid }
-      if (updateBankAccount) {
+      if (updateUserAccount) {
         const unsubscribe = onSnapshot(doc(db, "users", user.id), (updatedDoc) => {
           if (updatedDoc.exists()) {
             const updatedData = updatedDoc.data() as User
-            updateBankAccount(updatedData)
+            updateUserAccount(updatedData)
           }
         })
       }
