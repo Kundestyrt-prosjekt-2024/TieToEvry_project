@@ -18,6 +18,8 @@ import { Timestamp } from "firebase/firestore"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { useRouter } from "expo-router"
 import AntDesign from "@expo/vector-icons/AntDesign"
+import ChoreList from "@/components/chores/chore"
+import ChoresDetailedView from "@/components/chores/choresDetailedView"
 
 const choresParent = () => {
   const router = useRouter()
@@ -27,6 +29,7 @@ const choresParent = () => {
 
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("Aktive")
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0)
   const [showModal, setShowModal] = useState(false)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -36,6 +39,9 @@ const choresParent = () => {
   const [rewardAmount, setRewardAmount] = useState("")
   const [timeLimit, setTimeLimit] = useState(new Date())
 
+  const [viewChore, toggleView] = useState(false)
+  const [choreOfInterest, setChoreOfInterest] = useState<Chore | null>(null)
+
   const selectedChildID = parent.data?.children?.[selectedChildIndex]
 
   const children = useGetChildren(parent.data?.children || [])
@@ -44,6 +50,15 @@ const choresParent = () => {
   const choreIcons = useGetChoreIcons()
 
   const createChore = useCreateChore()
+
+  const setViewChore = (chore: Chore) => {
+    setChoreOfInterest(chore)
+    toggleModal()
+  }
+
+  const toggleModal = () => {
+    toggleView((prevState) => !prevState)
+  }
 
   const handleCreateChore = () => {
     setShowModal(false)
@@ -68,6 +83,22 @@ const choresParent = () => {
     setRecurrence("daily")
     setRewardAmount("")
     setTimeLimit(new Date())
+  }
+
+  const handleCategoryChange = (category: string) => {
+    if (category === "Aktive") {
+      setSelectedCategory("available")
+      setSelectedCategoryIndex(0)
+    } else if (category === "Forslag") {
+      setSelectedCategory("pending")
+      setSelectedCategoryIndex(1)
+    } else if (category === "Forespurt godkjent") {
+      setSelectedCategory("complete")
+      setSelectedCategoryIndex(2)
+    } else if (category === "Godkjent") {
+      setSelectedCategory("complete")
+      setSelectedCategoryIndex(3)
+    }
   }
 
   if (children.some((query) => query.isPending) || choreIcons.isPending) {
@@ -121,20 +152,40 @@ const choresParent = () => {
         </View>
         <Text className="text-center my-10 text-lg">Her er {children[selectedChildIndex]?.data?.name}'s gjøremål:</Text>
         <View className="flex flex-row gap-2 justify-center">
-          {["Aktive", "Forespurt godkjent", "Godkjent"].map((category) => (
+          {["Aktive", "Forslag", "Forespurt godkjent", "Godkjent"].map((category, index) => (
             <Pressable
               key={category}
-              className={`p-3 ${category === selectedCategory ? "bg-blue-400" : "bg-blue-300"} rounded-md`}
-              onPress={() => setSelectedCategory(category)}
+              className={`p-3 ${index === selectedCategoryIndex ? "bg-blue-500" : "bg-blue-300"} rounded-md`}
+              onPress={() => handleCategoryChange(category)}
             >
               <Text>{category}</Text>
             </Pressable>
           ))}
         </View>
+        <View>
+          {childChores.data
+            ?.filter((chore) => chore.chore_status === selectedCategory)
+            .filter((chore) => (selectedCategoryIndex === 3 ? chore.paid : !chore.paid))
+            .map((chore) => <ChoreList chore={chore} onClick={() => setViewChore(chore)} />)}
+        </View>
       </ScrollView>
       <Pressable className="absolute bottom-5 right-5 bg-blue-500 rounded-full p-4" onPress={() => setShowModal(true)}>
         <Ionicons name="add" size={24} color="white" />
       </Pressable>
+      {choreOfInterest && (
+        <Modal visible={viewChore} animationType="slide" transparent={true} onRequestClose={toggleModal}>
+          <View className="h-full w-full flex justify-center items-center">
+            <View className="p-4 w-full">
+              <ChoresDetailedView
+                chore={choreOfInterest}
+                onClick={toggleModal}
+                refetch={childChores.refetch}
+                parentSide
+              />
+            </View>
+          </View>
+        </Modal>
+      )}
       <Modal transparent={true} visible={showModal} onRequestClose={() => setShowModal(false)}>
         <Pressable className="flex-1 justify-center items-center bg-opacity-50" onPress={() => setShowModal(false)}>
           <Pressable className="bg-white rounded-lg w-4/5 p-6 shadow-lg" onPress={() => setShowModal(true)}>

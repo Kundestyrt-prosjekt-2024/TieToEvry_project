@@ -1,28 +1,30 @@
-import React from "react";
-import { View, Text, Pressable, Image } from "react-native";
+import React from "react"
+import { View, Text, Pressable, Image } from "react-native"
 import { Chore } from "../../backend/types/chore"
-import Button from "../ui/button";
-import { useGetUser, useUpdateChoreStatus } from "@/hooks/useGetFirestoreData";
+import Button from "../ui/button"
+import { useGetUser, useUpdateChoreStatus } from "@/hooks/useGetFirestoreData"
 
 interface PropsDetailedView {
-  chore: Chore;
-  onClick: () => void;
-  refetch: () => void;
+  chore: Chore
+  onClick: () => void
+  refetch: () => void
+  parentSide?: boolean
 }
 
-const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refetch }) => {
-  const { mutate: updateChoreStatus } = useUpdateChoreStatus();
-  const { data: parent } = useGetUser(chore.parent_id);
-  const sphareCoins = 3;
+const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refetch, parentSide = false }) => {
+  const { mutate: updateChoreStatus } = useUpdateChoreStatus()
+  const { data: parent } = useGetUser(chore.parent_id)
+  const { data: child } = useGetUser(chore.child_id)
+  const sphareCoins = 3
 
   async function handleStatus(newStatus: string) {
     try {
-      await updateChoreStatus({ chore: chore, status: newStatus });
-      refetch();
-      console.log("Chore status updated successfully");
-      onClick();
+      await updateChoreStatus({ chore: chore, status: newStatus })
+      refetch()
+      console.log("Chore status updated successfully")
+      onClick()
     } catch (error) {
-      console.error("Failed to update chore status:", error);
+      console.error("Failed to update chore status:", error)
     }
   }
 
@@ -56,22 +58,28 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
           </View>
           <View className="flex flex-col justify-end items-end py-2 w-[40%]">
             <Text className="text-sm color-slate-400">Frist:</Text>
-            <Text className="text-lg">{new Date(chore.time_limit.seconds * 1000).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}</Text>
+            <Text className="text-lg">
+              {new Date(chore.time_limit.seconds * 1000).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </Text>
           </View>
         </View>
         <View className="w-full flex flex-row items-center space-x-2">
           <Text className="text-sm color-slate-400">Fra:</Text>
-          <Text className="text-base">{parent?.name}</Text>
+          <Text className="text-base">{parentSide ? child?.name : parent?.name}</Text>
         </View>
         <View className="flex flex-row justify-between w-full pt-2">
           <Button onClick={onClick} text="Lukk" classname="bg-slate-50 px-3 py-1"></Button>
           <View className="flex justify-center flex-row space-x-2">
             <View>
-              <Button onClick={() => handleStatus("complete")} text="Godkjenn" classname=" bg-green-200 px-3 py-1"></Button>
+              <Button
+                onClick={() => (parentSide ? handleStatus("available") : handleStatus("complete"))}
+                text="Godkjenn"
+                classname=" bg-green-200 px-3 py-1"
+              ></Button>
             </View>
             <View>
               <Button onClick={() => handleStatus("rejected")} text="Avslå" classname="px-3 py-1"></Button>
@@ -79,7 +87,7 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
           </View>
         </View>
       </View>
-    );
+    )
   }
   const unavailableChore = () => {
     return (
@@ -111,25 +119,31 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
           </View>
           <View className="flex flex-col justify-end items-end py-2 w-[40%]">
             <Text className="text-sm color-slate-400">Innen:</Text>
-            <Text className="text-lg">{new Date(chore.time_limit.seconds * 1000).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}</Text>
+            <Text className="text-lg">
+              {new Date(chore.time_limit.seconds * 1000).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </Text>
           </View>
         </View>
         <View className="w-full flex flex-row items-center space-x-2">
           <Text className="text-sm color-slate-400">Fra:</Text>
-          <Text className="text-base">{parent?.name}</Text>
+          <Text className="text-base">{parentSide ? child?.name : parent?.name}</Text>
         </View>
         <View className="flex flex-row justify-between w-full pt-2">
           <Button onClick={onClick} text="Lukk" classname="bg-slate-50 px-3 py-1"></Button>
         </View>
       </View>
-    );
-  };
+    )
+  }
 
-  return chore.chore_status === "available" ? avilableChore() : unavailableChore();
-};
+  return (chore.chore_status === "available" && !parentSide) ||
+    chore.chore_status === "pending" ||
+    (chore.chore_status === "complete" && !chore.paid)
+    ? avilableChore()
+    : unavailableChore()
+}
 
-export default ChoresDetailedView;
+export default ChoresDetailedView
