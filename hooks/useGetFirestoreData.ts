@@ -7,6 +7,7 @@ import { getTransactionHistory, getTransactionHistoryBetweenAccounts } from "@/b
 import { getUser } from "@/backend/src/UserDAO"
 import { BankAccount } from "@/backend/types/bankAccount"
 import { Chore } from "@/backend/types/chore"
+import { User } from "@/backend/types/user"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -20,9 +21,17 @@ export const useGetUserID = () => {
 }
 
 export const useGetUser = (userID: string) => {
+  const queryClient = useQueryClient()
+
   return useQuery({
     queryKey: ["user", userID],
-    queryFn: () => getUser(userID),
+    queryFn: () =>
+      getUser(userID, (updatedData) => {
+        queryClient.setQueryData(["user", userID], (oldData: User | undefined) => {
+          if (!oldData) return updatedData
+          return { ...oldData, ...updatedData }
+        })
+      }),
     enabled: userID.length !== 0, // only fetch data when userID is not empty
   })
 }

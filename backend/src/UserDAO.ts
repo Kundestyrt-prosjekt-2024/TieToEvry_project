@@ -1,5 +1,5 @@
 import { db } from "@/constants/firebaseConfig"
-import { setDoc, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore"
+import { setDoc, doc, getDoc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore"
 import { User } from "../types/user"
 
 export async function addUser(uid: string, data: User): Promise<string | undefined> {
@@ -32,12 +32,21 @@ export async function addChildToParent(parentUid: string, childUid: string, data
   }
 }
 
-export async function getUser(uid: string): Promise<User | undefined> {
+export async function getUser(uid: string, updateBankAccount?: (updatedData: User) => void): Promise<User | undefined> {
   try {
     const userDoc = await getDoc(doc(db, "users", uid))
     if (userDoc.exists()) {
       const userData = userDoc.data() as User
-      return { ...userData, id: uid }
+      const user = { ...userData, id: uid }
+      if (updateBankAccount) {
+        const unsubscribe = onSnapshot(doc(db, "users", user.id), (updatedDoc) => {
+          if (updatedDoc.exists()) {
+            const updatedData = updatedDoc.data() as User
+            updateBankAccount(updatedData)
+          }
+        })
+      }
+      return user
     } else {
       throw new Error("User not found")
     }
