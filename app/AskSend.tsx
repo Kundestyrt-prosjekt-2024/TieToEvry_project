@@ -60,10 +60,15 @@ const AskSend = () => {
       if (isParent && isAll) {
         const selectedChildID = children[selectedReceiver]?.id ?? ""
         const allowance = await getAllowance(selectedChildID)
-        if (!allowance) return
-        setAmount(allowance.amount.toString())
-        setDayValue(dayArray[allowance.day])
-        setRepeatValue(recurrenceArray[allowance.recurrence])
+        if (!allowance) {
+          setAmount("0")
+          setDayValue("Velg dag")
+          setRepeatValue("Velg gjentakelse")
+        } else {
+          setAmount(allowance.amount.toString())
+          setDayValue(dayArray[allowance.day])
+          setRepeatValue(recurrenceArray[allowance.recurrence])
+        }
       }
     }
     fetchAllowance()
