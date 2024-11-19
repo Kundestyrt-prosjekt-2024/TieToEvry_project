@@ -154,7 +154,7 @@ const choresParent = () => {
           {["Aktive", "Forslag", "Forespurt godkjent", "Godkjent"].map((category, index) => (
             <Pressable
               key={category}
-              className={`p-3 ${index === selectedCategoryIndex ? "bg-blue-500" : "bg-blue-300"} rounded-md`}
+              className={`p-3 ${index === selectedCategoryIndex ? "bg-red-300" : "bg-red-100"} rounded-md`}
               onPress={() => handleCategoryChange(category)}
             >
               <Text>{category}</Text>
