@@ -43,7 +43,7 @@ To get a local copy up and running, follow these steps:
 
 ## Running the app
 
-**IMPORTANT** - In order to run the app, you need the API keys to our database. Contact andretan@stud.ntnu.no for these, or if you experience any troubles during set-up. Store them in a .env variable, in the format of .env.example
+**IMPORTANT** - In order to run the app, you need the API keys to our database. Contact andretan@stud.ntnu.no for these, or if you experience any troubles during set-up. Store them in a .env file, in the format of .env.example
 
 To run the app in development mode, follow these steps:
 
