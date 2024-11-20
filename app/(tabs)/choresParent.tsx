@@ -28,7 +28,7 @@ const choresParent = () => {
   const parent = useGetUser(parentID.data || "")
 
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
-  const [selectedCategory, setSelectedCategory] = useState("Aktive")
+  const [selectedCategory, setSelectedCategory] = useState("available")
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0)
   const [showModal, setShowModal] = useState(false)
   const [title, setTitle] = useState("")
