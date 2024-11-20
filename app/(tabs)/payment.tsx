@@ -58,6 +58,14 @@ const PaymentScreen = () => {
   const recurrenceArray = ["Daglig", "Ukentlig", "Hver 2. Uke", "Månedlig"]
 
   useEffect(() => {
+    const intervalId = setInterval(() => {
+      moneyRequests.refetch() // Refetch every 1 second
+    }, 1000)
+
+    return () => clearInterval(intervalId) // Cleanup interval on unmount
+  }, [moneyRequests])
+
+  useEffect(() => {
     async function fetchAllowance() {
       if (!isParent) {
         const allowance = await getAllowance(userID.data!)
