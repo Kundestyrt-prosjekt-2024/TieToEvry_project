@@ -21,18 +21,20 @@ const Education = () => {
   `
 
   return (
-    <SafeAreaView className="flex-1 bg-white relative">
+    <SafeAreaView style={{ flex: 1 }} className="bg-white">
       <AppHeader />
-      <WebView
-        originWhitelist={["*"]}
-        source={{ html: htmlContent }}
-        className="flex-1 z-10"
-        mediaPlaybackRequiresUserAction={true} // Stops auto-play on iOS
-        allowsInlineMediaPlayback={true} // Allows inline playback on iOS
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        scrollEnabled={false}
-      />
+      <View style={{ flex: 1 }}>
+        <WebView
+          originWhitelist={["*"]}
+          source={{ html: htmlContent }}
+          style={{ flex: 1 }}
+          mediaPlaybackRequiresUserAction={true} // Stops auto-play on iOS
+          allowsInlineMediaPlayback={true} // Allows inline playback on iOS
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          scrollEnabled={false}
+        />
+      </View>
     </SafeAreaView>
   )
 }
