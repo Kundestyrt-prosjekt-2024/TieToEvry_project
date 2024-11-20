@@ -17,6 +17,14 @@ import { Allowance, MoneyRequest } from "../types/moneyRequest"
 import { getBankAccountByUID } from "./bankAccountDAO"
 import { transferMoney } from "./transactionsDAO"
 
+/**
+ * Retrieves money requests associated with a specific account ID.
+ *
+ * @param {string} accountID - The ID of the account for which to fetch money requests.
+ * @param {(updatedData: MoneyRequest[]) => void} [updateMoneyRequests] - Optional callback for real-time updates.
+ * @returns {Promise<MoneyRequest[]>} - A promise that resolves to an array of money requests.
+ * @throws {Error} - If fetching money requests fails.
+ */
 export async function getMoneyRequests(
   accountID: string,
   updateMoneyRequests?: (updatedData: MoneyRequest[]) => void
@@ -77,6 +85,15 @@ export async function getMoneyRequests(
   }
 }
 
+/**
+ * Sends a money request from one user to another.
+ *
+ * @param {string} senderUID - The UID of the sender.
+ * @param {string} receiverUID - The UID of the receiver.
+ * @param {string} message - A message associated with the money request.
+ * @param {number} amount - The amount to request.
+ * @throws {Error} - If the money request fails to send.
+ */
 export async function sendMoneyRequest(senderUID: string, receiverUID: string, message: string, amount: number) {
   try {
     const senderAccount = await getBankAccountByUID(senderUID)
@@ -98,6 +115,12 @@ export async function sendMoneyRequest(senderUID: string, receiverUID: string, m
   }
 }
 
+/**
+ * Accepts a money request, transferring funds and updating the request's status.
+ *
+ * @param {string} id - The ID of the money request to accept.
+ * @throws {Error} - If accepting the money request fails.
+ */
 export async function acceptMoneyRequest(id: string) {
   try {
     const requestDocRef = doc(db, "moneyRequests", id)
@@ -131,6 +154,12 @@ export async function acceptMoneyRequest(id: string) {
   }
 }
 
+/**
+ * Rejects a money request by updating its status to "rejected."
+ *
+ * @param {string} id - The ID of the money request to reject.
+ * @throws {Error} - If rejecting the money request fails.
+ */
 export async function rejectMoneyRequest(id: string) {
   try {
     // Reference the specific document in the "moneyRequests" collection
@@ -146,6 +175,12 @@ export async function rejectMoneyRequest(id: string) {
   }
 }
 
+/**
+ * Deletes a money request by its ID.
+ *
+ * @param {string} id - The ID of the money request to delete.
+ * @throws {Error} - If deleting the money request fails.
+ */
 export async function deleteMoneyRequest(id: string) {
   try {
     // Reference the specific document in the "moneyRequests" collection
@@ -159,7 +194,14 @@ export async function deleteMoneyRequest(id: string) {
   }
 }
 
-export async function getAllowance(uid: string) : Promise<Allowance>{
+/**
+ * Retrieves the allowance information for a specific user.
+ *
+ * @param {string} uid - The UID of the user for whom to fetch the allowance.
+ * @returns {Promise<Allowance>} - A promise that resolves to the allowance information.
+ * @throws {Error} - If fetching the allowance fails.
+ */
+export async function getAllowance(uid: string): Promise<Allowance> {
   try {
     const allowanceRef = doc(db, "allowances", uid)
     const allowanceDoc = await getDoc(allowanceRef)
@@ -170,6 +212,16 @@ export async function getAllowance(uid: string) : Promise<Allowance>{
   }
 }
 
+/**
+ * Sets the allowance for a specific user.
+ *
+ * @param {string} uid - The UID of the user for whom to set the allowance.
+ * @param {number} recurrence - The recurrence interval for the allowance (e.g., days between payments).
+ * @param {number} day - The specific day for allowance payments (if applicable).
+ * @param {number} amount - The allowance amount.
+ * @param {string} [message] - An optional message for the allowance.
+ * @throws {Error} - If setting the allowance fails.
+ */
 export async function setAllowance(uid: string, recurrence: number, day: number, amount: number, message?: string) {
   try {
     const allowanceRef = doc(db, "allowances", uid)
@@ -185,5 +237,4 @@ export async function setAllowance(uid: string, recurrence: number, day: number,
     console.log(error)
     throw new Error("Failed to set allowance")
   }
-    
 }
