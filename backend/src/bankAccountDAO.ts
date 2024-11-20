@@ -131,8 +131,6 @@ export async function setSpendingLimit(childId: string, limit: number, timeLimit
       throw new Error("Invalid time limit. It must be one of: 'daily', 'weekly', 'monthly'")
     }
 
-    console.log(limit)
-
     await updateDoc(doc(db, "bankAccounts", childAccount.id), { spending_limit: limit, spending_time_limit: timeLimit })
   } catch (error: any) {
     throw new Error("Failed to set spending limit: " + error.message)

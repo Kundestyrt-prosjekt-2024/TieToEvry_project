@@ -20,7 +20,7 @@ const Overview = () => {
   const [showModal2, setShowModal2] = useState(false)
   const [spendingLimitPerPurchaseInput, setSpendingLimitPerPurchaseInput] = useState("")
   const [spendingLimitInput, setSpendingLimitInput] = useState("")
-  const [timeLimit, setTimeLimit] = useState("")
+  const [timeLimit, setTimeLimit] = useState<"daily" | "weekly" | "monthly">("daily")
 
   const selectedChildID = parent.data?.children?.[selectedChildIndex]
   const childBankAccount = useGetBankAccount(selectedChildID || "")
@@ -42,12 +42,11 @@ const Overview = () => {
   const translate = { daglig: "daily", ukentlig: "weekly", månedlig: "monthly" }
 
   const handleChangeSpendingLimit = async () => {
-    const translatedTimeLimit = translate[timeLimit.toLowerCase() as keyof typeof translate]
-    await setSpendingLimit(selectedChildID || "", parseInt(spendingLimitInput), translatedTimeLimit)
+    await setSpendingLimit(selectedChildID || "", parseInt(spendingLimitInput), timeLimit)
     childBankAccount.refetch()
     setShowModal(false)
     setSpendingLimitInput("")
-    setTimeLimit("")
+    setTimeLimit("daily")
   }
 
   const handleChangeSpendingLimitPerPurchase = async () => {
@@ -157,12 +156,29 @@ const Overview = () => {
                   value={spendingLimitInput}
                   onChangeText={setSpendingLimitInput}
                 />
-                <TextInput
-                  className="border border-gray-300 p-3 mb-4 rounded-md text-base"
-                  placeholder="Tidsbegrensning (daglig, ukentlig, månedlig)"
-                  value={timeLimit}
-                  onChangeText={setTimeLimit}
-                />
+                <View className="mb-4">
+                  <Text className="mb-2">Over hvor lang tid?</Text>
+                  <View className="flex flex-row gap-2">
+                    <Pressable
+                      className={`${timeLimit === "daily" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                      onPress={() => setTimeLimit("daily")}
+                    >
+                      <Text>Daglig</Text>
+                    </Pressable>
+                    <Pressable
+                      className={`${timeLimit === "weekly" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                      onPress={() => setTimeLimit("weekly")}
+                    >
+                      <Text>Ukentlig</Text>
+                    </Pressable>
+                    <Pressable
+                      className={`${timeLimit === "monthly" ? "bg-blue-300" : "border border-gray-300"} p-2 rounded-lg`}
+                      onPress={() => setTimeLimit("monthly")}
+                    >
+                      <Text>Månedlig</Text>
+                    </Pressable>
+                  </View>
+                </View>
                 <Pressable className="py-3 bg-blue-500 rounded-lg mt-2" onPress={handleChangeSpendingLimit}>
                   <Text className="text-white text-center font-semibold">Lagre</Text>
                 </Pressable>
