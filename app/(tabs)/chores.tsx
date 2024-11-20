@@ -51,6 +51,12 @@ const Chores = () => {
   const [rewardAmount, setRewardAmount] = useState("")
   const [timeLimit, setTimeLimit] = useState(new Date())
 
+  const sphareCoinsReceived = (data?.filter((chore) => chore.chore_status === "complete" && chore.paid).length || 0) * 3
+
+  const moneyReceived = data
+    ?.filter((chore) => chore.chore_status === "complete" && chore.paid)
+    .reduce((acc, currentValue) => acc + currentValue.reward_amount, 0)
+
   const choreIcons = useGetChoreIcons()
 
   const createChore = useCreateChore()
@@ -141,14 +147,14 @@ const Chores = () => {
             <Image className="rounded-md" source={require("@/assets/images/sphare1.png")} resizeMode="contain" />
             <View className="flex flex-col h-36 justify-between items-center ">
               <Text className="text-3xl font-normal text-teal-500">Du har tjent:</Text>
-              <Text className="text-2xl font-light text-center">{cashMullaCoin.mulla},-</Text>
+              <Text className="text-2xl font-light text-center">{moneyReceived},-</Text>
               <View className="flex-row items-center">
                 <Image
                   className="w-9 h-9 rounded-md"
                   source={require("@/assets/images/coin.png")}
                   resizeMode="contain"
                 />
-                <Text className="text-xl font-light">x{cashMullaCoin.sphareCoin}</Text>
+                <Text className="text-xl font-light">x{sphareCoinsReceived}</Text>
               </View>
             </View>
           </View>
