@@ -42,6 +42,8 @@ const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
   }
 
   const unavailablechore = () => {
+    const colour = chore.chore_status === "complete" ? "text-grenn-600" : chore.chore_status === "rejected" ? "text-red-600" : "text-yellow-600";
+
     return (
       <Pressable onPress={onClick}>
         <View className="w-full flex-row justify-between p-2 px-5 items-center bg-[#CBF1F4] rounded-2xl mb-2.5">
@@ -53,7 +55,7 @@ const ChoreList: React.FC<Props> = ({ chore, onClick }) => {
           </View>
           <View className="">
             <Text className="text-xs color-slate-400">Belønning:</Text>
-            <Text className="text-lg text-green-600">{chore.reward_amount},-</Text>
+            <Text className={`text-lg ${colour}`}>{chore.reward_amount},-</Text>
           </View>
         </View>
       </Pressable>

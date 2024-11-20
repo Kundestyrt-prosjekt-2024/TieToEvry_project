@@ -82,7 +82,7 @@ const Older: React.FC<Props> = ({ chores, onClick }) => {
         >
           <View className="h-full w-full flex justify-center items-center">
             <View className="p-4 w-full">
-              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} refetch={() => { /* Add your refetch logic here */ }} />
+              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} refetch={() => {}} />
             </View>
           </View>
         </Modal>

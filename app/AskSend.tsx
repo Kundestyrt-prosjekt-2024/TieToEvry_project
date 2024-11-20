@@ -1,24 +1,32 @@
-import { sendMoneyRequest } from "@/backend/src/moneyRequestsDAO"
+import { getAllowance, sendMoneyRequest, setAllowance } from "@/backend/src/moneyRequestsDAO"
 import { transferMoney } from "@/backend/src/transactionsDAO"
+import { Allowance } from "@/backend/types/moneyRequest"
 import DataLoading from "@/components/DataLoading"
-import {
-  useGetChildren,
-  useGetMoneyRequests,
-  useGetParents,
-  useGetUser,
-  useGetUserID,
-} from "@/hooks/useGetFirestoreData"
+import { useGetChildren, useGetParents, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams, useRouter } from "expo-router"
-import { useState } from "react"
-import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Image } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Image,
+  Keyboard,
+} from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
+import { Picker } from "react-native-wheel-pick"
 
 const AskSend = () => {
   const router = useRouter()
 
   const params = useLocalSearchParams()
-  const ask = params.ask as string
-  const isAsk = ask === "true"
+  const page = params.page as string
+  const isAsk = page === "ask"
+  const isSend = page === "send"
+  const isAll = page === "allowance"
 
   const userID = useGetUserID()
   const user = useGetUser(userID.data || "")
@@ -40,11 +48,39 @@ const AskSend = () => {
   const [message, setMessage] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
+  const isParent = parents.length == 0
+  const [showDayPicker, setShowDayPicker] = useState(false)
+  const [showRepeatPicker, setShowRepeatPicker] = useState(false)
+  const [dayValue, setDayValue] = useState("Velg dag")
+  const [repeatValue, setRepeatValue] = useState("Velg gjentakelse")
+  const dayArray = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
+  const recurrenceArray = ["Daglig", "Ukentlig", "Hver 2. Uke", "Månedlig"]
+
+  useEffect(() => {
+    async function fetchAllowance() {
+      if (isParent && isAll) {
+        const selectedChildID = children[selectedReceiver]?.id ?? ""
+        const allowance = await getAllowance(selectedChildID)
+        if (!allowance) {
+          setAmount("0")
+          setDayValue("Velg dag")
+          setRepeatValue("Velg gjentakelse")
+        } else {
+          setAmount(allowance.amount.toString())
+          setDayValue(dayArray[allowance.day])
+          setRepeatValue(recurrenceArray[allowance.recurrence])
+        }
+      }
+    }
+    fetchAllowance()
+  }, [selectedReceiver])
+
   async function handleAskSend() {
+    if (parseInt(amount) <= 0) return
     if (isAsk) {
       sendMoneyRequest(userID.data ?? "", users[selectedReceiver]?.id ?? "", message, parseInt(amount))
       router.back()
-    } else {
+    } else if (isSend) {
       try {
         await transferMoney(userID.data ?? "", users[selectedReceiver]?.id ?? "", parseInt(amount), message)
         router.back()
@@ -58,6 +94,22 @@ const AskSend = () => {
         } else if (errorMessage === "Insufficient funds") {
           setErrorMessage("Ikke nok penger på konto")
         }
+      }
+    } else {
+      const dayIndex = dayArray.indexOf(dayValue)
+      const recurrenceIndex = recurrenceArray.indexOf(repeatValue)
+      if (dayIndex < 0 || recurrenceIndex < 0) return
+      try {
+        setAllowance(
+          users[selectedReceiver]?.id ?? "",
+          recurrenceArray.indexOf(repeatValue),
+          dayArray.indexOf(dayValue),
+          parseInt(amount),
+          message
+        )
+        router.back()
+      } catch {
+        console.log("Inne nok på konto / Gått over spending limit") // TODO: Gjør noe her
       }
     }
   }
@@ -76,6 +128,45 @@ const AskSend = () => {
     siblingsQuery.some((query) => query.isPending)
   ) {
     return <DataLoading />
+  }
+
+  function renderAllowanceInput() {
+    return (
+      <View style={styles.allowanceContainer}>
+        <View style={styles.pickerContainer}>
+          <TouchableOpacity
+            style={styles.allowanceInput}
+            onPress={() => {
+              Keyboard.dismiss()
+              setShowRepeatPicker(false)
+              setShowDayPicker((prev) => !prev)
+            }}
+          >
+            <Text>Ukedag: {dayValue}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.allowanceInput}
+            onPress={() => {
+              Keyboard.dismiss()
+              setShowDayPicker(false)
+              setShowRepeatPicker((prev) => !prev)
+            }}
+          >
+            <Text>Gjenta: {repeatValue}</Text>
+          </TouchableOpacity>
+        </View>
+        {(showDayPicker || showRepeatPicker) && (
+          <Picker
+            style={{ backgroundColor: "white", width: 300, height: 215 }}
+            selectedValue={showDayPicker ? dayValue : repeatValue}
+            pickerData={showDayPicker ? dayArray : recurrenceArray}
+            onValueChange={(value: string) => {
+              showDayPicker ? setDayValue(value) : setRepeatValue(value)
+            }}
+          />
+        )}
+      </View>
+    )
   }
 
   return (
@@ -102,7 +193,7 @@ const AskSend = () => {
         <Text className="mt-10"></Text>
       )}
       <View style={styles.mainContainer}>
-        <View style={styles.upperContainer}>
+        <View style={{ ...styles.upperContainer, marginTop: isAll ? 50 : 60 }}>
           <TextInput
             style={styles.amountInput}
             placeholder="0"
@@ -110,18 +201,25 @@ const AskSend = () => {
             keyboardType="numeric"
             value={amount}
             onChangeText={handleAmountChange}
+            onFocus={() => {
+              setShowDayPicker(false), setShowRepeatPicker(false)
+            }}
             autoFocus
           />
           <Text style={{ fontSize: 50, fontWeight: "bold" }}> kr</Text>
         </View>
+        {isAll && renderAllowanceInput()}
         <View style={styles.bottomContainer}>
           <TextInput
             style={styles.textInput}
             placeholder="Skriv en beskjed..."
             onChangeText={(text) => setMessage(text)}
+            onFocus={() => {
+              setShowDayPicker(false), setShowRepeatPicker(false)
+            }}
           />
           <TouchableOpacity style={styles.askButton} onPress={handleAskSend}>
-            <Text style={styles.askText}>{isAsk ? "Be Om" : "Send"}</Text>
+            <Text style={styles.askText}>{isAsk ? "Be Om" : isSend ? "Send" : "Aktiver"}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -143,7 +241,6 @@ const styles = StyleSheet.create({
   upperContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 60,
   },
   bottomContainer: {
     flexDirection: "row",
@@ -195,6 +292,28 @@ const styles = StyleSheet.create({
   userListContent: {
     flex: 1,
     justifyContent: "center",
+    gap: 10,
+  },
+  allowanceInput: {
+    height: 50,
+    width: 180,
+    backgroundColor: "#52D1DC30",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  allowanceContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+  pickerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
     gap: 10,
   },
 })

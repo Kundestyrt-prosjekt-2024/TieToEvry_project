@@ -1,6 +1,17 @@
 import { db } from "@/constants/firebaseConfig"
-import { setDoc, doc, getDoc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore"
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  deleteField,
+  deleteDoc,
+  arrayRemove,
+  onSnapshot,
+} from "firebase/firestore"
 import { User } from "../types/user"
+import { getAuth } from "firebase/auth"
 
 export async function addUser(uid: string, data: User): Promise<string | undefined> {
   try {
@@ -105,5 +116,67 @@ export async function adjustSphareCoins(uid: string, amount: number) {
     await updateDoc(userDocRef, { sphareCoins: newSphareCoins })
   } catch (e) {
     throw new Error("Failed to adjust sphareCoins: " + e)
+  }
+}
+
+export async function deleteUser(user: User): Promise<boolean> {
+  try {
+    if (!user.id) {
+      throw new Error("User ID is undefined")
+    }
+    const auth = getAuth()
+    const userAuth = auth.currentUser
+    const docRef = doc(db, "users", user.id)
+
+    // Remove user from parents' children list
+    for (const parentId of user.parents || []) {
+      try {
+        console.log("Removing user from parent: ", parentId)
+        await removeChildFromParent(parentId, user.id)
+      } catch (error: any) {
+        console.warn(`Failed to remove child from parent ${parentId}: ${error.message}`)
+      }
+    }
+
+    await userAuth?.delete()
+    await deleteDoc(docRef)
+
+    return true
+  } catch (error: any) {
+    console.error(`Error in deleteUser: ${error.message} user: ${user.id}`)
+    throw new Error(error.message)
+  }
+}
+
+export async function removeChildFromParent(parentUid: string, childUid: string): Promise<void> {
+  try {
+    const parentDocRef = doc(db, "users", parentUid)
+    await updateDoc(parentDocRef, {
+      children: arrayRemove(childUid),
+    })
+  } catch (error: any) {
+    throw new Error(error.message)
+  }
+}
+
+export async function removeChildIfLastParent(childUid: string, currentParentId: string): Promise<void> {
+  try {
+    const childDocRef = doc(db, "users", childUid)
+    const childDoc = await getDoc(childDocRef)
+
+    if (!childDoc.exists()) {
+      console.warn(`Child document with ID ${childUid} not found, skipping.`)
+      return
+    }
+
+    const parents = childDoc.data()?.parents || []
+
+    // If only one parent exists (the one currently being deleted), delete the child
+    if (parents.length <= 1 && parents.includes(currentParentId)) {
+      console.log(`No other parents found for child ${childUid}, deleting child.`)
+      await deleteUser({ id: childUid, ...childDoc.data() } as User)
+    }
+  } catch (error: any) {
+    throw new Error(error.message)
   }
 }

@@ -6,13 +6,14 @@ import {
   doc,
   getDoc,
   getDocs,
+  setDoc,
   onSnapshot,
   query,
   Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore"
-import { MoneyRequest } from "../types/moneyRequest"
+import { Allowance, MoneyRequest } from "../types/moneyRequest"
 import { getBankAccountByUID } from "./bankAccountDAO"
 import { transferMoney } from "./transactionsDAO"
 
@@ -156,4 +157,33 @@ export async function deleteMoneyRequest(id: string) {
     console.log(error)
     throw new Error("Failed to delete money request")
   }
+}
+
+export async function getAllowance(uid: string) : Promise<Allowance>{
+  try {
+    const allowanceRef = doc(db, "allowances", uid)
+    const allowanceDoc = await getDoc(allowanceRef)
+    return allowanceDoc.data() as Allowance
+  } catch (error) {
+    console.log(error)
+    throw new Error("Failed to get allowance")
+  }
+}
+
+export async function setAllowance(uid: string, recurrence: number, day: number, amount: number, message?: string) {
+  try {
+    const allowanceRef = doc(db, "allowances", uid)
+    const allowance: Allowance = {
+      recurrence: recurrence,
+      day: day,
+      amount: amount,
+      message: message ?? "",
+      date: Timestamp.now(),
+    }
+    await setDoc(allowanceRef, allowance)
+  } catch (error) {
+    console.log(error)
+    throw new Error("Failed to set allowance")
+  }
+    
 }
