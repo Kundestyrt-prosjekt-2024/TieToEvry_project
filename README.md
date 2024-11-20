@@ -1,6 +1,6 @@
 # TieToEvry_project
 
-Repository for Kundestyrt prosjekt H2024 - Tieotoevry Banking.
+Repository for Kundestyrt prosjekt H2024 - Tieotoevry Banking by Group 8.
 
 Tietoevry aims to gain insights through student collaboration on
 designing a potential banking application tailored for children. The repository contains the source code for an MVP that serves as inspiration for the customer to a potential child banking-app.
