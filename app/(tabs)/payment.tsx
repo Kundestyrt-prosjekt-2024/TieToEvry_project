@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Animated, Pressable, Image, S
 import { SafeAreaView } from "react-native-safe-area-context"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   useGetBankAccount,
   useGetBankAccounts,
@@ -14,7 +14,13 @@ import {
   useGetUserID,
 } from "@/hooks/useGetFirestoreData"
 import DataLoading from "@/components/DataLoading"
-import { acceptMoneyRequest, deleteMoneyRequest, rejectMoneyRequest } from "@/backend/src/moneyRequestsDAO"
+import {
+  acceptMoneyRequest,
+  deleteMoneyRequest,
+  getAllowance,
+  rejectMoneyRequest,
+} from "@/backend/src/moneyRequestsDAO"
+import { Allowance } from "@/backend/types/moneyRequest"
 
 const PaymentScreen = () => {
   const router = useRouter()
@@ -46,6 +52,20 @@ const PaymentScreen = () => {
   const [lastScrollY, setLastScrollY] = useState(0)
   const [scrollDirection, setScrollDirection] = useState("up")
   const translateY = useRef(new Animated.Value(0)).current
+
+  const [allowance, setAllowance] = useState<Allowance>()
+  const dayArray = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
+  const recurrenceArray = ["Daglig", "Ukentlig", "Hver 2. Uke", "Månedlig"]
+
+  useEffect(() => {
+    async function fetchAllowance() {
+      if (!isParent) {
+        const allowance = await getAllowance(userID.data!)
+        setAllowance(allowance)
+      }
+    }
+    fetchAllowance()
+  }, [userID.data])
 
   function handleScroll(event: any) {
     const currentY = event.nativeEvent.contentOffset.y
@@ -104,7 +124,15 @@ const PaymentScreen = () => {
           ))}
         </View>
         <Text className="text-center text-cyan-400 text-3xl mt-5">{bankAccount.data?.balance} kr</Text>
-        <View className="flex flex-col items-center gap-4 mt-2">
+        {allowance && (
+          <View style={styles.allowanceContainer}>
+            <Text className="text-lg">Ukepenger: {allowance.amount} kr</Text>
+            <Text className="text-lg">
+              Utbetaling: {dayArray[allowance.day]} ({recurrenceArray[allowance.recurrence]})
+            </Text>
+          </View>
+        )}
+        <View className="flex flex-col items-center gap-4 mt-1">
           {moneyRequests.data
             ?.filter((moneyReq) => moneyReq.status === "pending")
             .map((moneyReq) => (
@@ -182,7 +210,7 @@ const styles = StyleSheet.create({
     width: "100%",
     bottom: 10,
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     flexDirection: "row",
   },
   buttonBackground: {
@@ -231,6 +259,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: "relative",
     marginHorizontal: 10,
+  },
+  allowanceContainer: {
+    alignSelf: "center",
+    alignItems: "center",
+    padding: 10,
+    margin: 10,
+    borderRadius: 10,
+    backgroundColor: "#cbffc4",
   },
 })
 
