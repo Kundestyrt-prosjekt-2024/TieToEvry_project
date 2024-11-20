@@ -24,7 +24,7 @@ const TabsLayout = () => {
   return (
     <Tabs>
       <Tabs.Screen
-        name="overview"
+        name="Overview"
         redirect={!hideParentTabs}
         options={{
           headerShown: false,
@@ -37,7 +37,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="choresParent"
+        name="ChoresParent"
         redirect={!hideParentTabs}
         options={{
           headerShown: false,
@@ -50,7 +50,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="savingsParent"
+        name="SavingsParent"
         redirect={!hideParentTabs}
         options={{
           headerShown: false,
@@ -63,7 +63,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="savings"
+        name="Savings"
         redirect={hideParentTabs}
         options={{
           headerShown: false,
@@ -77,7 +77,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="chores"
+        name="Chores"
         redirect={hideParentTabs}
         options={{
           headerShown: false,
@@ -91,7 +91,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="home"
+        name="Home"
         redirect={hideParentTabs}
         options={{
           headerShown: false,
@@ -105,7 +105,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="payment"
+        name="Payment"
         options={{
           headerShown: false,
           // tabBarShowLabel: false,
@@ -118,7 +118,7 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="education"
+        name="Education"
         redirect={hideParentTabs}
         options={{
           headerShown: false,
