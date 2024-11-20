@@ -111,7 +111,7 @@ const PaymentScreen = () => {
 
   return (
     <SafeAreaView className="h-full bg-white" edges={["top"]}>
-      <AppHeader />
+      <AppHeader parent={isParent} />
       <ScrollView onScroll={handleScroll}>
         <View className="flex flex-row justify-center mt-6">
           {users.map((user) => (
