@@ -1,17 +1,15 @@
 import { getBankAccountByUID } from "@/backend/src/bankAccountDAO"
 import { createChore, getAllChores, getChoreIcons, getChoresByStatus, updateChoreStatus } from "@/backend/src/choreDAO"
 import { getMoneyRequests } from "@/backend/src/moneyRequestsDAO"
-import { getProfilePictures } from "@/backend/src/ProfileDAO"
+import { getProfilePictures } from "@/backend/src/profileDAO"
 import { getSavingGoals } from "@/backend/src/savingsDAO"
 import { getTransactionHistory, getTransactionHistoryBetweenAccounts } from "@/backend/src/transactionsDAO"
-import { getUser } from "@/backend/src/UserDAO"
+import { getUser } from "@/backend/src/userDAO"
 import { BankAccount } from "@/backend/types/bankAccount"
 import { Chore } from "@/backend/types/chore"
 import { User } from "@/backend/types/user"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
-
-// User
 
 export const useGetUserID = () => {
   return useQuery({
@@ -32,7 +30,7 @@ export const useGetUser = (userID: string) => {
           return { ...oldData, ...updatedData }
         })
       }),
-    enabled: userID.length !== 0, // only fetch data when userID is not empty
+    enabled: userID.length !== 0,
   })
 }
 
@@ -79,8 +77,6 @@ export const useGetParents = (parentIDs: string[]) => {
   })
 }
 
-// Bank account
-
 export const useGetBankAccount = (userID: string) => {
   const queryClient = useQueryClient()
 
@@ -114,10 +110,8 @@ export const useGetBankAccounts = (userIDs: string[]) => {
     })),
   })
 
-  return queries // Returns an array of query results
+  return queries
 }
-
-// Saving goals
 
 export const useGetSavingGoals = (userId: string) => {
   return useQuery({
@@ -126,8 +120,6 @@ export const useGetSavingGoals = (userId: string) => {
     enabled: userId.length !== 0,
   })
 }
-
-// Chores
 
 export const useCreateChore = () => {
   return useMutation({
@@ -164,8 +156,6 @@ export const useGetChores = (child_id: string) => {
   })
 }
 
-// Transactions
-
 export const useGetTransactionHistory = (accountID: string, fromDate?: Date, toDate?: Date) => {
   if (!fromDate && !toDate) {
     return useQuery({
@@ -201,8 +191,6 @@ export const useGetTransactionHistoryBetweenAccounts = (accountID1: string, acco
     enabled: accountID1.length !== 0 && accountID2.length !== 0,
   })
 }
-
-// Money requests
 
 export const useGetMoneyRequests = (userID: string) => {
   const queryClient = useQueryClient()

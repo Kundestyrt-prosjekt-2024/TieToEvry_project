@@ -1,25 +1,13 @@
-import AppHeader from "@/components/AppHeader"
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Image,
-  Modal,
-  Dimensions,
-  FlatList,
-  Animated,
-  TextInput,
-  Switch,
-} from "react-native"
+import AppHeader from "@/components/ui/AppHeader"
+import { View, Text, Pressable, Image, Modal, FlatList, Animated, TextInput, Switch } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Chore } from "../../backend/types/chore"
-import React, { useMemo, useRef, useState } from "react"
-import ChoreList from "@/components/chores/chore"
-import ChoresDetailedView from "@/components/chores/choresDetailedView"
-import Button from "@/components/ui/button"
-import Popover from "@/components/chores/chorePopover"
+import React, { useRef, useState } from "react"
+import ChoreList from "@/components/chores/Chore"
+import ChoresDetailedView from "@/components/chores/ChoresDetailedView"
+import Button from "@/components/ui/Button"
+import Popover from "@/components/chores/ChorePopover"
 import {
   useCreateChore,
   useGetBankAccount,

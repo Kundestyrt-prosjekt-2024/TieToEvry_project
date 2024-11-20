@@ -1,13 +1,12 @@
-import { View, Text, TextInput, Pressable } from "react-native"
+import { View, Text, TextInput } from "react-native"
 import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { registerChild } from "@/backend/src/authentication"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { useRouter } from "expo-router"
-import Ionicons from "@expo/vector-icons/Ionicons"
 import { useGetUserID } from "@/hooks/useGetFirestoreData"
 
-const signupChild = () => {
+const SignupChild = () => {
   const router = useRouter()
   const userID = useGetUserID()
 
@@ -128,4 +127,4 @@ const signupChild = () => {
   )
 }
 
-export default signupChild
+export default SignupChild

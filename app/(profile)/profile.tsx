@@ -1,19 +1,17 @@
 import React from "react"
-import HorizontalLine from "@/components/HorizontalLine"
+import HorizontalLine from "@/components/ui/HorizontalLine"
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView, ActivityIndicator } from "react-native"
+import { useCallback, useRef } from "react"
+import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } from "react-native"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
-import { getUser, updateProfilePicture } from "@/backend/src/UserDAO"
-import { User } from "@/backend/types/user"
-import { FirestoreTimestamp } from "@/backend/types/user"
-import { getProfilePictures } from "@/backend/src/ProfileDAO"
+import { updateProfilePicture } from "@/backend/src/userDAO"
+import { FirestoreTimestamp } from "@/backend/types/firebase"
 import { useGetProfilePictures, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import DataLoading from "@/components/DataLoading"
-import DataError from "@/components/DataError"
+import DataLoading from "@/components/ui/DataLoading"
+import DataError from "@/components/ui/DataError"
 
 const Profile = () => {
   const router = useRouter()
@@ -37,7 +35,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userID")
-    router.replace("/(auth)/login")
+    router.replace("/(auth)/Login")
   }
 
   const handleProfilePictureUpdate = async (profilePictureUrl: string) => {
@@ -62,26 +60,26 @@ const Profile = () => {
   }
 
   const childrenPage = () => {
-    return(
+    return (
       <TouchableOpacity
-      className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-      onPress={() => router.navigate("/myParents")}
-      activeOpacity={0.8}
-    >
-      <Text className="text-xl">Mine foreldre</Text>
-    </TouchableOpacity>
+        className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
+        onPress={() => router.navigate("/MyParents")}
+        activeOpacity={0.8}
+      >
+        <Text className="text-xl">Mine foreldre</Text>
+      </TouchableOpacity>
     )
   }
 
   const parentPage = () => {
     return (
       <TouchableOpacity
-      className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-      onPress={() => router.navigate("/myChildren")}
-      activeOpacity={0.8}
-    >
-      <Text className="text-xl">Mine barn</Text>
-    </TouchableOpacity>
+        className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
+        onPress={() => router.navigate("/MyChildren")}
+        activeOpacity={0.8}
+      >
+        <Text className="text-xl">Mine barn</Text>
+      </TouchableOpacity>
     )
   }
   return (
@@ -91,7 +89,7 @@ const Profile = () => {
           <View className="relative">
             <Pressable
               onPress={handleOpenPress}
-              className="bg-[#52D1DC] rounded-full w-10 h-10 justify-center items-center absolute right-6 top-6 z-10 border border-black" 
+              className="bg-[#52D1DC] rounded-full w-10 h-10 justify-center items-center absolute right-6 top-6 z-10 border border-black"
               testID="edit-profile-picture-button"
             >
               <FontAwesome name="pencil" size={24} color="black" />
@@ -111,7 +109,7 @@ const Profile = () => {
           <View className="flex-col items-center gap-4 mt-8">
             <TouchableOpacity
               className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-              onPress={() => router.navigate("/settings")}
+              onPress={() => router.navigate("/Settings")}
               activeOpacity={0.8}
             >
               <Text className="text-xl">Innstillinger</Text>
@@ -143,12 +141,12 @@ const Profile = () => {
                 data={profilePictures.data}
                 numColumns={4}
                 renderItem={({ item }) => (
-                    <TouchableOpacity
-                    className={`w-12 h-12 rounded-xl mx-4 my-2 ${item === user.data?.profilePicture ? 'border-4 border-blue-500' : ''}`}
+                  <TouchableOpacity
+                    className={`w-12 h-12 rounded-xl mx-4 my-2 ${item === user.data?.profilePicture ? "border-4 border-blue-500" : ""}`}
                     onPress={() => handleProfilePictureUpdate(item)}
-                    >
+                  >
                     <Image source={{ uri: item }} className="h-full w-full rounded-xl" />
-                    </TouchableOpacity>
+                  </TouchableOpacity>
                 )}
                 keyExtractor={(_item, index) => index.toString()}
                 scrollEnabled={false}

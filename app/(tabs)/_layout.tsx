@@ -1,9 +1,8 @@
-import { FirestoreTimestamp } from "@/backend/types/user"
-import DataLoading from "@/components/DataLoading"
+import { FirestoreTimestamp } from "@/backend/types/firebase"
+import DataLoading from "@/components/ui/DataLoading"
 import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { Tabs } from "expo-router"
-import { Coins, DollarSign, GraduationCap, House, ListCheck, PiggyBank, Rabbit } from "lucide-react-native"
-import { TouchableOpacity } from "react-native-gesture-handler"
+import { DollarSign, GraduationCap, House, ListCheck, PiggyBank, Rabbit } from "lucide-react-native"
 import { Text } from "react-native"
 
 const TabsLayout = () => {

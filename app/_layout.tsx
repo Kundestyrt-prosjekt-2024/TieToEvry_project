@@ -63,7 +63,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="signupChild"
+            name="SignupChild"
             options={{
               headerBackTitle: "Tilbake",
               title: "",

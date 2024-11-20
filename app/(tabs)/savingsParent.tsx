@@ -1,11 +1,9 @@
-import { View, Text, Pressable, FlatList, Image, TouchableOpacity, ScrollView } from "react-native"
+import { View, Text, Pressable, FlatList, Image, ScrollView } from "react-native"
 import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
-import AppHeader from "@/components/AppHeader"
+import AppHeader from "@/components/ui/AppHeader"
 import { useGetChildren, useGetSavingGoals, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
-import DataLoading from "@/components/DataLoading"
 import { Bike, Check, MonitorSmartphone, Shirt, Ticket } from "lucide-react-native"
-import Ionicons from "@expo/vector-icons/Ionicons"
 import { useRouter } from "expo-router"
 import AntDesign from "@expo/vector-icons/AntDesign"
 
@@ -57,7 +55,7 @@ const savingsParent = () => {
                     return (
                       <Pressable
                         className="items-center justify-center mb-8 ml-4 w-16"
-                        onPress={() => router.push("/signupChild")}
+                        onPress={() => router.push("/SignupChild")}
                       >
                         <AntDesign name="pluscircle" size={40} color="#CCF2F5" />
                       </Pressable>
@@ -155,7 +153,7 @@ const savingsParent = () => {
         <View className="mt-40 flex items-center">
           <Text>Det virker som du ikke har lagt til dine barn enda.</Text>
           <View className="flex flex-row gap-8 justify-center items-center mt-8">
-            <Pressable onPress={() => router.push("/signupChild")}>
+            <Pressable onPress={() => router.push("/SignupChild")}>
               <AntDesign name="pluscircle" size={60} color="#3b82f6" />
             </Pressable>
             <Text className="text-lg">Legg til barn</Text>

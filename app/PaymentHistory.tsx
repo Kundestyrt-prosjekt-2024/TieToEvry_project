@@ -2,7 +2,7 @@ import React from "react"
 import { useLocalSearchParams } from "expo-router"
 import { View, FlatList, StyleSheet } from "react-native"
 import { Transaction } from "@/backend/types/transaction"
-import PaymentBubble from "@/components/PaymentBubble"
+import PaymentBubble from "@/components/payments/PaymentBubble"
 import {
   useGetBankAccount,
   useGetTransactionHistoryBetweenAccounts,

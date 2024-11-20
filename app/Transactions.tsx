@@ -1,5 +1,5 @@
 import React from "react"
-import TransactionCard from "@/components/TransactionCard"
+import TransactionCard from "@/components/payments/TransactionCard"
 import { Text, View, StyleSheet, FlatList } from "react-native"
 import { useGetBankAccount, useGetTransactionHistory } from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams } from "expo-router"

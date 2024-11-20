@@ -1,8 +1,8 @@
 import { View, Text, FlatList, Image, Pressable, Modal, TextInput } from "react-native"
-import AppHeader from "@/components/AppHeader"
+import AppHeader from "@/components/ui/AppHeader"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useGetBankAccount, useGetChildren, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
-import DataLoading from "@/components/DataLoading"
+import DataLoading from "@/components/ui/DataLoading"
 import { useState } from "react"
 import { useRouter } from "expo-router"
 import AntDesign from "@expo/vector-icons/AntDesign"
@@ -75,7 +75,7 @@ const Overview = () => {
                   return (
                     <Pressable
                       className="items-center justify-center mb-8 ml-4 w-16"
-                      onPress={() => router.push("/signupChild")}
+                      onPress={() => router.push("/SignupChild")}
                     >
                       <AntDesign name="pluscircle" size={40} color="#CCF2F5" />
                     </Pressable>
@@ -207,7 +207,7 @@ const Overview = () => {
         <View className="mt-40 flex items-center">
           <Text>Det virker som du ikke har lagt til dine barn enda.</Text>
           <View className="flex flex-row gap-8 justify-center items-center mt-8">
-            <Pressable onPress={() => router.push("/signupChild")}>
+            <Pressable onPress={() => router.push("/SignupChild")}>
               <AntDesign name="pluscircle" size={60} color="#3b82f6" />
             </Pressable>
             <Text className="text-lg">Legg til barn</Text>

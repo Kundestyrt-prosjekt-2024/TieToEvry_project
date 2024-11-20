@@ -1,6 +1,6 @@
-import AppHeader from "@/components/AppHeader"
+import AppHeader from "@/components/ui/AppHeader"
 import { useRouter } from "expo-router"
-import HorizontalLine from "@/components/HorizontalLine"
+import HorizontalLine from "@/components/ui/HorizontalLine"
 import { Text, View, Image, StyleSheet, Pressable, Dimensions, TouchableOpacity } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AntIcon from "react-native-vector-icons/AntDesign"

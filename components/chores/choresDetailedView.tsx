@@ -1,7 +1,7 @@
 import React from "react"
-import { View, Text, Pressable, Image } from "react-native"
+import { View, Text, Image } from "react-native"
 import { Chore } from "../../backend/types/chore"
-import Button from "../ui/button"
+import Button from "../ui/Button"
 import { useGetUser, useUpdateChoreStatus } from "@/hooks/useGetFirestoreData"
 
 interface PropsDetailedView {
@@ -99,7 +99,12 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
     )
   }
   const unavailableChore = () => {
-    const colour = chore.chore_status === "complete" ? "text-grenn-600" : chore.chore_status === "rejected" ? "text-red-600" : "text-yellow-600";
+    const colour =
+      chore.chore_status === "complete"
+        ? "text-grenn-600"
+        : chore.chore_status === "rejected"
+          ? "text-red-600"
+          : "text-yellow-600"
 
     return (
       <View className="bg-[#CCF2F5] p-4 rounded-lg space-y-2 items-center justify-between w-full">
@@ -111,7 +116,7 @@ const ChoresDetailedView: React.FC<PropsDetailedView> = ({ chore, onClick, refet
           <View className="flex flex-col items-center">
             <Text className="w-full text-sm color-slate-400">Belønning:</Text>
             <View className="flex flex-row space-x-2 py-1">
-                <Text className={`text-lg font-semibold ${colour}`}>{chore.reward_amount},-</Text>
+              <Text className={`text-lg font-semibold ${colour}`}>{chore.reward_amount},-</Text>
               <View className="flex flex-row">
                 <Image
                   className="w-7 h-7 rounded-md"

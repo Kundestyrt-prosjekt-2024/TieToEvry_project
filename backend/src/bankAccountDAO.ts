@@ -12,7 +12,6 @@ import {
   onSnapshot,
 } from "firebase/firestore"
 import { BankAccount } from "../types/bankAccount"
-import { useGetBankAccount } from "@/hooks/useGetFirestoreData"
 
 /**
  * Creates a new bank account for a user.

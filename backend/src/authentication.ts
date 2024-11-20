@@ -1,9 +1,10 @@
 import { auth } from "../../constants/firebaseConfig"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth"
-import { FirestoreTimestamp, User } from "../types/user"
+import { User } from "../types/user"
 import { Timestamp } from "firebase/firestore"
-import { addChildToParent, addUser, getUser } from "./UserDAO"
+import { addChildToParent, addUser, getUser } from "./userDAO"
 import { createBankAccount } from "./bankAccountDAO"
+import { FirestoreTimestamp } from "../types/firebase"
 
 /**
  * Registers a new user with the given credentials and details.

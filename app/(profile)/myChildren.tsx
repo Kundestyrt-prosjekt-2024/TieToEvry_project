@@ -1,27 +1,14 @@
 import { View, Text, Image } from "react-native"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { ScrollView } from "react-native-gesture-handler"
-import { fetchParents } from "@/backend/src/UserDAO"
-import { useGetChildren, useGetParents, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
-import { FirestoreTimestamp, User } from "@/backend/types/user"
+import { useGetChildren, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
+import { User } from "@/backend/types/user"
+import { FirestoreTimestamp } from "@/backend/types/firebase"
 
 const MyChildren = () => {
-
-  const parentID = useGetUserID();
-  const parent = useGetUser(parentID.data || "");
-  const children = useGetChildren(parent.data?.children || []);
-
-  // const userId = useGetUserID()
-  // const [parentIDs, setParentIDs] = useState<string[]>([])
-  // const parents = useGetParents(parentIDs)
-
-  // useEffect(() => {
-  //   async function fetchParentIDs() {
-  //     const IDs = await fetchParents(userId.data || "")
-  //     setParentIDs(IDs)
-  //   }
-  //   fetchParentIDs()
-  // }, [userId.data])
+  const parentID = useGetUserID()
+  const parent = useGetUser(parentID.data || "")
+  const children = useGetChildren(parent.data?.children || [])
 
   function renderChild(child: User) {
     return (
