@@ -60,7 +60,7 @@ const PaymentScreen = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       moneyRequests.refetch() // Refetch every 1 second
-    }, 1000)
+    }, 500)
 
     return () => clearInterval(intervalId) // Cleanup interval on unmount
   }, [moneyRequests])
