@@ -96,7 +96,11 @@ const AskSend = () => {
           </Pressable>
         ))}
       </View>
-      {errorMessage.length > 0 && <Text className="text-red-500 mt-10">{errorMessage}</Text>}
+      {errorMessage.length > 0 ? (
+        <Text className="text-red-500 mt-10 text-center">{errorMessage}</Text>
+      ) : (
+        <Text className="mt-10"></Text>
+      )}
       <View style={styles.mainContainer}>
         <View style={styles.upperContainer}>
           <TextInput
