@@ -22,7 +22,7 @@ const TransactionCard = ({
       )}
       <View style={styles.transaction}>
         <View style={styles.leftTransaction}>
-          <View style={styles.iconContainer}>
+          <View style={{ position: "relative" }}>
             <AwesomeIcon name="money" size={25} />
             {isPositive ? (
               <AwesomeIcon style={styles.arrowDown} name="arrow-down" size={20} />
@@ -30,9 +30,9 @@ const TransactionCard = ({
               <AwesomeIcon style={styles.arrowUp} name="arrow-up" size={20} />
             )}
           </View>
-          <Text style={styles.transactionText}>{transaction.description}</Text>
+          <Text style={{ fontSize: 20 }}>{transaction.description}</Text>
         </View>
-        <Text style={{ ...styles.transactionText, color: isPositive ? "green" : "red" }}>
+        <Text style={{ fontSize: 20, color: isPositive ? "green" : "red" }}>
           {new Intl.NumberFormat("nb-NO").format(transaction.amount)},-
         </Text>
       </View>
@@ -49,12 +49,6 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  transactionText: {
-    fontSize: 20,
-  },
-  iconContainer: {
-    position: "relative",
   },
   arrowUp: {
     position: "absolute",

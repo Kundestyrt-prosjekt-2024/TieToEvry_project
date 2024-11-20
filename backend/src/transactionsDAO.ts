@@ -1,5 +1,5 @@
 import { db } from "../../constants/firebaseConfig"
-import { collection, addDoc, query, where, getDocs, updateDoc, doc, Timestamp, or, and } from "firebase/firestore"
+import { collection, addDoc, query, where, getDocs, Timestamp, or, and } from "firebase/firestore"
 import { Transaction } from "../types/transaction"
 import { adjustBalance, getBankAccountByUID } from "./bankAccountDAO"
 

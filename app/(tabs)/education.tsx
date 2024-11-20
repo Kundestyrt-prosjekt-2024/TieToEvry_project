@@ -1,8 +1,8 @@
-import AppHeader from "@/components/AppHeader"
-import { View, Text, Image } from "react-native"
+import AppHeader from "@/components/ui/AppHeader"
 import { SafeAreaView } from "react-native-safe-area-context"
 import React from "react"
 import { WebView } from "react-native-webview"
+import { View } from "react-native"
 
 const Education = () => {
   const htmlContent = `

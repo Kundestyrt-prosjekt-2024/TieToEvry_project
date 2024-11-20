@@ -1,4 +1,4 @@
-import AppHeader from "@/components/AppHeader"
+import AppHeader from "@/components/ui/AppHeader"
 import { View, Text, StyleSheet, TouchableOpacity, Animated, Pressable, Image, ScrollView } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AwesomeIcon from "react-native-vector-icons/FontAwesome"
@@ -13,7 +13,7 @@ import {
   useGetUser,
   useGetUserID,
 } from "@/hooks/useGetFirestoreData"
-import DataLoading from "@/components/DataLoading"
+import DataLoading from "@/components/ui/DataLoading"
 import {
   acceptMoneyRequest,
   deleteMoneyRequest,

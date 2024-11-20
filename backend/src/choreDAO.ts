@@ -3,7 +3,7 @@ import { db, storage } from "../../constants/firebaseConfig"
 import { collection, query, where, getDocs, doc, addDoc, updateDoc, Timestamp } from "firebase/firestore"
 import { Chore } from "../types/chore"
 import { transferMoney } from "./transactionsDAO"
-import { adjustSphareCoins } from "./UserDAO"
+import { adjustSphareCoins } from "./userDAO"
 
 /**
  * Creates a new chore and saves it to the database.

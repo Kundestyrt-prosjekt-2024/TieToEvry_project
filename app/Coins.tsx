@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, 
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import FeatherIcon from "react-native-vector-icons/Feather"
 import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
-import { adjustSphareCoins } from "@/backend/src/UserDAO"
+import { adjustSphareCoins } from "@/backend/src/userDAO"
 
 const coinItems: { id: string; name: string; amount: number }[] = [
   { id: "1", name: "Flaske", amount: 249 },
@@ -26,7 +26,7 @@ const Coins = () => {
       <TouchableOpacity style={styles.product} onPress={() => handleExpandItem(coinItem)}>
         <Text style={styles.productName}>{coinItem.name}</Text>
         <View style={styles.productPrice}>
-          <Text style={styles.text2}>{coinItem.amount}</Text>
+          <Text style={{ fontSize: 20 }}>{coinItem.amount}</Text>
           <Image style={styles.coin2} source={require("@/assets/images/coin.png")} />
         </View>
       </TouchableOpacity>
@@ -162,9 +162,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-  },
-  text2: {
-    fontSize: 20,
   },
   sheetContainer: {
     width: "100%",

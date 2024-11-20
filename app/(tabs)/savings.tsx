@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import {
   View,
   Text,
@@ -9,14 +9,12 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from "react-native"
-import ReusableBottomSheet from "@/components/ReusableBottomSheet"
+import ReusableBottomSheet from "@/components/ui/ReusableBottomSheet"
 import NewGoalContent from "@/components/savings/NewGoalContent"
 import AddMoneyContent from "@/components/savings/AddMoneyContent"
-import AppHeader from "@/components/AppHeader"
+import AppHeader from "@/components/ui/AppHeader"
 import SavingGoalCard from "@/components/savings/SavingGoalCard"
 import { useGetSavingGoals, useGetUserID /**useGetSavingGoals*/ } from "@/hooks/useGetFirestoreData"
-import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore"
-import { db } from "@/constants/firebaseConfig"
 import { SavingGoal } from "@/backend/types/savingGoal"
 
 const Savings = () => {

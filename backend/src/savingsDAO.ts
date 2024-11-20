@@ -6,8 +6,6 @@ import {
   where,
   doc,
   setDoc,
-  getDocsFromServer,
-  getDocsFromCache,
   updateDoc,
   increment,
 } from "firebase/firestore"

@@ -1,27 +1,27 @@
-import { Modal, Text, View, Image, Dimensions, Pressable, TextInput, FlatList } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker'
-import { Chore } from "../../../backend/types/chore";
-import { ScrollView } from "react-native-gesture-handler";
-import ChoreList from "../chore";
-import ChoresDetailedView from "../choresDetailedView";
-import React, { useState } from "react";
-import Button from "@/components/ui/button";
-import { Timestamp } from "firebase/firestore";
-import { useCreateChore, useGetChoreIcons, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData";
+import { Modal, Text, View, Image, Dimensions, Pressable, TextInput, FlatList } from "react-native"
+import DateTimePicker from "@react-native-community/datetimepicker"
+import { Chore } from "../../../backend/types/chore"
+import { ScrollView } from "react-native-gesture-handler"
+import ChoreList from "../Chore"
+import ChoresDetailedView from "../ChoresDetailedView"
+import React, { useState } from "react"
+import Button from "@/components/ui/Button"
+import { Timestamp } from "firebase/firestore"
+import { useCreateChore, useGetChoreIcons, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 
 interface Props {
-  chores: Chore[];
-  onClick: () => void;
+  chores: Chore[]
+  onClick: () => void
 }
 
-const {width, height} = Dimensions.get("window");
+const { height } = Dimensions.get("window")
 
 const Requested: React.FC<Props> = ({ chores, onClick }) => {
-  const [viewChore, toggleView] = React.useState(false);
-  const [choreOfInterest, setChoreOfInterest] = React.useState<Chore | null>(null);
+  const [viewChore, toggleView] = React.useState(false)
+  const [choreOfInterest, setChoreOfInterest] = React.useState<Chore | null>(null)
 
-  const {data: userID} = useGetUserID()
-  const {data: user} = useGetUser(userID ?? "")
+  const { data: userID } = useGetUserID()
+  const { data: user } = useGetUser(userID ?? "")
   const [showModal, setShowModal] = useState(false)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -54,59 +54,48 @@ const Requested: React.FC<Props> = ({ chores, onClick }) => {
     createChore.mutate(chore)
   }
 
-
   const setViewChore = (chore: Chore) => {
-    setChoreOfInterest(chore);
-    toggleModal();
+    setChoreOfInterest(chore)
+    toggleModal()
   }
   const toggleModal = () => {
-    toggleView((prevState) => !prevState);
+    toggleView((prevState) => !prevState)
   }
 
   const earnedCoin = chores.reduce((acc, chore) => {
-    if (chore.chore_status === "complete" && !chore.paid || chore.chore_status === "pending") {
-      return acc + chore.reward_amount;
+    if ((chore.chore_status === "complete" && !chore.paid) || chore.chore_status === "pending") {
+      return acc + chore.reward_amount
     }
-    return acc;
-  },0);
+    return acc
+  }, 0)
 
-  const scrollHeight = height*0.26;
+  const scrollHeight = height * 0.26
   return (
     <View className="w-full flex flex-col items-center justify-center py-4 space-y-2">
       <View className="flex flex-row space-x-2">
         <View className="w-[50%] flex justify-center items-center rounded-lg bg-[#E6FDFF]">
-          <Text className=" p-4 ">
-            Så flink du har vært! Her kan du se alle gjennomførte gjøremål!
-          </Text>
+          <Text className=" p-4 ">Så flink du har vært! Her kan du se alle gjennomførte gjøremål!</Text>
         </View>
         <View>
-          <Image
-            className="rounded-md"
-            source={require("@/assets/images/sphare3.png")}
-            resizeMode="contain" />
+          <Image className="rounded-md" source={require("@/assets/images/sphare3.png")} resizeMode="contain" />
         </View>
       </View>
-      <View style={{height: scrollHeight}} className="mb-2 border-b-2 border-teal-300">
-        <ScrollView >
-          {chores.filter((chore)=> chore.chore_status==="complete" && !chore.paid || chore.chore_status==="pending")
-          .map((chore, index) => ( (
+      <View style={{ height: scrollHeight }} className="mb-2 border-b-2 border-teal-300">
+        <ScrollView>
+          {chores
+            .filter((chore) => (chore.chore_status === "complete" && !chore.paid) || chore.chore_status === "pending")
+            .map((chore, index) => (
               <View key={index}>
                 <ChoreList chore={chore} onClick={() => setViewChore(chore)} />
               </View>
-            )
-          ))}
+            ))}
         </ScrollView>
       </View>
       {choreOfInterest && (
-        <Modal
-          visible={viewChore}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={toggleModal}
-        >
+        <Modal visible={viewChore} animationType="slide" transparent={true} onRequestClose={toggleModal}>
           <View className="h-full w-full flex justify-center items-center">
             <View className="p-4 w-full">
-              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} refetch={()=>{}} />
+              <ChoresDetailedView chore={choreOfInterest} onClick={toggleModal} refetch={() => {}} />
             </View>
           </View>
         </Modal>
@@ -116,14 +105,11 @@ const Requested: React.FC<Props> = ({ chores, onClick }) => {
           <Text className="w-full text-left">Du har forespurt gjøremål for:</Text>
           <Text className="w-full text-left px-2 py-1 font-semibold text-xl text-green-600">{earnedCoin} NOK</Text>
           {/* <View className="flex flex-row w-full"> */}
-            <Text className="w-full my-1">Foreslå et til så tjener du mer!</Text>
-            <Button classname="py-1" text="Foreslå gjøremål" onClick={() => setShowModal(true)}></Button>
+          <Text className="w-full my-1">Foreslå et til så tjener du mer!</Text>
+          <Button classname="py-1" text="Foreslå gjøremål" onClick={() => setShowModal(true)}></Button>
           {/* </View> */}
         </View>
-        <Image
-            className="rounded-md"
-            source={require("@/assets/images/sphare3.png")}
-            resizeMode="contain" />
+        <Image className="rounded-md" source={require("@/assets/images/sphare3.png")} resizeMode="contain" />
       </View>
       <Modal transparent={true} visible={showModal} onRequestClose={() => setShowModal(false)}>
         <Pressable className="flex-1 justify-center items-center bg-opacity-50" onPress={() => setShowModal(false)}>
@@ -199,7 +185,7 @@ const Requested: React.FC<Props> = ({ chores, onClick }) => {
         </Pressable>
       </Modal>
     </View>
-  );
-};
+  )
+}
 
-export default Requested;
+export default Requested

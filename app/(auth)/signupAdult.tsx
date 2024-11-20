@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, Pressable, KeyboardAvoidingView, Platform } from "react-native"
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from "react-native"
 import { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { TouchableOpacity } from "react-native-gesture-handler"
@@ -6,7 +6,7 @@ import { registerUser } from "@/backend/src/authentication"
 import { useRouter } from "expo-router"
 import Ionicons from "@expo/vector-icons/Ionicons"
 
-const signupAdult = () => {
+const SignupAdult = () => {
   const router = useRouter()
 
   const [name, setName] = useState("")
@@ -55,7 +55,7 @@ const signupAdult = () => {
       setSuccess(true)
 
       setTimeout(() => {
-        router.push("/(auth)/login")
+        router.push("/(auth)/Login")
       }, 1500)
     } catch (error) {
       setError("Registreringen mislyktes. Vennligst prøv igjen.")
@@ -68,7 +68,7 @@ const signupAdult = () => {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="w-full flex-col">
         <View className="w-full items-center flex flex-col">
           <View className="w-full flex flex-col gap-8">
-            <Pressable className="items-center flex-row" onPress={() => router.navigate("/(auth)/login")}>
+            <Pressable className="items-center flex-row" onPress={() => router.navigate("/(auth)/Login")}>
               <Ionicons name="chevron-back" size={24} color="#3b82f6" />
               <Text className="text-blue-500 ml-2 text-lg">Tilbake</Text>
             </Pressable>
@@ -144,4 +144,4 @@ const signupAdult = () => {
   )
 }
 
-export default signupAdult
+export default SignupAdult

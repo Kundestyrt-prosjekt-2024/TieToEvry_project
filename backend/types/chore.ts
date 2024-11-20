@@ -1,9 +1,5 @@
 import { z } from "zod"
-
-const FirestoreTimestampSchema = z.object({
-  seconds: z.number(),
-  nanoseconds: z.number(),
-})
+import { FirestoreTimestampSchema } from "./firebase"
 
 const ChoreSchema = z.object({
   child_id: z.string(),
@@ -22,4 +18,3 @@ const ChoreSchema = z.object({
 })
 
 export type Chore = z.infer<typeof ChoreSchema>
-export type FirestoreTimestamp = z.infer<typeof FirestoreTimestampSchema>

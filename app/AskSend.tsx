@@ -1,10 +1,9 @@
 import { getAllowance, sendMoneyRequest, setAllowance } from "@/backend/src/moneyRequestsDAO"
 import { transferMoney } from "@/backend/src/transactionsDAO"
-import { Allowance } from "@/backend/types/moneyRequest"
-import DataLoading from "@/components/DataLoading"
+import DataLoading from "@/components/ui/DataLoading"
 import { useGetChildren, useGetParents, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { useLocalSearchParams, useRouter } from "expo-router"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   View,
   Text,

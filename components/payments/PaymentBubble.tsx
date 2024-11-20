@@ -71,7 +71,7 @@ const PaymentBubble: React.FC<PaymentBubbleProps> = ({
           </Text>
           <View style={[styles.messageBubble, isSentByUser ? styles.send : styles.receive]}>
             <Text style={styles.statusText}>{isSentByUser ? `Du sendte ${name}` : `${name} sendte deg`}</Text>
-            <Text style={styles.amountText}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
+            <Text style={{ fontSize: 24 }}>{new Intl.NumberFormat("nb-NO").format(payment.amount)} kr</Text>
             {payment.description && <Text style={styles.statusText}>{payment.description}</Text>}
           </View>
         </Animated.View>
@@ -103,9 +103,6 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 16,
-  },
-  amountText: {
-    fontSize: 24,
   },
   dateDivider: {
     fontSize: 18,

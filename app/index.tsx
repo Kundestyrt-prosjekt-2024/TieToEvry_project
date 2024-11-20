@@ -1,8 +1,8 @@
 import { Redirect } from "expo-router"
 import { useGetUserID } from "@/hooks/useGetFirestoreData"
-import DataLoading from "@/components/DataLoading"
+import DataLoading from "@/components/ui/DataLoading"
 
-export default function Index() {
+export default function index() {
   const userID = useGetUserID()
 
   // Render a loading state while checking AsyncStorage
@@ -12,8 +12,8 @@ export default function Index() {
 
   // Conditionally redirect based on user data
   if (userID.data) {
-    return <Redirect href="/(tabs)/home" />
+    return <Redirect href="/(tabs)/Home" />
   } else {
-    return <Redirect href="/(auth)/login" />
+    return <Redirect href="/(auth)/Login" />
   }
 }
