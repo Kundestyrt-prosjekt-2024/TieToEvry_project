@@ -1,9 +1,16 @@
 import { getDownloadURL, listAll, ref } from "firebase/storage"
 import { db, storage } from "../../constants/firebaseConfig"
-import { transferMoney } from "./transactionService"
 import { collection, query, where, getDocs, doc, addDoc, updateDoc, Timestamp } from "firebase/firestore"
 import { Chore } from "../types/chore"
+import { transferMoney } from "./transactionsDAO"
+import { adjustSphareCoins } from "./UserDAO"
 
+/**
+ * Creates a new chore and saves it to the database.
+ *
+ * @param {Chore} chore - The chore object containing details about the chore.
+ * @throws {Error} - If the chore creation fails.
+ */
 export async function createChore(chore: Chore) {
   try {
     await addDoc(collection(db, "chores"), chore)
@@ -12,6 +19,12 @@ export async function createChore(chore: Chore) {
   }
 }
 
+/**
+ * Retrieves all chore icons stored in the storage bucket.
+ *
+ * @returns {Promise<string[]>} - A promise that resolves to an array of URLs for the chore icons.
+ * @throws {Error} - If fetching chore icons fails.
+ */
 export async function getChoreIcons() {
   const folderRef = ref(storage, "Icons")
   try {
@@ -26,29 +39,49 @@ export async function getChoreIcons() {
   }
 }
 
-//Kids can create chores but they are set to pending awaiting approval by parents
+/**
+ * Suggests a new chore, setting it to pending status for parental approval.
+ *
+ * @param {Chore} chore - The chore object to be suggested.
+ * @throws {Error} - If the chore suggestion fails.
+ */
 export async function suggestChore(chore: Chore) {
   createChore(chore)
 }
 
-//Parents can approve a suggested chore, which marks it as approved
+/**
+ * Updates the status of a chore and optionally handles associated rewards.
+ *
+ * @param {Chore} chore - The chore object containing updated information.
+ * @param {string} status - The new status of the chore (e.g., "approved", "completed").
+ * @throws {Error} - If updating the chore status fails.
+ */
 export async function updateChoreStatus(chore: Chore, status: string) {
   try {
     const choreRef = doc(db, "chores", chore.id!)
     await updateDoc(choreRef, {
       chore_status: status,
+      paid: chore.paid,
     })
 
-    // if (status === "paid") {
-    //   await transferMoney(chore.parent_id, chore.child_id, chore.reward_amount, "Chore Completion Reward")
-    // }
+    if (chore.paid) {
+      await transferMoney(chore.parent_id, chore.child_id, chore.reward_amount, chore.chore_title)
+      await adjustSphareCoins(chore.child_id, 3)
+    }
   } catch (error) {
     console.error("Error updating status of chore:", error)
     throw new Error("Failed to update suggested chore")
   }
 }
 
-//Parents can fetch all chores by specific status
+/**
+ * Fetches chores for a specific child based on a given status.
+ *
+ * @param {string} childID - The unique ID of the child.
+ * @param {string} status - The status of chores to filter by (e.g., "pending", "approved").
+ * @returns {Promise<Chore[]>} - A promise that resolves to an array of chores matching the specified status.
+ * @throws {Error} - If fetching chores by status fails.
+ */
 export async function getChoresByStatus(childID: string, status: string) {
   const chores: Chore[] = []
   try {
@@ -75,7 +108,13 @@ export async function getChoresByStatus(childID: string, status: string) {
   }
 }
 
-//All chores for a child can be fetched, including all the different chore statuses
+/**
+ * Fetches all chores for a specific child, regardless of status.
+ *
+ * @param {string} childID - The unique ID of the child.
+ * @returns {Promise<Chore[]>} - A promise that resolves to an array of all chores for the child.
+ * @throws {Error} - If fetching all chores fails.
+ */
 export async function getAllChores(childID: string) {
   const allChores: Chore[] = []
   try {
@@ -98,7 +137,13 @@ export async function getAllChores(childID: string) {
   }
 }
 
-// Updates the time_limit of recurring chores that have passed their time_limit
+/**
+ * Updates the time limit of recurring chores if their time limit has passed.
+ *
+ * @param {Chore[]} recurringChores - An array of recurring chores to be handled.
+ * @returns {Promise<Chore[]>} - A promise that resolves to an array of updated recurring chores.
+ * @throws {Error} - If handling recurring chores fails.
+ */
 async function handleRecurringChores(recurringChores: Chore[]) {
   try {
     const updatedChores: Chore[] = []

@@ -3,12 +3,14 @@ import { collection, addDoc, query, where, getDocs, updateDoc, doc, Timestamp, o
 import { Transaction } from "../types/transaction"
 import { adjustBalance, getBankAccountByUID } from "./bankAccountDAO"
 
-/**Function is used to transfer money from one account to another.
+/**
+ * Transfers money from one user to another with specified validation rules.
  *
- * @param senderUID A string of the id of the sender.
- * @param receiverUID A string of the id of the receiver.
- * @param amount A number of the amount of money to be transferred.
- * @param description A string of the description of the transaction.
+ * @param {string} senderUID - The UID of the sender's account.
+ * @param {string} receiverUID - The UID of the receiver's account.
+ * @param {number} amount - The amount of money to transfer.
+ * @param {string} description - A description for the transaction.
+ * @throws {Error} - If the transfer fails due to insufficient funds, invalid limits, or other reasons.
  */
 export async function transferMoney(senderUID: string, receiverUID: string, amount: number, description: string) {
   try {
@@ -61,12 +63,13 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
 
       // Check if the cumulative spending limit has been exceeded
       if (totalSpent + amount > senderAccount.spending_limit) {
-        throw new Error(
-          "Cumulative spending exceeds spending limit for the specified period with limit " +
-            senderAccount.spending_limit +
-            " and time " +
-            senderAccount.spending_time_limit
-        )
+        throw new Error("Cumulative spending exceeds spending limit for the specified period")
+      }
+    }
+
+    if (senderAccount.spending_limit_per_purchase !== Number.MAX_SAFE_INTEGER) {
+      if (amount > senderAccount.spending_limit_per_purchase) {
+        throw new Error("Amount exceeds spending limit per purchase")
       }
     }
 
@@ -84,17 +87,18 @@ export async function transferMoney(senderUID: string, receiverUID: string, amou
 
     await addDoc(collection(db, "transactions"), newTransaction)
   } catch (error) {
-    console.log(error)
-    throw new Error("Failed to transfer money")
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred"
+    throw new Error(errorMessage)
   }
 }
 
-/**Function is used to get all transactions made from an account.
+/**
+ * Retrieves all transactions made from or to a specific account, optionally filtered by date range.
  *
- * @param accountId A string of the id of the account.
- * @param fromDate Optional Date object representing the start date of the transaction filter.
- * @param toDate Optional Date object representing the end date of the transaction filter.
- * @returns an array of transactions made from the account.
+ * @param {string} accountId - The ID of the account to retrieve transactions for.
+ * @param {Date} [fromDate] - Optional start date for filtering transactions.
+ * @param {Date} [toDate] - Optional end date for filtering transactions.
+ * @returns {Promise<Transaction[]>} - A promise that resolves to an array of transactions.
  */
 export async function getTransactionHistory(accountId: string, fromDate?: Date, toDate?: Date) {
   const transactionsRef = collection(db, "transactions")
@@ -120,6 +124,13 @@ export async function getTransactionHistory(accountId: string, fromDate?: Date, 
   return querySnapshot.docs.map((doc) => doc.data()) as Transaction[]
 }
 
+/**
+ * Retrieves all transactions made between two specific accounts.
+ *
+ * @param {string} accountId1 - The ID of the first account.
+ * @param {string} accountId2 - The ID of the second account.
+ * @returns {Promise<Transaction[]>} - A promise that resolves to an array of transactions between the two accounts.
+ */
 export async function getTransactionHistoryBetweenAccounts(accountId1: string, accountId2: string) {
   const transactionsRef = collection(db, "transactions")
 
@@ -139,6 +150,13 @@ export async function getTransactionHistoryBetweenAccounts(accountId1: string, a
   return querySnapshot.docs.map((doc) => doc.data()) as Transaction[]
 }
 
+/**
+ * Fetches transaction statistics for a specific account within a given month.
+ *
+ * @param {string} accountId - The ID of the account to fetch statistics for.
+ * @param {number} month - The month (0-11) to retrieve statistics for.
+ * @returns {Promise<{to: Transaction[], from: Transaction[]}>} - A promise that resolves to an object containing incoming and outgoing transactions for the month.
+ */
 export async function fetchMonthStatsFS(accountId: string, month: number) {
   const transactionsRef = collection(db, "transactions")
   const currYear = new Date().getFullYear()

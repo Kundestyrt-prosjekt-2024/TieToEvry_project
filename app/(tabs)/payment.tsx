@@ -58,6 +58,14 @@ const PaymentScreen = () => {
   const recurrenceArray = ["Daglig", "Ukentlig", "Hver 2. Uke", "Månedlig"]
 
   useEffect(() => {
+    const intervalId = setInterval(() => {
+      moneyRequests.refetch() // Refetch every 1 second
+    }, 500)
+
+    return () => clearInterval(intervalId) // Cleanup interval on unmount
+  }, [moneyRequests])
+
+  useEffect(() => {
     async function fetchAllowance() {
       if (!isParent) {
         const allowance = await getAllowance(userID.data!)
@@ -103,7 +111,7 @@ const PaymentScreen = () => {
 
   return (
     <SafeAreaView className="h-full bg-white" edges={["top"]}>
-      <AppHeader />
+      <AppHeader parent={isParent} />
       <ScrollView onScroll={handleScroll}>
         <View className="flex flex-row justify-center mt-6">
           {users.map((user) => (
@@ -133,43 +141,54 @@ const PaymentScreen = () => {
           </View>
         )}
         <View className="flex flex-col items-center gap-4 mt-1">
-          {moneyRequests.data
-            ?.filter((moneyReq) => moneyReq.status === "pending")
-            .map((moneyReq) => (
-              <View key={moneyReq.id} className="rounded-[32px] bg-blue-100 p-6 flex flex-row justify-between w-[90%]">
-                {moneyReq.sender === bankAccount.data?.id ? (
-                  <>
-                    <Text className="text-lg">
-                      Du ber{" "}
-                      {
-                        users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.receiver)]?.name.split(
-                          " "
-                        )[0]
-                      }{" "}
-                      om {moneyReq.amount} kr
-                    </Text>
-                    <Pressable onPress={() => deleteMoneyRequest(moneyReq.id!)}>
-                      <Text className="text-red-500 text-lg">Avbryt</Text>
-                    </Pressable>
-                  </>
-                ) : (
-                  <>
-                    <Text className="text-lg">
-                      {users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.sender)]?.name.split(" ")[0]}{" "}
-                      ber deg om {moneyReq.amount} kr
-                    </Text>
-                    <View className="flex flex-row gap-2">
-                      <Pressable onPress={() => acceptMoneyRequest(moneyReq.id!)}>
-                        <Text className="text-green-700 text-lg">Godta</Text>
+          {(moneyRequests.data?.filter((moneyReq) => moneyReq.status === "pending") || []).length > 0 ? (
+            moneyRequests.data
+              ?.filter((moneyReq) => moneyReq.status === "pending")
+              .map((moneyReq) => (
+                <View
+                  key={moneyReq.id}
+                  className="rounded-[32px] bg-blue-100 p-6 flex flex-row justify-between w-[90%]"
+                >
+                  {moneyReq.sender === bankAccount.data?.id ? (
+                    <>
+                      <Text className="text-lg">
+                        Du ber{" "}
+                        {
+                          users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.receiver)]?.name.split(
+                            " "
+                          )[0]
+                        }{" "}
+                        om {moneyReq.amount} kr
+                      </Text>
+                      <Pressable onPress={() => deleteMoneyRequest(moneyReq.id!)}>
+                        <Text className="text-red-500 text-lg">Avbryt</Text>
                       </Pressable>
-                      <Pressable onPress={() => rejectMoneyRequest(moneyReq.id!)}>
-                        <Text className="text-red-500 text-lg">Avslå</Text>
-                      </Pressable>
-                    </View>
-                  </>
-                )}
-              </View>
-            ))}
+                    </>
+                  ) : (
+                    <>
+                      <Text className="text-lg">
+                        {
+                          users[bankAccounts.findIndex((bankAcc) => bankAcc?.id === moneyReq.sender)]?.name.split(
+                            " "
+                          )[0]
+                        }{" "}
+                        ber deg om {moneyReq.amount} kr
+                      </Text>
+                      <View className="flex flex-row gap-2">
+                        <Pressable onPress={() => acceptMoneyRequest(moneyReq.id!)}>
+                          <Text className="text-green-700 text-lg">Godta</Text>
+                        </Pressable>
+                        <Pressable onPress={() => rejectMoneyRequest(moneyReq.id!)}>
+                          <Text className="text-red-500 text-lg">Avslå</Text>
+                        </Pressable>
+                      </View>
+                    </>
+                  )}
+                </View>
+              ))
+          ) : (
+            <Text className="text-gray-500 text-lg">Ingen forespørsler å vise</Text>
+          )}
         </View>
       </ScrollView>
       <Animated.View style={[styles.bottomContainer, { transform: [{ translateY }] }]}>

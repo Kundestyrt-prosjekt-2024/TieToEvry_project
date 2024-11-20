@@ -21,25 +21,34 @@ import { SavingGoal } from "@/backend/types/savingGoal"
 
 const Savings = () => {
   // Hooks for UserID and saving goals.
-  const { data: userID, isLoading: isUserIDLoading } = useGetUserID();
-  const userIDValue = userID ?? "";
-  const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue);
+  const { data: userID, isLoading: isUserIDLoading } = useGetUserID()
+  const userIDValue = userID ?? ""
+  const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue)
 
   // States for showing/hiding bottom sheets
-  const [isNewGoalVisible, setIsNewGoalVisible] = useState(false);
-  const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false);
+  const [isNewGoalVisible, setIsNewGoalVisible] = useState(false)
+  const [isAddMoneyVisible, setIsAddMoneyVisible] = useState(false)
 
   // Saving goal to see when bottom sheet for adding money is in focus
-  const [savingGoal, setSavingGoal] = useState<SavingGoal | undefined>();
+  const [savingGoal, setSavingGoal] = useState<SavingGoal | undefined>()
 
-  // Makes us not see the page before data is present.
-  if (isUserIDLoading || isSavingGoalsLoading) {
-    return (
-      <SafeAreaView className="bg-white flex-1 justify-center items-center">
-        <Text>Loading...</Text>
-      </SafeAreaView>
-    )
-  }
+  const sortedGoals =
+    savingGoals
+      ?.sort((a, b) => {
+        // Calculate progress for both goals
+        const progressA = a.current_amount / a.goal_amount
+        const progressB = b.current_amount / b.goal_amount
+
+        // If progress is >= 1, move to the beginning
+        if (progressA >= 1 && progressB < 1) {
+          return -1 // a comes before b
+        } else if (progressA < 1 && progressB >= 1) {
+          return 1 // b comes before a
+        } else {
+          return 0 // keep original order for other cases
+        }
+      })
+      .reverse() || []
 
   //Functions to handle showing/hiding bottom sheets
   const handleAddMoney = () => {
@@ -92,17 +101,15 @@ const Savings = () => {
 
           {/* Current savings goals displayed in cards. */}
           <View className="flex-col items-center py-5 pb-20">
-            {savingGoals && savingGoals.length > 0 ? (
-              savingGoals
-                .sort((a, b) => Number(b.current_amount) - Number(a.current_amount))
-                .map((goal) => (
-                  <SavingGoalCard
-                    key={goal.id}
-                    goal={goal}
-                    onAddMoney={handleAddMoney}
-                    setSavingGoal={() => setSavingGoal(goal)}
-                  />
-                ))
+            {sortedGoals && sortedGoals.length > 0 ? (
+              sortedGoals.map((goal) => (
+                <SavingGoalCard
+                  key={goal.id}
+                  goal={goal}
+                  onAddMoney={handleAddMoney}
+                  setSavingGoal={() => setSavingGoal(goal)}
+                />
+              ))
             ) : (
               <Text>Du har ingen aktive sparemål!</Text>
             )}

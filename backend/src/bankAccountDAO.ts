@@ -14,15 +14,22 @@ import {
 import { BankAccount } from "../types/bankAccount"
 import { useGetBankAccount } from "@/hooks/useGetFirestoreData"
 
+/**
+ * Creates a new bank account for a user.
+ *
+ * @param {string} userUID - The unique ID of the user.
+ * @throws {Error} - If the bank account creation fails.
+ */
 export async function createBankAccount(userUID: string) {
   const bankAccount: BankAccount = {
     UID: userUID,
     account_nr: "34989848484",
     account_type: "yDigBGdcMlS7h9pFKcqF",
-    balance: 0,
+    balance: 2000,
     currency: "NOK",
     date_opened: Timestamp.now(),
     spending_limit: Number.MAX_SAFE_INTEGER,
+    spending_limit_per_purchase: Number.MAX_SAFE_INTEGER,
   }
 
   try {
@@ -32,6 +39,13 @@ export async function createBankAccount(userUID: string) {
   }
 }
 
+/**
+ * Retrieves a bank account by its ID.
+ *
+ * @param {string} id - The ID of the bank account.
+ * @returns {Promise<BankAccount>} - A promise that resolves to the bank account data.
+ * @throws {Error} - If the bank account is not found or retrieval fails.
+ */
 export async function getBankAccount(id: string) {
   try {
     const accountDoc = await getDoc(doc(db, "bankAccounts", id))
@@ -45,10 +59,13 @@ export async function getBankAccount(id: string) {
   }
 }
 
-/**Funtion is used to get a bank account by its a users userID
+/**
+ * Retrieves a bank account associated with a user ID and sets up a listener for updates.
  *
- * @param userUID A string of the id of the user.
- * @returns the id of the account and the account information
+ * @param {string} userUID - The unique ID of the user.
+ * @param {(updatedData: BankAccount) => void} [updateBankAccount] - Optional callback function to handle real-time updates to the bank account.
+ * @returns {Promise<BankAccount & { id: string }>} - A promise that resolves to the bank account data and its ID.
+ * @throws {Error} - If the bank account is not found or retrieval fails.
  */
 export async function getBankAccountByUID(
   userUID: string,
@@ -89,10 +106,11 @@ export async function getBankAccountByUID(
 }
 
 /**
- * Function is used to adjust the balance of a bank account by a specified amount.
+ * Adjusts the balance of a bank account by a specified amount.
  *
- * @param accountId A string of the id of the account.
- * @param amount A number representing the amount to adjust the balance by (can be positive or negative).
+ * @param {string} accountId - The ID of the bank account.
+ * @param {number} amount - The amount to adjust the balance by (can be positive or negative).
+ * @throws {Error} - If the account is not found, the new balance is negative, or the update fails.
  */
 export async function adjustBalance(accountId: string, amount: number) {
   const accountDocRef = doc(db, "bankAccounts", accountId)
@@ -117,6 +135,14 @@ export async function adjustBalance(accountId: string, amount: number) {
   }
 }
 
+/**
+ * Sets a spending limit for a child's bank account with a specific time limit.
+ *
+ * @param {string} childId - The unique ID of the child.
+ * @param {number} limit - The spending limit amount.
+ * @param {string} timeLimit - The time limit for the spending restriction (e.g., "daily", "weekly", "monthly").
+ * @throws {Error} - If the limit is negative, the time limit is invalid, or the update fails.
+ */
 export async function setSpendingLimit(childId: string, limit: number, timeLimit: string) {
   try {
     const childAccount = await getBankAccountByUID(childId)
@@ -130,19 +156,62 @@ export async function setSpendingLimit(childId: string, limit: number, timeLimit
       throw new Error("Invalid time limit. It must be one of: 'daily', 'weekly', 'monthly'")
     }
 
-    console.log(limit)
-
     await updateDoc(doc(db, "bankAccounts", childAccount.id), { spending_limit: limit, spending_time_limit: timeLimit })
   } catch (error: any) {
     throw new Error("Failed to set spending limit: " + error.message)
   }
 }
 
+/**
+ * Sets a per-purchase spending limit for a child's bank account.
+ *
+ * @param {string} childId - The unique ID of the child.
+ * @param {number} limit - The per-purchase spending limit amount.
+ * @throws {Error} - If the limit is negative or the update fails.
+ */
+export async function setSpendingLimitPerPurchase(childId: string, limit: number) {
+  try {
+    const childAccount = await getBankAccountByUID(childId)
+
+    if (limit < 0) {
+      throw new Error("Spending limit cannot be negative")
+    }
+
+    await updateDoc(doc(db, "bankAccounts", childAccount.id), { spending_limit_per_purchase: limit })
+  } catch (error: any) {
+    throw new Error("Failed to set spending limit: " + error.message)
+  }
+}
+
+/**
+ * Retrieves the spending limit for a child's bank account.
+ *
+ * @param {string} childId - The unique ID of the child.
+ * @returns {Promise<number>} - A promise that resolves to the spending limit.
+ * @throws {Error} - If the retrieval fails.
+ */
 export async function getSpendingLimit(childId: string) {
   try {
     const childAccount = await getBankAccountByUID(childId)
 
     return childAccount.spending_limit
+  } catch (error: any) {
+    throw new Error("Failed to get spending limit: " + error.message)
+  }
+}
+
+/**
+ * Retrieves the per-purchase spending limit for a child's bank account.
+ *
+ * @param {string} childId - The unique ID of the child.
+ * @returns {Promise<number>} - A promise that resolves to the per-purchase spending limit.
+ * @throws {Error} - If the retrieval fails.
+ */
+export async function getSpendingLimitPerPurchase(childId: string) {
+  try {
+    const childAccount = await getBankAccountByUID(childId)
+
+    return childAccount.spending_limit_per_purchase
   } catch (error: any) {
     throw new Error("Failed to get spending limit: " + error.message)
   }

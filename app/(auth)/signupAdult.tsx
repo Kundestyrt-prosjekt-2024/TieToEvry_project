@@ -65,15 +65,10 @@ const signupAdult = () => {
 
   return (
     <SafeAreaView className="flex-1 justify-center items-center relative">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="w-full flex-col">
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="w-full flex-col">
         <View className="w-full items-center flex flex-col">
-          <View className="w-full">
-            <Pressable
-              className="items-center flex-row"
-              onPress={() => router.navigate("/(auth)/login")}
-            >
+          <View className="w-full flex flex-col gap-8">
+            <Pressable className="items-center flex-row" onPress={() => router.navigate("/(auth)/login")}>
               <Ionicons name="chevron-back" size={24} color="#3b82f6" />
               <Text className="text-blue-500 ml-2 text-lg">Tilbake</Text>
             </Pressable>

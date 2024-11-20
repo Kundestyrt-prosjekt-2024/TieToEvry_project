@@ -46,6 +46,7 @@ const AskSend = () => {
   const [selectedReceiver, setSelectedReceiver] = useState(0)
   const [amount, setAmount] = useState("")
   const [message, setMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const isParent = parents.length == 0
   const [showDayPicker, setShowDayPicker] = useState(false)
@@ -74,17 +75,25 @@ const AskSend = () => {
     fetchAllowance()
   }, [selectedReceiver])
 
-  function handleAskSend() {
+  async function handleAskSend() {
     if (parseInt(amount) <= 0) return
     if (isAsk) {
       sendMoneyRequest(userID.data ?? "", users[selectedReceiver]?.id ?? "", message, parseInt(amount))
       router.back()
     } else if (isSend) {
       try {
-        transferMoney(userID.data ?? "", users[selectedReceiver]?.id ?? "", parseInt(amount), message)
+        await transferMoney(userID.data ?? "", users[selectedReceiver]?.id ?? "", parseInt(amount), message)
         router.back()
-      } catch {
-        console.log("Inne nok på konto / Gått over spending limit") // TODO: Gjør noe her
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred"
+        console.log(errorMessage)
+        if (errorMessage === "Amount exceeds spending limit per purchase") {
+          setErrorMessage("Beløpet overgår grense for overføring")
+        } else if (errorMessage === "Cumulative spending exceeds spending limit for the specified period") {
+          setErrorMessage("Du har brukt opp grensen din for tidsperioden")
+        } else if (errorMessage === "Insufficient funds") {
+          setErrorMessage("Ikke nok penger på konto")
+        }
       }
     } else {
       const dayIndex = dayArray.indexOf(dayValue)
@@ -178,8 +187,13 @@ const AskSend = () => {
           </Pressable>
         ))}
       </View>
+      {errorMessage.length > 0 ? (
+        <Text className="text-red-500 mt-10 text-center">{errorMessage}</Text>
+      ) : (
+        <Text className="mt-10"></Text>
+      )}
       <View style={styles.mainContainer}>
-        <View style={{ ...styles.upperContainer, marginTop: isAll ? 50 : 100 }}>
+        <View style={{ ...styles.upperContainer, marginTop: isAll ? 50 : 60 }}>
           <TextInput
             style={styles.amountInput}
             placeholder="0"

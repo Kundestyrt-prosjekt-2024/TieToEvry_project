@@ -33,17 +33,6 @@ const Education = () => {
         domStorageEnabled={true}
         scrollEnabled={false}
       />
-      <View className="flex flex-row justify-center mt-4">
-        <View>
-          <Image className="" source={require("@/assets/images/sphare_small.png")} />
-        </View>
-        <View className="relative justify-center px-8 pb-6 items-center">
-          <Image className="" source={require("@/assets/images/figma_bubble.png")} />
-          <Text className="absolute top-7 right-9 text-sm text-black text-center">
-            Her kan du lære mer om penger og sparing!
-          </Text>
-        </View>
-      </View>
     </SafeAreaView>
   )
 }

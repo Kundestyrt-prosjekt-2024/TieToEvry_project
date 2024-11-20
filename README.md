@@ -1,6 +1,16 @@
 # TieToEvry_project
 
-Repository for Kundestyrt prosjekt H2024 - Tieotoevry Banking
+Repository for Kundestyrt prosjekt H2024 - Tieotoevry Banking by Group 8.
+
+Tietoevry aims to gain insights through student collaboration on designing a potential bankingapplication
+tailored for children. This repository contains the source code for an MVP that serves as inspiration for the
+customer to a potential child banking-app.
+
+## Requirements
+
+- [Node.js](https://nodejs.org/en)
+- [Java](https://adoptium.net/temurin/releases/)
+- An IDE of your choice, e.g Visual Studio Code or Android Studio
 
 ## Technologies
 
@@ -32,6 +42,8 @@ To get a local copy up and running, follow these steps:
    ```
 
 ## Running the app
+
+**IMPORTANT** - In order to run the app, you need the API keys to our database. Contact andretan@stud.ntnu.no for these, or if you experience any troubles during set-up. Store them in a .env file, in the format of .env.example
 
 To run the app in development mode, follow these steps:
 
