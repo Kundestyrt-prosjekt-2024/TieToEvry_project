@@ -147,7 +147,7 @@ const Chores = () => {
             </View>
           </View>
         </View>
-        <Text className="text-lg pb-2 text-center border-b border-teal-300">Aktive gjøremål 👇</Text>
+        <Text className="text-lg pb-2 text-center ">Aktive gjøremål 👇</Text>
       </>
     )
   }
