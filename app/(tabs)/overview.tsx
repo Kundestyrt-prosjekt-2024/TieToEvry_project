@@ -6,7 +6,7 @@ import DataLoading from "@/components/DataLoading"
 import { useState } from "react"
 import { useRouter } from "expo-router"
 import AntDesign from "@expo/vector-icons/AntDesign"
-import { setSpendingLimit } from "@/backend/src/bankAccountDAO"
+import { setSpendingLimit, setSpendingLimitPerPurchase } from "@/backend/src/bankAccountDAO"
 
 const Overview = () => {
   const router = useRouter()
@@ -17,6 +17,8 @@ const Overview = () => {
 
   const [selectedChildIndex, setSelectedChildIndex] = useState(0)
   const [showModal, setShowModal] = useState(false)
+  const [showModal2, setShowModal2] = useState(false)
+  const [spendingLimitPerPurchaseInput, setSpendingLimitPerPurchaseInput] = useState("")
   const [spendingLimitInput, setSpendingLimitInput] = useState("")
   const [timeLimit, setTimeLimit] = useState("")
 
@@ -30,14 +32,29 @@ const Overview = () => {
       ? childBankAccount.data.spending_limit.toString()
       : "0"
 
+  const spendingLimitPerPurchase =
+    childBankAccount.data &&
+    childBankAccount.data.spending_limit_per_purchase &&
+    childBankAccount.data.spending_limit_per_purchase !== Number.MAX_SAFE_INTEGER
+      ? childBankAccount.data.spending_limit_per_purchase.toString()
+      : "0"
+
+  const translate = { daglig: "daily", ukentlig: "weekly", månedlig: "monthly" }
+
   const handleChangeSpendingLimit = async () => {
-    const translate = { daglig: "daily", ukentlig: "weekly", månedlig: "monthly" }
     const translatedTimeLimit = translate[timeLimit.toLowerCase() as keyof typeof translate]
     await setSpendingLimit(selectedChildID || "", parseInt(spendingLimitInput), translatedTimeLimit)
     childBankAccount.refetch()
     setShowModal(false)
     setSpendingLimitInput("")
     setTimeLimit("")
+  }
+
+  const handleChangeSpendingLimitPerPurchase = async () => {
+    await setSpendingLimitPerPurchase(selectedChildID || "", parseInt(spendingLimitPerPurchaseInput))
+    childBankAccount.refetch()
+    setShowModal2(false)
+    setSpendingLimitPerPurchaseInput("")
   }
 
   if (children.some((query) => query.isPending)) {
@@ -97,12 +114,16 @@ const Overview = () => {
             </Pressable>
           </View>
 
-          <View className="flex-row items-center mt-16 px-8">
+          <Text className="text-center mt-10 font-bold text-xl">
+            {children[selectedChildIndex].data?.name.split(" ")[0]} sine beløpsgrenser
+          </Text>
+          <View className="flex-row items-center mt-6 justify-center">
             <Text className="text-base">
-              {children[selectedChildIndex]?.data?.name.split(" ")[0]} har
               {spendingLimit === "0" || spendingLimit === Number.MAX_SAFE_INTEGER.toString()
-                ? " ingen "
-                : ` en beløpsgrense på ${spendingLimit},-`}
+                ? "Ingen beløpsgrense over tid"
+                : `Grense på ${spendingLimit},- ${Object.keys(translate).find(
+                    (key) => translate[key as keyof typeof translate] === childBankAccount.data?.spending_time_limit
+                  )}`}
             </Text>
             <Pressable className="py-2 px-4 bg-red-200 rounded-lg ml-4" onPress={() => setShowModal(true)}>
               <Text className=" text-black font-semibold">
@@ -110,11 +131,25 @@ const Overview = () => {
               </Text>
             </Pressable>
           </View>
+          <View className="flex-row items-center mt-8 justify-center">
+            <Text className="text-base">
+              {spendingLimitPerPurchase === "0" || spendingLimitPerPurchase === Number.MAX_SAFE_INTEGER.toString()
+                ? "Ingen beløpsgrense per kjøp"
+                : `Grense på ${spendingLimitPerPurchase},- per kjøp`}
+            </Text>
+            <Pressable className="py-2 px-4 bg-red-200 rounded-lg ml-4" onPress={() => setShowModal2(true)}>
+              <Text className=" text-black font-semibold">
+                {spendingLimitPerPurchase === "0" || spendingLimitPerPurchase === Number.MAX_SAFE_INTEGER.toString()
+                  ? "Konfigurer"
+                  : "Endre"}
+              </Text>
+            </Pressable>
+          </View>
 
           <Modal transparent visible={showModal} onRequestClose={() => setShowModal(false)}>
             <Pressable className="flex-1 justify-center items-center" onPress={() => setShowModal(false)}>
               <Pressable className="bg-white rounded-lg w-4/5 p-6 shadow-lg">
-                <Text className="text-lg font-bold mb-4">Sett beløpsgrense</Text>
+                <Text className="text-lg font-bold mb-4">Sett beløpsgrense over tid</Text>
                 <TextInput
                   className="border border-gray-300 p-3 mb-4 rounded-md text-base"
                   placeholder="Beløpsgrense (f.eks. 1000)"
@@ -129,6 +164,23 @@ const Overview = () => {
                   onChangeText={setTimeLimit}
                 />
                 <Pressable className="py-3 bg-blue-500 rounded-lg mt-2" onPress={handleChangeSpendingLimit}>
+                  <Text className="text-white text-center font-semibold">Lagre</Text>
+                </Pressable>
+              </Pressable>
+            </Pressable>
+          </Modal>
+          <Modal transparent visible={showModal2} onRequestClose={() => setShowModal2(false)}>
+            <Pressable className="flex-1 justify-center items-center" onPress={() => setShowModal2(false)}>
+              <Pressable className="bg-white rounded-lg w-4/5 p-6 shadow-lg">
+                <Text className="text-lg font-bold mb-4">Sett beløpsgrense per kjøp</Text>
+                <TextInput
+                  className="border border-gray-300 p-3 mb-4 rounded-md text-base"
+                  placeholder="Beløpsgrense (f.eks. 1000)"
+                  keyboardType="numeric"
+                  value={spendingLimitPerPurchaseInput}
+                  onChangeText={setSpendingLimitPerPurchaseInput}
+                />
+                <Pressable className="py-3 bg-blue-500 rounded-lg mt-2" onPress={handleChangeSpendingLimitPerPurchase}>
                   <Text className="text-white text-center font-semibold">Lagre</Text>
                 </Pressable>
               </Pressable>

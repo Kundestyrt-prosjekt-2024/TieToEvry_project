@@ -19,10 +19,11 @@ export async function createBankAccount(userUID: string) {
     UID: userUID,
     account_nr: "34989848484",
     account_type: "yDigBGdcMlS7h9pFKcqF",
-    balance: 0,
+    balance: 2000,
     currency: "NOK",
     date_opened: Timestamp.now(),
     spending_limit: Number.MAX_SAFE_INTEGER,
+    spending_limit_per_purchase: Number.MAX_SAFE_INTEGER,
   }
 
   try {
@@ -138,11 +139,35 @@ export async function setSpendingLimit(childId: string, limit: number, timeLimit
   }
 }
 
+export async function setSpendingLimitPerPurchase(childId: string, limit: number) {
+  try {
+    const childAccount = await getBankAccountByUID(childId)
+
+    if (limit < 0) {
+      throw new Error("Spending limit cannot be negative")
+    }
+
+    await updateDoc(doc(db, "bankAccounts", childAccount.id), { spending_limit_per_purchase: limit })
+  } catch (error: any) {
+    throw new Error("Failed to set spending limit: " + error.message)
+  }
+}
+
 export async function getSpendingLimit(childId: string) {
   try {
     const childAccount = await getBankAccountByUID(childId)
 
     return childAccount.spending_limit
+  } catch (error: any) {
+    throw new Error("Failed to get spending limit: " + error.message)
+  }
+}
+
+export async function getSpendingLimitPerPurchase(childId: string) {
+  try {
+    const childAccount = await getBankAccountByUID(childId)
+
+    return childAccount.spending_limit_per_purchase
   } catch (error: any) {
     throw new Error("Failed to get spending limit: " + error.message)
   }
