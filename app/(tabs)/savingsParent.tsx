@@ -1,5 +1,5 @@
 import { View, Text, Pressable, FlatList, Image, ScrollView } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AppHeader from "@/components/ui/AppHeader"
 import { useGetChildren, useGetSavingGoals, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
@@ -19,6 +19,14 @@ const savingsParent = () => {
   const selectedChildID = parent.data?.children?.[selectedChildIndex]
 
   const savingGoals = useGetSavingGoals(selectedChildID || "")
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      savingGoals.refetch() // Refetch every 1 second
+    }, 500)
+
+    return () => clearInterval(intervalId) // Cleanup interval on unmount
+  }, [savingGoals])
 
   const sortedGoals =
     savingGoals.data

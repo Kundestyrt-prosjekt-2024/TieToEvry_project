@@ -3,7 +3,7 @@ import { View, Text, Pressable, Image, Modal, FlatList, Animated, TextInput, Swi
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Chore } from "../../backend/types/chore"
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import ChoreList from "@/components/chores/chore"
 import ChoresDetailedView from "@/components/chores/choresDetailedView"
 import Button from "@/components/ui/button"
@@ -29,6 +29,14 @@ const Chores = () => {
   const { data: user } = useGetUser(userID ?? "")
   const { data: balance } = useGetBankAccount(userID ?? "")
   const { data, isLoading, isError, refetch } = useGetChores(userID ?? "")
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch() // Refetch every 1 second
+    }, 500)
+
+    return () => clearInterval(intervalId) // Cleanup interval on unmount
+  }, [data])
 
   const [showModal, setShowModal] = useState(false)
   const [title, setTitle] = useState("")

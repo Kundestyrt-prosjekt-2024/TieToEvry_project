@@ -1,5 +1,5 @@
 import { View, Text, FlatList, Pressable, Image, TextInput, Modal, Switch } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AppHeader from "@/components/ui/AppHeader"
 import {
@@ -45,6 +45,14 @@ const choresParent = () => {
 
   const children = useGetChildren(parent.data?.children || [])
   const childChores = useGetChores(selectedChildID ?? "")
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      childChores.refetch() // Refetch every 1 second
+    }, 500)
+
+    return () => clearInterval(intervalId) // Cleanup interval on unmount
+  }, [childChores])
 
   const choreIcons = useGetChoreIcons()
 

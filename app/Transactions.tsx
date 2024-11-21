@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import TransactionCard from "@/components/payments/TransactionCard"
 import { Text, View, StyleSheet, FlatList } from "react-native"
 import { useGetBankAccount, useGetTransactionHistory } from "@/hooks/useGetFirestoreData"
@@ -11,6 +11,14 @@ const Transactions = () => {
   const account = useGetBankAccount(userID)
 
   const transactionHistory = useGetTransactionHistory(account.data?.id ?? "")
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      transactionHistory.refetch() // Refetch every 1 second
+    }, 500)
+
+    return () => clearInterval(intervalId) // Cleanup interval on unmount
+  }, [transactionHistory])
 
   function renderListHeader() {
     return (

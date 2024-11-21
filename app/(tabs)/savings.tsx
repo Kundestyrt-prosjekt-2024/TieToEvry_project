@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   View,
   Text,
@@ -22,6 +22,14 @@ const Savings = () => {
   const { data: userID, isLoading: isUserIDLoading } = useGetUserID()
   const userIDValue = userID ?? ""
   const { data: savingGoals, isLoading: isSavingGoalsLoading, refetch } = useGetSavingGoals(userIDValue)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch() // Refetch every 1 second
+    }, 500)
+
+    return () => clearInterval(intervalId) // Cleanup interval on unmount
+  }, [savingGoals])
 
   // States for showing/hiding bottom sheets
   const [isNewGoalVisible, setIsNewGoalVisible] = useState(false)
