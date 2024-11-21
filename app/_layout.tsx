@@ -12,7 +12,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(profile)/Profile" options={{ headerBackTitle: "Tilbake", headerTitle: "Profil" }} />
+          <Stack.Screen name="(profile)/profile" options={{ headerBackTitle: "Tilbake", headerTitle: "Profil" }} />
           <Stack.Screen
             name="Transactions"
             options={{
@@ -44,15 +44,15 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="(profile)/Settings"
+            name="(profile)/settings"
             options={{ headerBackTitle: "Tilbake", headerTitle: "Innstillinger" }}
           />
           <Stack.Screen
-            name="(profile)/MyParents"
+            name="(profile)/myParents"
             options={{ headerBackTitle: "Tilbake", headerTitle: "Mine foreldre" }}
           />
           <Stack.Screen
-            name="(profile)/MyChildren"
+            name="(profile)/myChildren"
             options={{ headerBackTitle: "Tilbake", headerTitle: "Mine barn" }}
           />
           <Stack.Screen
@@ -63,7 +63,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="SignupChild"
+            name="signupChild"
             options={{
               headerBackTitle: "Tilbake",
               title: "",

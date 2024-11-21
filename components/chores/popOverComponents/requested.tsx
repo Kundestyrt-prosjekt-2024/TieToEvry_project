@@ -2,10 +2,10 @@ import { Modal, Text, View, Image, Dimensions, Pressable, TextInput, FlatList } 
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { Chore } from "../../../backend/types/chore"
 import { ScrollView } from "react-native-gesture-handler"
-import ChoreList from "../Chore"
-import ChoresDetailedView from "../ChoresDetailedView"
+import ChoreList from "../chore"
+import ChoresDetailedView from "../choresDetailedView"
 import React, { useState } from "react"
-import Button from "@/components/ui/Button"
+import Button from "@/components/ui/button"
 import { Timestamp } from "firebase/firestore"
 import { useCreateChore, useGetChoreIcons, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 

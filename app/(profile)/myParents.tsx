@@ -1,7 +1,7 @@
 import { View, Text, Image } from "react-native"
 import React, { useEffect, useState } from "react"
 import { ScrollView } from "react-native-gesture-handler"
-import { fetchParents } from "@/backend/src/userDAO"
+import { fetchParents } from "@/backend/src/UserDAO"
 import { useGetParents, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { User } from "@/backend/types/user"
 import { FirestoreTimestamp } from "@/backend/types/firebase"

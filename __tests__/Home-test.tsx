@@ -1,6 +1,6 @@
 import React from "react"
 import { render, fireEvent } from "@testing-library/react-native"
-import Home from "../app/(tabs)/Home"
+import Home from "../app/(tabs)/home"
 import { useRouter } from "expo-router"
 import { useGetBankAccount, useGetUserID } from "@/hooks/useGetFirestoreData"
 

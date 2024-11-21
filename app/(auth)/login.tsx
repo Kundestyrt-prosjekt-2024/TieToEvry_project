@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { loginUser } from "@/backend/src/authentication"
 import { useRouter } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { getUser } from "@/backend/src/userDAO"
+import { getUser } from "@/backend/src/UserDAO"
 import { FirestoreTimestamp } from "@/backend/types/firebase"
 
 export default function Login() {
@@ -29,9 +29,9 @@ export default function Login() {
         await AsyncStorage.setItem("userID", userID)
         const user = await getUser(userID)
         if (user && calculateAge(user.birthdate) >= 18) {
-          router.push("/(tabs)/Overview")
+          router.push("/(tabs)/overview")
         } else if (user && calculateAge(user.birthdate) < 18) {
-          router.push("/(tabs)/Home")
+          router.push("/(tabs)/home")
         }
       }
     } catch (error) {
@@ -42,7 +42,7 @@ export default function Login() {
 
   // Function to handle sign-up action
   const handleSignUp = () => {
-    router.navigate("/(auth)/SignupAdult")
+    router.navigate("/(auth)/signupAdult")
     // Add navigation to sign-up screen
   }
 

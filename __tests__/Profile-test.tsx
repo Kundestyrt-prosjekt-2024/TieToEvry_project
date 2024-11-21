@@ -1,5 +1,5 @@
 import React from "react"
-import Profile from "@/app/(profile)/Profile"
+import Profile from "@/app/(profile)/profile"
 import { render, fireEvent, waitFor } from "@testing-library/react-native"
 import { useGetUserID, useGetUser, useGetProfilePictures } from "@/hooks/useGetFirestoreData"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -12,7 +12,7 @@ jest.mock("@/hooks/useGetFirestoreData", () => ({
   useGetProfilePictures: jest.fn(),
 }))
 
-jest.mock("@/backend/src/userDAO", () => ({
+jest.mock("@/backend/src/UserDAO", () => ({
   updateProfilePicture: jest.fn(),
 }))
 

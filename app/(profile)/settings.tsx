@@ -2,8 +2,8 @@ import { View, Text, ScrollView, FlatList, Image, Alert } from "react-native"
 import React from "react"
 import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import DataLoading from "@/components/ui/DataLoading"
-import Button from "@/components/ui/Button"
-import { deleteUser } from "@/backend/src/userDAO"
+import Button from "@/components/ui/button"
+import { deleteUser } from "@/backend/src/UserDAO"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { router } from "expo-router"
 
@@ -42,7 +42,7 @@ const Settings = () => {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userID")
-    router.replace("/(auth)/Login")
+    router.replace("/(auth)/login")
   }
 
   const performDelete = async () => {

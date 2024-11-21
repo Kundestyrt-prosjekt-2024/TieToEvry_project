@@ -1,7 +1,7 @@
 import React from "react"
 import { View, Text, Image } from "react-native"
 import { Chore } from "../../backend/types/chore"
-import Button from "../ui/Button"
+import Button from "../ui/button"
 import { useGetUser, useUpdateChoreStatus } from "@/hooks/useGetFirestoreData"
 
 interface PropsDetailedView {

@@ -4,10 +4,10 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Chore } from "../../backend/types/chore"
 import React, { useRef, useState } from "react"
-import ChoreList from "@/components/chores/Chore"
-import ChoresDetailedView from "@/components/chores/ChoresDetailedView"
-import Button from "@/components/ui/Button"
-import Popover from "@/components/chores/ChorePopover"
+import ChoreList from "@/components/chores/chore"
+import ChoresDetailedView from "@/components/chores/choresDetailedView"
+import Button from "@/components/ui/button"
+import Popover from "@/components/chores/chorePopover"
 import {
   useCreateChore,
   useGetBankAccount,

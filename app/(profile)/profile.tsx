@@ -6,7 +6,7 @@ import { View, Text, Image, TouchableOpacity, Pressable, FlatList, ScrollView } 
 import AntDesign from "@expo/vector-icons/AntDesign"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { useRouter } from "expo-router"
-import { updateProfilePicture } from "@/backend/src/userDAO"
+import { updateProfilePicture } from "@/backend/src/UserDAO"
 import { FirestoreTimestamp } from "@/backend/types/firebase"
 import { useGetProfilePictures, useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -35,7 +35,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userID")
-    router.replace("/(auth)/Login")
+    router.replace("/(auth)/login")
   }
 
   const handleProfilePictureUpdate = async (profilePictureUrl: string) => {
@@ -63,7 +63,7 @@ const Profile = () => {
     return (
       <TouchableOpacity
         className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-        onPress={() => router.navigate("/MyParents")}
+        onPress={() => router.navigate("/myParents")}
         activeOpacity={0.8}
       >
         <Text className="text-xl">Mine foreldre</Text>
@@ -75,7 +75,7 @@ const Profile = () => {
     return (
       <TouchableOpacity
         className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-        onPress={() => router.navigate("/MyChildren")}
+        onPress={() => router.navigate("/myChildren")}
         activeOpacity={0.8}
       >
         <Text className="text-xl">Mine barn</Text>
@@ -109,7 +109,7 @@ const Profile = () => {
           <View className="flex-col items-center gap-4 mt-8">
             <TouchableOpacity
               className="bg-[#FFC5D3] rounded-lg py-3 px-14 w-64 items-center"
-              onPress={() => router.navigate("/Settings")}
+              onPress={() => router.navigate("/settings")}
               activeOpacity={0.8}
             >
               <Text className="text-xl">Innstillinger</Text>

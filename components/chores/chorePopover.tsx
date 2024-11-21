@@ -2,10 +2,10 @@ import React, { useCallback, useRef } from "react"
 import { View } from "react-native"
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import { Chore } from "../../backend/types/chore"
-import ChoreNavbar from "./ChorePopoverNavbar"
-import Done from "./popOverComponents/Done"
-import Requested from "./popOverComponents/Requested"
-import Older from "./popOverComponents/Older"
+import ChoreNavbar from "./chorePopoverNavbar"
+import Done from "./popOverComponents/done"
+import Requested from "./popOverComponents/requested"
+import Older from "./popOverComponents/older"
 
 interface Props {
   chore: Chore[]

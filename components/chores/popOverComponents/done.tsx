@@ -1,10 +1,10 @@
 import { Modal, Text, View, Image, Dimensions } from "react-native"
 import { Chore } from "../../../backend/types/chore"
 import { ScrollView } from "react-native-gesture-handler"
-import ChoreList from "../Chore"
+import ChoreList from "../chore"
 import React from "react"
-import ChoresDetailedView from "../ChoresDetailedView"
-import Button from "@/components/ui/Button"
+import ChoresDetailedView from "../choresDetailedView"
+import Button from "@/components/ui/button"
 
 interface Props {
   chores: Chore[]

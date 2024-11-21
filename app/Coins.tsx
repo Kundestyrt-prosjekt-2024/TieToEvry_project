@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, 
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import FeatherIcon from "react-native-vector-icons/Feather"
 import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
-import { adjustSphareCoins } from "@/backend/src/userDAO"
+import { adjustSphareCoins } from "@/backend/src/UserDAO"
 
 const coinItems: { id: string; name: string; amount: number }[] = [
   { id: "1", name: "Flaske", amount: 249 },

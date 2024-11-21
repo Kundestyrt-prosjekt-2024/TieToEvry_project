@@ -9,7 +9,7 @@ const AppHeader = ({ parent = false }: { parent?: boolean }) => {
   const user = useGetUser(userID.data || "")
 
   function handleProfile(): void {
-    router.navigate("/(profile)/Profile")
+    router.navigate("/(profile)/profile")
   }
 
   function handleCoin(): void {

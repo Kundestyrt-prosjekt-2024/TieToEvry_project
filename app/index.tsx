@@ -12,8 +12,8 @@ export default function index() {
 
   // Conditionally redirect based on user data
   if (userID.data) {
-    return <Redirect href="/(tabs)/Home" />
+    return <Redirect href="/(tabs)/home" />
   } else {
-    return <Redirect href="/(auth)/Login" />
+    return <Redirect href="/(auth)/login" />
   }
 }

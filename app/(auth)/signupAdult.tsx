@@ -55,7 +55,7 @@ const SignupAdult = () => {
       setSuccess(true)
 
       setTimeout(() => {
-        router.push("/(auth)/Login")
+        router.push("/(auth)/login")
       }, 1500)
     } catch (error) {
       setError("Registreringen mislyktes. Vennligst prøv igjen.")
@@ -68,7 +68,7 @@ const SignupAdult = () => {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="w-full flex-col">
         <View className="w-full items-center flex flex-col">
           <View className="w-full flex flex-col gap-8">
-            <Pressable className="items-center flex-row" onPress={() => router.navigate("/(auth)/Login")}>
+            <Pressable className="items-center flex-row" onPress={() => router.navigate("/(auth)/login")}>
               <Ionicons name="chevron-back" size={24} color="#3b82f6" />
               <Text className="text-blue-500 ml-2 text-lg">Tilbake</Text>
             </Pressable>
