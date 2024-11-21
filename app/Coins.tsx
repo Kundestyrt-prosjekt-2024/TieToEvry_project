@@ -5,23 +5,35 @@ import FeatherIcon from "react-native-vector-icons/Feather"
 import { useGetUser, useGetUserID } from "@/hooks/useGetFirestoreData"
 import { adjustSphareCoins } from "@/backend/src/UserDAO"
 
-const coinItems: { id: string; name: string; amount: number }[] = [
-  { id: "1", name: "Flaske", amount: 249 },
-  { id: "2", name: "Sparegris", amount: 349 },
-  { id: "3", name: "Kortstokk", amount: 149 },
-  { id: "4", name: "Jalla", amount: 999 },
+const coinItems: { id: string; name: string; amount: number; image: string }[] = [
+  { id: "1", name: "Flaske", amount: 249, image: "bottle.png" },
+  { id: "2", name: "Sparegris", amount: 349, image: "piggybank.jpg" },
+  { id: "3", name: "Kortstokk", amount: 149, image: "carddeck.png" },
+  { id: "4", name: "Refleks", amount: 100, image: "refleks.jpg" },
 ]
+
+const imageMap = {
+  "bottle.png": require("@/assets/images/bottle.png"),
+  "piggybank.jpg": require("@/assets/images/piggybank.jpg"),
+  "carddeck.png": require("@/assets/images/carddeck.png"),
+  "refleks.jpg": require("@/assets/images/refleks.jpg"),
+}
 
 const Coins = () => {
   const bottomSheetRef = useRef<BottomSheet>(null)
-  const [expandedItem, setExpandedItem] = React.useState<{ id: string; name: string; amount: number } | null>(null)
+  const [expandedItem, setExpandedItem] = React.useState<{
+    id: string
+    name: string
+    amount: number
+    image: string
+  } | null>(null)
 
   const userID = useGetUserID()
   const user = useGetUser(userID.data || "")
 
   const [errorMessage, setErrorMessage] = useState("")
 
-  function renderList(coinItem: { id: string; name: string; amount: number }) {
+  function renderList(coinItem: { id: string; name: string; amount: number; image: string }) {
     return (
       <TouchableOpacity style={styles.product} onPress={() => handleExpandItem(coinItem)}>
         <Text style={styles.productName}>{coinItem.name}</Text>
@@ -33,7 +45,7 @@ const Coins = () => {
     )
   }
 
-  const handleExpandItem = useCallback((coinItem: { id: string; name: string; amount: number }) => {
+  const handleExpandItem = useCallback((coinItem: { id: string; name: string; amount: number; image: string }) => {
     setExpandedItem(coinItem)
     bottomSheetRef.current?.expand()
   }, [])
@@ -83,7 +95,10 @@ const Coins = () => {
               <FeatherIcon name="x" size={50} />
             </Pressable>
           </View>
-          <Image style={styles.bottle} source={require("@/assets/images/bottle.png")} />
+          <Image
+            style={styles.bottle}
+            source={expandedItem ? imageMap[expandedItem.image as keyof typeof imageMap] : null}
+          />
           <View style={styles.priceContainer}>
             <Text style={styles.text3}>Pris: {expandedItem?.amount}</Text>
             <Image style={styles.coin3} source={require("@/assets/images/coin.png")} />
