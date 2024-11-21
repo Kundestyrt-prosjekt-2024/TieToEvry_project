@@ -93,7 +93,9 @@ const Home = () => {
           <View style={{ ...styles.budgetPost, backgroundColor: "#CBF1F4" }}>
             <Text style={styles.budgetPostText}>Total</Text>
             <Text style={{ ...styles.budgetPostText, color: monthStats[2] >= 0 ? "green" : "red" }}>
-              {loadingStats ? "..." : new Intl.NumberFormat("nb-NO").format(monthStats[2]) + " kr"}
+              {loadingStats
+                ? "..."
+                : `${monthStats[2] >= 0 ? "+" : ""}${new Intl.NumberFormat("nb-NO").format(monthStats[2])} kr`}
             </Text>
           </View>
         </View>
